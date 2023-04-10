@@ -1,12 +1,28 @@
-
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'home', component: () => import('pages/MainPage.vue') },
-      { path: 'reports', name: 'reports', component: () => import('pages/ReportsPage.vue') },
-      { path: 'ecoisland', name: 'ecoisland', component: () => import('pages/EcoIslandPage.vue') }
+      {
+        path: '',
+        name: 'home',
+        component: () => import('pages/MainPage.vue')
+      },
+      {
+        path: 'reports',
+        name: 'reports',
+        component: () => import('pages/ReportsPage.vue')
+      },
+      {
+        path: 'ecoisland',
+        name: 'ecoisland',
+        component: () => import('pages/EcoIslandPage.vue')
+      },
+      {
+        path: 'report/:reportId',
+        name: 'report',
+        component: () => import('pages/SingleReportPage.vue')
+      }
     ]
   },
 

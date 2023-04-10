@@ -29,7 +29,7 @@
       </template>
 
       <template v-slot:body="props">
-        <q-tr :props="props" @click="props.expand = !props.expand">
+        <q-tr :props="props" @click="openReport(props.row.id)">
           <q-td
             v-for="col in props.cols.filter(e => e.name !== 'caixotes')"
             :key="col.name"
@@ -47,11 +47,6 @@
               :color="bin.color"
               size="sm"
             />
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%">
-            <div class="text-left">This is expand slot for row above: {{ props.row.name }}.</div>
           </q-td>
         </q-tr>
       </template>
@@ -92,10 +87,12 @@
 <script>
 import { onMounted, ref } from 'vue'
 import { useReportStore } from 'stores/ReportStore'
+import { useRouter } from 'vue-router'
 
 export default {
   setup () {
     const reportStore = useReportStore()
+    const router = useRouter()
     const expandedList = ref([
       'caixotes', 'time'
     ])
@@ -220,6 +217,13 @@ export default {
       return str.substring(0, index) + chr + str.substring(index + 1)
     }
 
+    const openReport = (id) => {
+      router.push({
+        name: 'report',
+        params: { reportId: id }
+      })
+    }
+
     return {
       columns,
       reportStore,
@@ -228,7 +232,8 @@ export default {
       },
       iconBins,
       filteredIconBin,
-      expandedList
+      expandedList,
+      openReport
 
     }
   }
