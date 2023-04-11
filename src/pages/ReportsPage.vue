@@ -1,11 +1,5 @@
 <template>
   <q-page class="q-pa-md">
-    <!--    <q-table
-          title="Relatórios"
-          :rows="reportStore.reports"
-          :columns="columns"
-          row-key="name"
-        />-->
     <q-table
       card-class="bg-grey-2"
       flat bordered
@@ -13,7 +7,6 @@
       :rows="reportStore.getReports()"
       :columns="columns"
       row-key="id"
-      @row-click="test"
     >
 
       <template v-slot:header="props">
@@ -85,17 +78,15 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useReportStore } from 'stores/ReportStore'
 import { useRouter } from 'vue-router'
+import useFunctions from 'src/composables/UseFunctions'
 
 export default {
   setup () {
     const reportStore = useReportStore()
     const router = useRouter()
-    const expandedList = ref([
-      'caixotes', 'time'
-    ])
 
     const columns = [
       {
@@ -179,7 +170,6 @@ export default {
     ]
 
     const filteredIconBin = (condition) => {
-      console.log('confition', condition)
       return iconBins.filter((e) => {
         return condition.charAt(e.position) === '1'
       })
@@ -189,28 +179,7 @@ export default {
       reportStore.fetchReports()
     })
 
-    const formatDate = (stringDate) => {
-      // receives string
-      const date = new Date(parseInt(stringDate))
-
-      return (
-        [
-          padTo2Digits(date.getDate()),
-          padTo2Digits(date.getMonth() + 1),
-          date.getFullYear()
-        ].join('/') +
-        ' ' +
-        [
-          padTo2Digits(date.getHours()),
-          padTo2Digits(date.getMinutes()),
-          padTo2Digits(date.getSeconds())
-        ].join(':')
-      )
-
-      function padTo2Digits (num) {
-        return num.toString().padStart(2, '0')
-      }
-    }
+    const { formatDate } = useFunctions()
 
     function setCharAt (str, index, chr) {
       if (index > str.length - 1) return str
@@ -227,12 +196,8 @@ export default {
     return {
       columns,
       reportStore,
-      test: (e, row, index) => {
-        console.log('reports', e, row, index)
-      },
       iconBins,
       filteredIconBin,
-      expandedList,
       openReport
 
     }
