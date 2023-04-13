@@ -78,10 +78,11 @@
 
       </q-card>
       <q-table
+        title-class="text-h6 text-primary"
         class="col-5"
         card-class="bg-grey-2"
         flat bordered
-        title="Relatórios"
+        title="Ecoilhas"
         :rows="ecoIslandStore.getEcoIslands()"
         :columns="columns"
         row-key="id"
@@ -116,6 +117,7 @@
 <script>
 import { onMounted, ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
+import useVariables from 'src/composables/useVariables'
 
 export default {
   // name: 'PageName',
@@ -127,21 +129,10 @@ export default {
     const toggleGlass = ref(false)
     const toggleBio = ref(false)
 
-    const iconBins = [
-      {
-        color: 'green-6',
-        position: '1',
-        name: 'Vidro'
-      },
-      {
-        color: 'brown-5',
-        position: '0',
-        name: 'Biorresíduos'
-      }
-    ]
+    const { iconBinsExtra } = useVariables()
 
     const filteredIconBin = (condition) => {
-      return iconBins.filter((e) => {
+      return iconBinsExtra.filter((e) => {
         return condition.charAt(e.position) === '1'
       })
     }
@@ -218,6 +209,7 @@ export default {
     ]
 
     onMounted(() => {
+      console.log('onMOunted')
       ecoIslandStore.fetchEcoIslands()
     })
     return {

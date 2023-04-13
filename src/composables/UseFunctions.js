@@ -6,16 +6,12 @@ export default function useFunctions () {
     return Number.isInteger(+str)
   }
 
-  const formatDate = (stringDate) => {
+  const formatDateTime = (stringDate) => {
     // receives string
     const date = new Date(parseInt(stringDate))
 
     return (
-      [
-        padTo2Digits(date.getDate()),
-        padTo2Digits(date.getMonth() + 1),
-        date.getFullYear()
-      ].join('/') +
+      formatDate(stringDate) +
       ' ' +
       [
         padTo2Digits(date.getHours()),
@@ -29,8 +25,26 @@ export default function useFunctions () {
     }
   }
 
+  const formatDate = (stringDate) => {
+    // receives string
+    const date = new Date(parseInt(stringDate))
+
+    return (
+      [
+        padTo2Digits(date.getDate()),
+        padTo2Digits(date.getMonth() + 1),
+        date.getFullYear()
+      ].join('/')
+    )
+
+    function padTo2Digits (num) {
+      return num.toString().padStart(2, '0')
+    }
+  }
+
   return {
     isStringInteger,
+    formatDateTime,
     formatDate
   }
 }

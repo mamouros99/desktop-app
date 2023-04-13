@@ -10,37 +10,60 @@ export const useEcoIslandStore = defineStore('island', () => {
     notifySuccess
   } = useNotify()
   const ecoIslands = ref([])
+  const currentEcoIsland = ref({})
   const { isStringInteger } = useFunctions()
 
-  const fetchEcoIslands = () => {
+  async function fetchEcoIslands () {
     console.log('Fetching islands...')
-    api.get('http://localhost:3000/ecoislands')
+    await api.get('http://localhost:3000/ecoislands')
       .then((response) => {
+        console.log('Fetched islands...')
         ecoIslands.value = response.data
       })
       .catch((error) => {
         notifyError((error.code === 'ERR_NETWORK') ? 'Loading Failed' : 'Something Went Wrong')
+        console.log('Failed Fetching islands')
       })
   }
 
   const getEcoIslands = () => {
-    if (ecoIslands.value.length === 0) {
-      fetchEcoIslands()
-    }
     return ecoIslands.value
   }
 
-  const getEcoIslandsById = (id) => {
-    console.log('Getting ecoisland with ', id, 'from', ecoIslands)
+  const getCurrentEcoIsland = () => {
+    return currentEcoIsland.value
+  }
 
-    if (ecoIslands.value.length === 0) {
-      fetchEcoIslands()
-    }
+  const getEcoIslandsById = (id) => {
     if (!isStringInteger(id)) {
       return
     }
 
-    return ecoIslands.value.find(e => e.id === +id)
+    console.log('getEcoIslandsById', ecoIslands)
+
+    return ecoIslands.value.find(e => {
+      console.log(e.id, ' ===', +id, e.id === +id)
+      return e.id === +id
+    })
+  }
+
+  const setEcoIslandsByID = async (id) => {
+    if (ecoIslands.value.length !== 0) {
+      console.log('Setting with value1', ecoIslands.value.find(e => e.id === +id))
+      currentEcoIsland.value = ecoIslands.value.find(e => e.id === +id)
+    } else {
+      fetchEcoIslands()
+        .then(() => {
+          console.log('Setting with value2', ecoIslands.value.find(e => e.id === +id))
+          currentEcoIsland.value = ecoIslands.value.find(e => e.id === +id)
+        }
+        )
+        .catch(
+          () => {
+            console.log('something went wrong')
+          }
+        )
+    }
   }
 
   const addEcoIsland = async (ecoIsland) => {
@@ -61,6 +84,9 @@ export const useEcoIslandStore = defineStore('island', () => {
     fetchEcoIslands,
     getEcoIslandsById,
     getEcoIslands,
-    addEcoIsland
+    addEcoIsland,
+    getCurrentEcoIsland,
+    setEcoIslandsByID,
+    currentEcoIsland
   }
 })

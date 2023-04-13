@@ -12,12 +12,14 @@ export const useReportStore = defineStore('report', () => {
 
   const fetchReports = () => {
     console.log('Fetching reports...')
-    api.get('http://localhost:3001/reports')
+    api.get('http://localhost:3000/reports')
       .then((response) => {
         reports.value = response.data
+        console.log('Fetched reports')
       })
       .catch((error) => {
         notifyError((error.code === 'ERR_NETWORK') ? 'Loading Failed' : 'Something Went Wrong')
+        console.log('Failed fetching reports')
       })
   }
 
@@ -29,11 +31,9 @@ export const useReportStore = defineStore('report', () => {
     if (!isStringInteger(id)) {
       return
     }
-    const result = reports.value.find(e => {
+    return reports.value.find(e => {
       return e.id === +id
     })
-    console.log('result', result, reports.value)
-    return result
   }
 
   return {

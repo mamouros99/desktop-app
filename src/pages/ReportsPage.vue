@@ -6,8 +6,47 @@
       title="Relatórios"
       :rows="reportStore.getReports()"
       :columns="columns"
+      :filter="filter"
+      :filter-method="customFilter"
       row-key="id"
     >
+
+      <template v-slot:top>
+        <div class="row full-width justify-between">
+          <div class="text-h6 q-pl-lg">
+            Relatórios
+          </div>
+
+          <div class="row">
+            <q-input dense rounded v-model="filter.search" label="Search">
+              <template v-slot:append>
+                <q-icon
+                  name="search"
+                />
+              </template>
+            </q-input>
+
+            <q-btn
+              rounded
+              flat
+              class="bg-primary text-white q-px-sm q-mx-lg"
+              dense
+              label="Filtro"
+              icon="filter_alt"
+              size="sm"
+              @click="toggleDialog"
+            />
+          </div>
+
+        </div>
+
+        <FilterDialog
+          v-model:show-dialog="showDialog"
+          @update-filters="(value) => updateFilter(value)"
+          :old-filter="filter"
+        />
+
+      </template>
 
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -22,7 +61,7 @@
       </template>
 
       <template v-slot:body="props">
-        <q-tr :props="props" @click="openReport(props.row.id)">
+        <q-tr :props="props" @click="openReport(props.row.id)" class="bg-grey-1">
           <q-td
             v-for="col in props.cols.filter(e => e.name !== 'caixotes')"
             :key="col.name"
@@ -46,47 +85,36 @@
 
     </q-table>
 
-    <q-card flat bordered class="q-mt-lg bg-grey-2" style="">
-      <q-card-section class="q-pl-lg text-grey-8">
-        Legenda Caixotes:
-      </q-card-section>
-      <q-separator/>
-      <q-card-section class="q-pt-sm" horizontal>
-        <q-list
-          v-for="bin in iconBins"
-          :key="bin.name"
-          class="row justify-around"
-        >
-          <q-item
-            class="col-2 items-center"
-          >
-            <q-icon
-              class="q-pr-sm"
-              name="mdi-trash-can-outline"
-              size="sm"
-              :color="bin.color"
-            />
-
-            <div>
-              {{ bin.name }}
-            </div>
-          </q-item>
-        </q-list>
-      </q-card-section>
-    </q-card>
+    <BinsLegendCard :icon-bins="iconBins"/>
   </q-page>
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useReportStore } from 'stores/ReportStore'
 import { useRouter } from 'vue-router'
 import useFunctions from 'src/composables/UseFunctions'
+import useVariables from 'src/composables/useVariables'
+import BinsLegendCard from 'components/BinsLegendCard.vue'
+import FilterDialog from 'components/FilterDialog.vue'
 
 export default {
+  components: {
+    FilterDialog,
+    BinsLegendCard
+  },
   setup () {
     const reportStore = useReportStore()
     const router = useRouter()
+
+    const filter = ref({
+      search: '',
+      startDate: '',
+      endDate: '',
+      binsSelected: [],
+      problemsSelected: []
+    })
+    const showDialog = ref(false)
 
     const columns = [
       {
@@ -98,7 +126,7 @@ export default {
       {
         name: 'ecoisland',
         label: 'Island ID',
-        field: 'ecoIsland',
+        field: 'ecoisland',
         sortable: true,
         align: 'center',
         format: (val) => {
@@ -137,42 +165,83 @@ export default {
         align: 'center',
         format: (val) => {
           return val === undefined ? '--' : val
+        },
+        sortable: true,
+        sort: (a, b, row, rowb) => {
+          return (a.match(/1/g) || []).length - (b.match(/1/g) || []).length
         }
       }
     ]
 
-    const iconBins = [
-      {
-        color: 'black',
-        position: '4',
-        name: 'Indiferenciado'
-      },
-      {
-        color: 'yellow-8',
-        position: '3',
-        name: 'Embalagens'
-      },
-      {
-        color: 'blue-7',
-        position: '2',
-        name: 'Papel'
-      },
-      {
-        color: 'green-6',
-        position: '1',
-        name: 'Vidro'
-      },
-      {
-        color: 'brown-5',
-        position: '0',
-        name: 'Biorresíduos'
+    const { iconBins } = useVariables()
+    const customFilter = (rows, terms, cols) => {
+      const startDateFilter = filter.value.startDate !== '' ? rows.filter(e => {
+        return +e.time > Date.parse(filter.value.startDate)
+      }) : rows
+
+      const endOfDay = Date.parse(filter.value.endDate) + 86399999 // 23 hours, 59 minutes, 59seconds, 999ms
+      const endDateFilter = filter.value.endDate !== '' ? startDateFilter.filter(e => {
+        return +e.time < endOfDay
+      }) : startDateFilter
+
+      const problemsFilter = filter.value.problemsSelected.length > 0 ? endDateFilter.filter(e => {
+        return (filter.value.problemsSelected.includes('dirty') && e.dirty !== '00000') ||
+          (filter.value.problemsSelected.includes('full') && e.full !== '00000') ||
+          (filter.value.problemsSelected.includes('separation') && e.separation !== '00000')
+      }) : endDateFilter
+
+      const binsFilter = filter.value.binsSelected.length > 0 ? problemsFilter.filter(e => {
+        return (filter.value.binsSelected.includes('undifferentiated') && reportContainBin(e, 'undifferentiated')) ||
+          (filter.value.binsSelected.includes('plastic') && reportContainBin(e, 'plastic')) ||
+          (filter.value.binsSelected.includes('paper') && reportContainBin(e, 'paper')) ||
+          (filter.value.binsSelected.includes('glass') && reportContainBin(e, 'glass')) ||
+          (filter.value.binsSelected.includes('bio') && reportContainBin(e, 'bio'))
+      }) : problemsFilter
+
+      return filter.value.search !== '' ? binsFilter.filter(e => {
+        return e.ecoisland.includes(filter.value.search) ||
+          e.id.toString().includes(filter.value.search) ||
+          formatDate(e.time).includes(filter.value.search) ||
+          (reportContainBin(e, 'undifferentiated') && 'indiferenciado'.includes(filter.value.search.toLowerCase())) ||
+          (reportContainBin(e, 'plastic') && 'embalagens'.includes(filter.value.search.toLowerCase())) ||
+          (reportContainBin(e, 'paper') && 'papel'.includes(filter.value.search.toLowerCase())) ||
+          (reportContainBin(e, 'glass') && 'vidro'.includes(filter.value.search.toLowerCase())) ||
+          (reportContainBin(e, 'bio') && 'biorresiduos'.includes(filter.value.search.toLowerCase()))
+      }) : binsFilter
+
+      function reportContainBin (report, bin) {
+        function containAtPosition (report, pos) {
+          return report.dirty.charAt(pos) === '1' || report.separation.charAt(pos) === '1' || report.full.charAt(pos) === '1'
+        }
+
+        switch (bin) {
+          case 'undifferentiated':
+            return containAtPosition(report, 4)
+          case 'plastic':
+            return containAtPosition(report, 3)
+          case 'paper':
+            return containAtPosition(report, 2)
+          case 'glass':
+            return containAtPosition(report, 1)
+          case 'bio':
+            return containAtPosition(report, 0)
+          default:
+            return false
+        }
       }
-    ]
+    }
 
     const filteredIconBin = (condition) => {
       return iconBins.filter((e) => {
         return condition.charAt(e.position) === '1'
       })
+    }
+
+    const updateFilter = (value) => {
+      filter.value.endDate = value.endDate
+      filter.value.startDate = value.startDate
+      filter.value.problemsSelected = value.problemsSelected
+      filter.value.binsSelected = value.binsSelected
     }
 
     onMounted(() => {
@@ -193,12 +262,23 @@ export default {
       })
     }
 
+    const toggleDialog = () => {
+      showDialog.value = !showDialog.value
+    }
+
     return {
       columns,
       reportStore,
       iconBins,
       filteredIconBin,
-      openReport
+      openReport,
+
+      customFilter,
+      updateFilter,
+
+      toggleDialog,
+      showDialog,
+      filter
 
     }
   }

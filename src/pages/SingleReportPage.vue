@@ -14,53 +14,77 @@
       </q-card-section>
       <q-card-section>
         <q-card flat bordered v-if="report !== undefined">
-          <q-card-section>
+          <q-table
+            :rows="getInfoReport(report)"
+            :columns="columns"
+            row-key="name"
+            :pagination="{
+              page: 1,
+              rowsPerPage: 0
+            }"
+            :hide-pagination="true"
+          >
 
-            <q-list>
-              <q-item-label class="text-h6 text-grey-7">
-                Caixotes
-              </q-item-label>
-              <q-item v-for="bin in getInfoReport(report)" :key="bin.name">
-                <q-item-section>
-                  <div>
-                    <em>{{ bin.name }}</em>
+            <template v-slot:header="props">
+              <q-tr :props="props" class="bg-teal-3">
+                <q-th
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                >
+                  {{ col.label }}
+                </q-th>
+              </q-tr>
+            </template>
+
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td
+                  class="text-center"
+                >
+                  <div
+                    v-for="bin in props.cols.filter(e => e.name === 'bin')"
+                    :key="bin.name">
+                    {{ bin.value }}
                     <q-icon
-                      class="q-pl-sm"
                       name="mdi-trash-can-outline"
-                      :color="bin.color"
+                      :color="props.row.color"
                     />
                   </div>
-                  - {{ bin.problems }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-        </q-card>
-        <q-card v-else
 
-        >
+                </q-td>
+                <q-td
+                  v-for="col in props.cols.filter(e => e.name !== 'bin')"
+                  :key="col.name"
+                  :props="props"
+                >
+                  <q-icon
+                    v-if="col.value"
+                    name="cancel"
+                    color="primary"
+                  />
+                  <div v-else>
+                    -
+                  </div>
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
+        </q-card>
+        <q-card v-else>
           <q-spinner
             color="primary"
             size="3em"
           />
         </q-card>
       </q-card-section>
-      <q-card-section>
-        <q-card flat bordered v-if="report !== undefined">
-          <q-card-section>
-            EcoIlha {{ report.ecoIsland }}
-          </q-card-section>
-        </q-card>
-        <q-card v-else
-
-        >
-          <q-spinner
-            color="primary"
-            size="3em"
-          />
-        </q-card>
-
-      </q-card-section>
+      <EcoIslandCard v-if="report !== undefined" :report="report"/>
+      <q-card v-else>
+        <q-spinner
+          color="primary"
+          size="3em"
+        />
+      </q-card>
     </q-card>
   </q-page>
 </template>
@@ -72,8 +96,10 @@ import { computed, onMounted } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import { useReportStore } from 'stores/ReportStore'
 import useFunctions from 'src/composables/UseFunctions'
+import EcoIslandCard from 'components/ReportEcoIslandCard.vue'
 
 export default {
+  components: { EcoIslandCard },
   // name: 'PageName',
   props: [],
   setup () {
@@ -86,55 +112,108 @@ export default {
 
     const reportId = route.params.reportId
 
+    const columns = [
+      {
+        name: 'bin',
+        required: true,
+        label: 'Caixote',
+        field: row => row.name,
+        align: 'center'
+      },
+      {
+        name: 'dirty',
+        required: true,
+        label: 'Sujo',
+        field: row => row.problems.dirty,
+        align: 'center'
+      },
+      {
+        name: 'full',
+        required: true,
+        label: 'Cheio',
+        field: row => row.problems.full,
+        align: 'center'
+      },
+      {
+        name: 'separation',
+        required: true,
+        label: 'Má Separação',
+        field: row => {
+          console.log('row', row)
+          return row.problems.separation
+        },
+        align: 'center'
+      }
+    ]
     const getInfoReport = (report) => {
       const result = [
         {
           name: 'Indiferenciado',
           color: 'black',
-          problems: '',
+          problems: {
+            dirty: 0,
+            full: 0,
+            separation: 0
+          },
           pos: 4
         },
         {
           name: 'Embalagens',
           color: 'yellow-8',
-          problems: '',
+          problems: {
+            dirty: 0,
+            full: 0,
+            separation: 0
+          },
           pos: 3
         },
         {
           name: 'Papel',
           color: 'blue-7',
-          problems: '',
+          problems: {
+            dirty: 0,
+            full: 0,
+            separation: 0
+          },
           pos: 2
         },
         {
-          name: 'Plástico',
+          name: 'Vidro',
           color: 'green-6',
-          problems: '',
+          problems: {
+            dirty: 0,
+            full: 0,
+            separation: 0
+          },
           pos: 1
         },
         {
           name: 'Biorresiduos',
           color: 'brown-5',
-          problems: '',
+          problems: {
+            dirty: 0,
+            full: 0,
+            separation: 0
+          },
           pos: 0
         }
       ]
 
       for (const bin of result) {
         if (report.dirty.charAt(bin.pos) === '1') {
-          bin.problems = bin.problems + 'Sujo '
+          bin.problems.dirty = 1
         }
         if (report.separation.charAt(bin.pos) === '1') {
-          bin.problems = bin.problems + 'Má Separação '
+          bin.problems.separation = 1
         }
         if (report.full.charAt(bin.pos) === '1') {
-          bin.problems = bin.problems + 'Cheio '
+          bin.problems.full = 1
         }
       }
 
-      console.log('result', result)
-
-      return result.filter(e => e.problems.length > 0)
+      return result.filter((e) => {
+        return e.problems.dirty || e.problems.full || e.problems.separation
+      })
     }
 
     onMounted(() => {
@@ -150,7 +229,8 @@ export default {
       reportStore,
       ecoIslandStore,
       getInfoReport,
-      formatDate
+      formatDate,
+      columns
     }
   }
 }
