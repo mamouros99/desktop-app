@@ -96,7 +96,7 @@ import { useRouter } from 'vue-router'
 import useFunctions from 'src/composables/UseFunctions'
 import useVariables from 'src/composables/useVariables'
 import BinsLegendCard from 'components/BinsLegendCard.vue'
-import FilterDialog from 'components/FilterDialog.vue'
+import FilterDialog from 'components/Dialogs/FilterDialog.vue'
 
 export default {
   components: {

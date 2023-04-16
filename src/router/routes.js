@@ -14,14 +14,19 @@ const routes = [
         component: () => import('pages/ReportsPage.vue')
       },
       {
-        path: 'ecoisland',
-        name: 'ecoisland',
+        path: 'ecoislands',
+        name: 'ecoislands',
         component: () => import('pages/EcoIslandPage.vue')
       },
       {
         path: 'report/:reportId',
         name: 'report',
         component: () => import('pages/SingleReportPage.vue')
+      },
+      {
+        path: 'ecoisland/:ecoislandId',
+        name: 'ecoisland',
+        component: () => import('pages/SingleEcoIslandPage.vue')
       }
     ]
   },

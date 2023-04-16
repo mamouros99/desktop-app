@@ -23,7 +23,7 @@
         <q-list padding class="menu-list">
           <q-item clickable v-ripple exact :to="{name: 'home'}">
             <q-item-section avatar>
-              <q-icon name="home" />
+              <q-icon name="home"/>
             </q-item-section>
 
             <q-item-section>
@@ -33,7 +33,7 @@
 
           <q-item clickable v-ripple :to="{name: 'reports'}">
             <q-item-section avatar>
-              <q-icon name="summarize" />
+              <q-icon name="summarize"/>
             </q-item-section>
 
             <q-item-section>
@@ -41,9 +41,9 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple :to="{name: 'ecoisland'}">
+          <q-item clickable v-ripple :to="{name: 'ecoislands'}">
             <q-item-section avatar>
-              <q-icon name="recycling" />
+              <q-icon name="recycling"/>
             </q-item-section>
 
             <q-item-section>
@@ -54,7 +54,7 @@
       </q-scroll-area>
     </q-drawer>
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>

@@ -1,6 +1,7 @@
 <template>
   <q-page padding>
     <q-btn
+      flat
       color="primary"
       label="Back"
       icon="arrow_back"
@@ -10,8 +11,14 @@
     <q-card flat bordered class="bg-grey-2">
       <q-card-section class="row justify-between items-center">
         <div class="text-h4  text-grey-9">Relatório ID {{ reportId }}</div>
-        <div class="q-pr-md text-h5  text-grey-8" v-if="report !== undefined"> {{ formatDate(report.time) }}</div>
+        <div class="q-pr-md text-h5  text-grey-8" v-if="report !== undefined"> {{ formatDateTime(report.time) }}</div>
       </q-card-section>
+      <div class="q-ml-lg text-subtitle2 text-grey-7" v-if="report !== undefined">
+        Ecoilha {{ island.id + ' - ' }}
+        {{ island.building + ',' }}
+        {{ island.floor + ',' }}
+        {{ island.description }}
+      </div>
       <q-card-section>
         <q-card flat bordered v-if="report !== undefined">
           <q-table
@@ -78,13 +85,6 @@
           />
         </q-card>
       </q-card-section>
-      <EcoIslandCard v-if="report !== undefined" :report="report"/>
-      <q-card v-else>
-        <q-spinner
-          color="primary"
-          size="3em"
-        />
-      </q-card>
     </q-card>
   </q-page>
 </template>
@@ -96,10 +96,9 @@ import { computed, onMounted } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import { useReportStore } from 'stores/ReportStore'
 import useFunctions from 'src/composables/UseFunctions'
-import EcoIslandCard from 'components/ReportEcoIslandCard.vue'
 
 export default {
-  components: { EcoIslandCard },
+  components: {},
   // name: 'PageName',
   props: [],
   setup () {
@@ -108,7 +107,7 @@ export default {
 
     const ecoIslandStore = useEcoIslandStore()
     const reportStore = useReportStore()
-    const { formatDate } = useFunctions()
+    const { formatDateTime } = useFunctions()
 
     const reportId = route.params.reportId
 
@@ -216,21 +215,29 @@ export default {
       })
     }
 
+    const report = computed(() => {
+      return reportStore.getReportById(reportId)
+    })
+
+    const island = computed(() => {
+      return ecoIslandStore.getEcoIslandsById(report.value.ecoisland)
+    })
+
     onMounted(() => {
       reportStore.fetchReports()
+      ecoIslandStore.fetchEcoIslands()
     })
 
     return {
       reportId,
       router,
-      report: computed(() => {
-        return reportStore.getReportById(reportId)
-      }),
+      report,
       reportStore,
       ecoIslandStore,
       getInfoReport,
-      formatDate,
-      columns
+      formatDateTime,
+      columns,
+      island
     }
   }
 }
