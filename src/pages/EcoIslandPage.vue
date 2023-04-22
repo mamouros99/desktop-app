@@ -1,11 +1,57 @@
 <template>
   <q-page padding>
-    <q-card flat class="q-pa-md row justify-around">
+    <q-card flat class="q-pa-md">
 
       <NewIslandDialog v-model:showDialog="showDialog"/>
 
+      <div class="q-my-md row justify-between">
+        <div>
+          <q-btn
+            class="q-ml-lg q-px-md"
+            rounded
+            dense
+            color="secondary"
+            @click="showDialog = true"
+          >
+            <q-icon
+              name="add"
+              class="q-pr-sm"
+            />
+            <div>Nova EcoIlha</div>
+
+          </q-btn>
+        </div>
+
+        <q-file
+          ref="fileInput"
+          class="q-mr-lg col-2"
+          rounded
+          bg-color="primary"
+          dense
+          label-color="white"
+          outlined
+          v-model="file"
+          label="Upload .CSV"
+        >
+          <template v-slot:before>
+            <q-icon
+              v-if="file!== null"
+              color="secondary"
+              name="send"
+              @click=" uploadFiles(file)"
+            />
+          </template>
+
+          <template v-slot:append>
+            <q-icon v-if="file !== null" color="white" name="close" @click.stop.prevent="file = null"
+                    class="cursor-pointer"/>
+          </template>
+        </q-file>
+
+      </div>
+
       <q-table
-        class="col-10"
+        class="col-8"
         card-class="bg-grey-2"
         flat bordered
         :rows="ecoIslandStore.getEcoIslands()"
@@ -16,32 +62,18 @@
 
         <template v-slot:top>
           <div class="row full-width justify-between">
-            <div class="text-h6 q-pl-lg col-6">
+            <div class="text-h5 q-pl-lg col-6 text-primary">
               Ecoilhas
             </div>
 
-            <div class="col-6 row items-center justify-around">
-              <q-input class="col-5" rounded v-model="search" label="Search">
+            <div class="col-3 ">
+              <q-input class="" rounded v-model="search" label="Search">
                 <template v-slot:append>
                   <q-icon
                     name="search"
                   />
                 </template>
               </q-input>
-              <q-btn
-                class=" col-5"
-                rounded
-                dense
-                color="teal-4"
-                @click="showDialog = true"
-              >
-                <q-icon
-                  name="add"
-                  class="q-pr-sm"
-                />
-                <div>Adicionar EcoIlha</div>
-
-              </q-btn>
             </div>
           </div>
 
@@ -83,6 +115,7 @@ import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import useVariables from 'src/composables/useVariables'
 import NewIslandDialog from 'components/Dialogs/NewIslandDialog.vue'
 import { useRouter } from 'vue-router'
+import useNotify from 'src/composables/UseNotify'
 
 export default {
   components: {
@@ -95,16 +128,24 @@ export default {
       iconBinsExtra,
       iconBinsBase
     } = useVariables()
+
     const router = useRouter()
-
+    const {
+      notifyError,
+      notifySuccess
+    } = useNotify()
     const showDialog = ref(false)
-
+    const file = ref(null)
     const search = ref('')
 
     const filteredIconBin = (condition) => {
       return [...iconBinsBase, ...iconBinsExtra.filter((e) => {
         return condition.charAt(e.position) === '1'
       })]
+    }
+
+    const test = () => {
+      console.log('test')
     }
 
     const columns = [
@@ -137,26 +178,41 @@ export default {
         sortable: true,
         align: 'center'
       }
-
     ]
 
+    const uploadFiles = (a) => {
+      ecoIslandStore.uploadEcoIslands(a)
+        .then(() => {
+          notifySuccess('Upload foi bem-sucedido')
+        })
+        .catch((errorMessage) => {
+          notifyError('Problema com o upload - ' + errorMessage)
+        })
+
+      file.value = null
+    }
+
     onMounted(() => {
-      console.log('onMOunted')
-      ecoIslandStore.fetchEcoIslands()
+      fetch()
     })
+
+    const fetch = () => {
+      ecoIslandStore.fetchEcoIslands()
+        .catch((errorMessage) => {
+          notifyError(errorMessage)
+        })
+    }
+
     return {
       ecoIslandStore,
       columns,
       showDialog,
       router,
-
       search,
-
+      file,
       filteredIconBin,
-
-      test: (a) => {
-        console.log('test', a)
-      }
+      uploadFiles,
+      test
     }
   }
 }

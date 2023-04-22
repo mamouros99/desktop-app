@@ -8,7 +8,19 @@ import axios from 'axios'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({ baseURL: 'http://localhost:3000' })
-
+api.interceptors.response.use((response) => {
+  return response
+}, error => {
+  if (!error.response) {
+    return Promise.reject('Erro de Ligação')
+  } else {
+    if (error.response.data.message === undefined) {
+      return Promise.reject('Alguma correu mal no servidor')
+    } else {
+      return Promise.reject(error.response.data.message)
+    }
+  }
+})
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 

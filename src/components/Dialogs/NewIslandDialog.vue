@@ -86,10 +86,11 @@
 <script>
 import { ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
+import useNotify from 'src/composables/UseNotify'
 
 export default {
   name: 'NewIslandDialog',
-  emits: ['update:showDialog', 'updateTable'],
+  emits: ['update:showDialog'],
   props: {
     showDialog: {
       type: Boolean,
@@ -99,6 +100,10 @@ export default {
 
   setup (prop, { emit }) {
     const ecoIslandStore = useEcoIslandStore()
+    const {
+      notifyError,
+      notifySuccess
+    } = useNotify()
 
     const building = ref('')
     const floor = ref('')
@@ -122,7 +127,7 @@ export default {
       }
     }
 
-    const createNewEcoIsland = () => {
+    const createNewEcoIsland = async () => {
       const result = {
         building: building.value,
         floor: floor.value,
@@ -142,18 +147,35 @@ export default {
         result.bins = '0' + result.bins
       }
 
-      ecoIslandStore.addEcoIsland(result)
+      await ecoIslandStore.addEcoIsland(result)
+        .then(response => {
+          notifySuccess('Ecoilha adicionada com sucesso')
+        }
+        )
+        .catch(e => {
+          notifyError('Alguma coisa correu mal - ' + e)
+        })
+
       emit('updateTable')
+      emit('update:showDialog', false)
+      resetFields()
     }
 
     const cleanFloorAndDesc = () => {
-      console.log('here')
       floor.value = ''
       desc.value = ''
     }
 
     const emitUpdate = (event, value) => {
       emit(event, value)
+    }
+
+    const resetFields = () => {
+      toggleBio.value = false
+      toggleGlass.value = false
+      building.value = ''
+      floor.value = ''
+      desc.value = ''
     }
 
     return {
@@ -165,7 +187,7 @@ export default {
       buildingFloors,
       buildingOptions,
       emitUpdate,
-
+      resetFields,
       createNewEcoIsland,
       cleanFloorAndDesc
     }

@@ -97,6 +97,7 @@ import useFunctions from 'src/composables/UseFunctions'
 import useVariables from 'src/composables/useVariables'
 import BinsLegendCard from 'components/BinsLegendCard.vue'
 import FilterDialog from 'components/Dialogs/FilterDialog.vue'
+import useNotify from 'src/composables/UseNotify'
 
 export default {
   components: {
@@ -106,6 +107,7 @@ export default {
   setup () {
     const reportStore = useReportStore()
     const router = useRouter()
+    const { notifyError } = useNotify()
 
     const filter = ref({
       search: '',
@@ -126,11 +128,11 @@ export default {
       {
         name: 'ecoisland',
         label: 'Island ID',
-        field: 'ecoisland',
+        field: 'ecoIsland',
         sortable: true,
         align: 'center',
         format: (val) => {
-          return val === undefined ? '--' : val
+          return val === undefined ? '--' : val.id
         }
       },
       {
@@ -199,7 +201,7 @@ export default {
       }) : problemsFilter
 
       return filter.value.search !== '' ? binsFilter.filter(e => {
-        return e.ecoisland.includes(filter.value.search) ||
+        return e.ecoIsland.id.toString().includes(filter.value.search) ||
           e.id.toString().includes(filter.value.search) ||
           formatDate(e.time).includes(filter.value.search) ||
           (reportContainBin(e, 'undifferentiated') && 'indiferenciado'.includes(filter.value.search.toLowerCase())) ||
@@ -245,8 +247,15 @@ export default {
     }
 
     onMounted(() => {
-      reportStore.fetchReports()
+      fetch()
     })
+
+    const fetch = () => {
+      reportStore.fetchReports()
+        .catch((errorMessage) => {
+          notifyError(errorMessage)
+        })
+    }
 
     const { formatDate } = useFunctions()
 

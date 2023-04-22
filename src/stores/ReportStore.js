@@ -1,25 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'boot/axios'
-import useNotify from 'src/composables/UseNotify'
-import useFunctions from 'src/composables/UseFunctions'
 
 export const useReportStore = defineStore('report', () => {
-  const { notifyError } = useNotify()
   const reports = ref([])
 
-  const { isStringInteger } = useFunctions()
-
-  const fetchReports = () => {
-    console.log('Fetching reports...')
-    api.get('http://localhost:3000/reports')
+  const fetchReports = async () => {
+    console.log('fetching')
+    await api.get('http://localhost:3001/report/all')
       .then((response) => {
         reports.value = response.data
-        console.log('Fetched reports')
-      })
-      .catch((error) => {
-        notifyError((error.code === 'ERR_NETWORK') ? 'Loading Failed' : 'Something Went Wrong')
-        console.log('Failed fetching reports')
       })
   }
 
@@ -27,18 +17,25 @@ export const useReportStore = defineStore('report', () => {
     return reports.value
   }
 
-  const getReportById = (id) => {
-    if (!isStringInteger(id)) {
-      return
+  const deleteById = async (id) => {
+    await api.delete('http://localhost:3001/report/delete/' + id)
+  }
+
+  const getReportById = async (id) => {
+    const result = {
+      data: reports
+        .value.find(e => e.id === +id)
     }
-    return reports.value.find(e => {
-      return e.id === +id
-    })
+    if (result.data !== undefined) {
+      return result
+    }
+    return await api.get('http://localhost:3001/report/' + id)
   }
 
   return {
     fetchReports,
     getReports,
-    getReportById
+    getReportById,
+    deleteById
   }
 })

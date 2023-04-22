@@ -11,16 +11,18 @@
     <q-card flat bordered class="bg-grey-2">
       <q-card-section class="row justify-between items-center">
         <div class="text-h4  text-grey-9">Relatório ID {{ reportId }}</div>
-        <div class="q-pr-md text-h5  text-grey-8" v-if="report !== undefined"> {{ formatDateTime(report.time) }}</div>
+        <div class="q-pr-md text-h5  text-grey-8" v-if="loaded"> {{ formatDateTime(report.time) }}</div>
       </q-card-section>
-      <div class="q-ml-lg text-subtitle2 text-grey-7" v-if="report !== undefined">
-        Ecoilha {{ island.id + ' - ' }}
-        {{ island.building + ',' }}
-        {{ island.floor + ',' }}
-        {{ island.description }}
+      <div class="q-ml-lg text-subtitle2 text-grey-7" style="cursor: pointer; display: inline-block" v-if="loaded">
+        <div @click="router.push('/ecoisland/' + report.ecoIsland.id)">
+          Ecoilha {{ report.ecoIsland.id + ' - ' }}
+          {{ report.ecoIsland.building + ',' }}
+          {{ report.ecoIsland.floor + ',' }}
+          {{ report.ecoIsland.description }}
+        </div>
       </div>
       <q-card-section>
-        <q-card flat bordered v-if="report !== undefined">
+        <q-card flat bordered v-if="loaded">
           <q-table
             :rows="getInfoReport(report)"
             :columns="columns"
@@ -86,30 +88,63 @@
         </q-card>
       </q-card-section>
     </q-card>
+    <q-btn
+      class="glossy q-ml-lg q-mt-lg"
+      rounded color="red-7"
+      label="Apagar Relatório"
+      @click="showDeleteDialog = !showDeleteDialog"
+    />
+    <ConfirmationDialog
+      title="Tem a certeza que quer apagar o relatório?"
+      negative-label="Apagar"
+      positive-label="Cancelar"
+      v-model:show-dialog="showDeleteDialog"
+      @negative-function="deleteReport()"
+    />
   </q-page>
 </template>
 
 <script>
 
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted } from 'vue'
-import { useEcoIslandStore } from 'stores/EcoIslandStore'
+import { onMounted, ref } from 'vue'
 import { useReportStore } from 'stores/ReportStore'
 import useFunctions from 'src/composables/UseFunctions'
+import useNotify from 'src/composables/UseNotify'
+import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
 
 export default {
-  components: {},
+  components: { ConfirmationDialog },
   // name: 'PageName',
   props: [],
   setup () {
     const route = useRoute()
     const router = useRouter()
 
-    const ecoIslandStore = useEcoIslandStore()
+    const {
+      notifyError,
+      notifySuccess,
+      notifyWarning
+    } = useNotify()
     const reportStore = useReportStore()
     const { formatDateTime } = useFunctions()
 
     const reportId = route.params.reportId
+
+    const report = ref()
+    const loaded = ref(false)
+    const showDeleteDialog = ref(false)
+
+    const deleteReport = () => {
+      reportStore.deleteById(reportId)
+        .then(() => {
+          notifySuccess('Report ' + reportId + ' foi apagada com sucesso')
+          router.push('/reports')
+        })
+        .catch((e) => {
+          notifyWarning(e)
+        })
+    }
 
     const columns = [
       {
@@ -138,7 +173,6 @@ export default {
         required: true,
         label: 'Má Separação',
         field: row => {
-          console.log('row', row)
           return row.problems.separation
         },
         align: 'center'
@@ -215,17 +249,15 @@ export default {
       })
     }
 
-    const report = computed(() => {
-      return reportStore.getReportById(reportId)
-    })
-
-    const island = computed(() => {
-      return ecoIslandStore.getEcoIslandsById(report.value.ecoisland)
-    })
-
-    onMounted(() => {
-      reportStore.fetchReports()
-      ecoIslandStore.fetchEcoIslands()
+    onMounted(async () => {
+      await reportStore.getReportById(reportId)
+        .then((response) => {
+          report.value = response.data
+          loaded.value = true
+        })
+        .catch((error) => {
+          notifyError('Error Loading Report' + error)
+        })
     })
 
     return {
@@ -233,11 +265,12 @@ export default {
       router,
       report,
       reportStore,
-      ecoIslandStore,
       getInfoReport,
       formatDateTime,
       columns,
-      island
+      loaded,
+      showDeleteDialog,
+      deleteReport
     }
   }
 }

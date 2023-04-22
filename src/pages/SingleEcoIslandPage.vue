@@ -25,10 +25,10 @@
 
         <QRCodeDialog v-model:show-dialog="showDialog" :islandid="islandId"/>
       </q-card-section>
-      <div v-if="ecoIsland !== undefined">
+      <div v-if="loaded">
         <q-card-section>
           <div class="text-h6">Localização</div>
-          <q-card-section class="row">
+          <q-card-section class="row bg-grey-1">
             <div class="col-4">
               <b>Edifício</b>: {{ ecoIsland.building }}
             </div>
@@ -42,14 +42,14 @@
         </q-card-section>
         <q-card-section>
           <div class="text-h6">Caixotes</div>
-          <div class="row q-my-md">
+          <div class="row q-my-md bg-grey-1">
 
             <q-btn
               :ripple="false"
               flat
               v-for="bin in getEcoIslandBins(ecoIsland.bins)"
               :key="bin.name"
-              class="col-2"
+              class="col-8 col-sm-3"
               icon="mdi-trash-can-outline"
               :color="bin.color"
               :label="bin.name"
@@ -58,20 +58,37 @@
           </div>
         </q-card-section>
       </div>
-
     </q-card>
+    <q-btn
+      class="glossy q-ml-lg q-mt-lg"
+      rounded color="red-7"
+      label="Apagar Ecoilha"
+      @click="showDeleteDialog = !showDeleteDialog"
+    />
+    <ConfirmationDialog
+      title="Tem a certeza que quer apagar a ecoilha?"
+      negative-label="Apagar"
+      positive-label="Cancelar"
+      v-model:show-dialog="showDeleteDialog"
+      @negative-function="deleteIsland()"
+    />
   </q-page>
 </template>
 
 <script>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import useVariables from 'src/composables/useVariables'
 import QRCodeDialog from 'components/Dialogs/QRCodeDialog.vue'
+import useNotify from 'src/composables/UseNotify'
+import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
 
 export default {
-  components: { QRCodeDialog },
+  components: {
+    ConfirmationDialog,
+    QRCodeDialog
+  },
   // name: 'PageName',
 
   props: {
@@ -83,26 +100,55 @@ export default {
   setup (props) {
     const route = useRoute()
     const router = useRouter()
+    const ecoIsland = ref()
+    const loaded = ref(false)
     const ecoIslandStore = useEcoIslandStore()
     const { getEcoIslandBins } = useVariables()
 
+    const {
+      notifyError,
+      notifySuccess,
+      notifyWarning
+    } = useNotify()
+
     const islandId = route.params.ecoislandId
     const showDialog = ref(false)
+    const showDeleteDialog = ref(false)
 
-    onMounted(() => {
-      if (props.report === '') {
-        ecoIslandStore.fetchEcoIslands()
-      }
+    const deleteIsland = () => {
+      ecoIslandStore.deleteById(islandId)
+        .then(() => {
+          notifySuccess('Ecoilha ' + islandId + ' foi apagada com sucesso')
+          router.push('/ecoislands')
+        })
+        .catch((e) => {
+          notifyWarning(e)
+        })
+    }
+
+    onMounted(async () => {
+      await ecoIslandStore.getEcoIslandsById(islandId)
+        .then((response) => {
+          ecoIsland.value = response.data
+          loaded.value = true
+        })
+        .catch((errorMessage) => {
+          notifyError('Error Loading Island - ' + errorMessage)
+        })
     })
 
     return {
       router,
       islandId,
-      ecoIsland: computed(() => {
-        return ecoIslandStore.getEcoIslandsById(islandId)
-      }),
       getEcoIslandBins,
-      showDialog
+      showDialog,
+      deleteIsland,
+      showDeleteDialog,
+      ecoIsland,
+      loaded,
+      test: () => {
+        console.log(ecoIsland.value)
+      }
     }
   }
 }
