@@ -60,6 +60,7 @@
       </div>
     </q-card>
     <q-btn
+      v-if="userStore.hasEditPermissions()"
       class="glossy q-ml-lg q-mt-lg"
       rounded color="red-7"
       label="Apagar Ecoilha"
@@ -83,6 +84,7 @@ import useVariables from 'src/composables/useVariables'
 import QRCodeDialog from 'components/Dialogs/QRCodeDialog.vue'
 import useNotify from 'src/composables/UseNotify'
 import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
+import { useUserStore } from 'stores/UserStore'
 
 export default {
   components: {
@@ -97,7 +99,7 @@ export default {
     }
   },
 
-  setup (props) {
+  setup () {
     const route = useRoute()
     const router = useRouter()
     const ecoIsland = ref()
@@ -146,9 +148,7 @@ export default {
       showDeleteDialog,
       ecoIsland,
       loaded,
-      test: () => {
-        console.log(ecoIsland.value)
-      }
+      userStore: useUserStore()
     }
   }
 }

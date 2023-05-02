@@ -89,6 +89,7 @@
       </q-card-section>
     </q-card>
     <q-btn
+      v-if="userStore.hasEditPermissions()"
       class="glossy q-ml-lg q-mt-lg"
       rounded color="red-7"
       label="Apagar Relatório"
@@ -112,6 +113,7 @@ import { useReportStore } from 'stores/ReportStore'
 import useFunctions from 'src/composables/UseFunctions'
 import useNotify from 'src/composables/UseNotify'
 import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
+import { useUserStore } from 'stores/UserStore'
 
 export default {
   components: { ConfirmationDialog },
@@ -270,7 +272,8 @@ export default {
       columns,
       loaded,
       showDeleteDialog,
-      deleteReport
+      deleteReport,
+      userStore: useUserStore()
     }
   }
 }

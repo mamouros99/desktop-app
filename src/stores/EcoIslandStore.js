@@ -28,12 +28,12 @@ export const useEcoIslandStore = defineStore('island', () => {
     if (result.data !== undefined) {
       return result
     }
-    return await api.get('http://localhost:3001/ecoisland/' + id)
+    return await api.get('/ecoisland/' + id)
   }
 
   const addEcoIsland = async (ecoIsland) => {
     return await api
-      .post('http://localhost:3001/ecoisland/add', ecoIsland)
+      .post('/ecoisland/add', ecoIsland)
       .then(() => {
         fetchEcoIslands()
           .catch((errorMessage) => {
@@ -43,7 +43,7 @@ export const useEcoIslandStore = defineStore('island', () => {
   }
 
   const uploadEcoIslands = async (file) => {
-    await api.post('http://localhost:3001/ecoisland/upload', {
+    await api.post('/ecoisland/upload', {
       file
     },
     {

@@ -1,6 +1,7 @@
 import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
+import { useUserStore } from 'stores/UserStore'
 
 /*
  * If not building with SSR mode, you can
@@ -10,13 +11,13 @@ import routes from './routes'
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
-
-export default route(function (/* { store, ssrContext } */) {
+let router = null
+export default route(function () {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
 
-  return createRouter({
+  router = createRouter({
     scrollBehavior: () => ({
       left: 0,
       top: 0
@@ -28,4 +29,18 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE)
   })
+
+  router.beforeEach((to, from, next) => {
+    // eslint-disable-next-line no-unused-vars
+    const userstore = useUserStore()
+    if ((to.meta.requiresAuth && !userstore.hasAuthenticatied()) || (to.meta.requiresAdmin && !userstore.hasAdminPermissions())) {
+      next('/')
+    }
+    next()
+  }
+  )
+
+  return router
 })
+
+export { router }

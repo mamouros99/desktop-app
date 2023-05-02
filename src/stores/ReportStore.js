@@ -6,8 +6,7 @@ export const useReportStore = defineStore('report', () => {
   const reports = ref([])
 
   const fetchReports = async () => {
-    console.log('fetching')
-    await api.get('http://localhost:3001/report/all')
+    await api.get('/report/all')
       .then((response) => {
         reports.value = response.data
       })
@@ -18,7 +17,8 @@ export const useReportStore = defineStore('report', () => {
   }
 
   const deleteById = async (id) => {
-    await api.delete('http://localhost:3001/report/delete/' + id)
+    console.log('DEleting', id)
+    await api.delete('/report/delete/' + id)
   }
 
   const getReportById = async (id) => {
@@ -29,7 +29,7 @@ export const useReportStore = defineStore('report', () => {
     if (result.data !== undefined) {
       return result
     }
-    return await api.get('http://localhost:3001/report/' + id)
+    return await api.get('/report/' + id)
   }
 
   return {

@@ -1,3 +1,5 @@
+import { useUserStore } from 'stores/UserStore'
+
 export default function useFunctions () {
   function isStringInteger (str) {
     if (typeof str !== 'string') {
@@ -6,6 +8,11 @@ export default function useFunctions () {
     return Number.isInteger(+str)
   }
 
+  const userStore = useUserStore()
+
+  const isAuth = () => {
+    return userStore.hasAuthenticatied()
+  }
   const formatDateTime = (stringDate) => {
     // receives string
     const date = new Date(parseInt(stringDate))
@@ -45,6 +52,7 @@ export default function useFunctions () {
   return {
     isStringInteger,
     formatDateTime,
-    formatDate
+    formatDate,
+    isAuth
   }
 }

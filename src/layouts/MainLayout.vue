@@ -3,6 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn
+          v-if="userStore.hasAuthenticatied()"
           flat
           dense
           round
@@ -14,6 +15,29 @@
         <q-toolbar-title>
           EcoTecnico Watcher
         </q-toolbar-title>
+
+        <q-btn-dropdown
+          v-if="userStore.hasAuthenticatied()"
+          flat
+          :label="userStore.getFirstName() + ' ' + userStore.getLastName()"
+        >
+
+          <q-list class="q-py-sm">
+            <q-separator/>
+
+            <q-btn
+              color="primary"
+              icon="logout"
+              class="full-width"
+              flat
+              v-close-popup
+              label="Logout"
+              @click="userStore.logoutUser()"
+            >
+            </q-btn>
+            <q-separator/>
+          </q-list>
+        </q-btn-dropdown>
 
       </q-toolbar>
     </q-header>
@@ -50,6 +74,18 @@
               Ecoilhas
             </q-item-section>
           </q-item>
+
+          <q-item
+            v-if="userStore.hasAdminPermissions()"
+            clickable v-ripple :to="{name: 'admin'}">
+            <q-item-section avatar>
+              <q-icon name="group"/>
+            </q-item-section>
+
+            <q-item-section>
+              Users
+            </q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -61,18 +97,21 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
+import { useUserStore } from 'stores/UserStore'
 
 export default defineComponent({
   name: 'MainLayout',
 
   setup () {
     const leftDrawerOpen = ref(false)
+    const userStore = useUserStore()
 
     return {
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },
+      userStore
     }
   }
 })

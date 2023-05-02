@@ -9,7 +9,6 @@
 // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js
 
 const ESLintPlugin = require('eslint-webpack-plugin')
-
 const { configure } = require('quasar/wrappers')
 
 module.exports = configure(function (ctx) {
@@ -51,8 +50,8 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-build
     build: {
-      vueRouterMode: 'history', // available values: 'hash', 'history'
-
+      vueRouterMode: 'history', // available values: 'hash', 'history',
+      env: require('dotenv').config().parsed,
       // transpile: false,
       // publicPath: '/',
 
@@ -85,7 +84,7 @@ module.exports = configure(function (ctx) {
       server: {
         type: 'http'
       },
-      port: 8080,
+      port: 8081,
       open: true // opens browser window automatically
     },
 
@@ -118,7 +117,7 @@ module.exports = configure(function (ctx) {
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,
 
-      prodPort: 3000, // The default port that the production server should use
+      prodPort: 3001, // The default port that the production server should use
       // (gets superseded if process.env.PORT is specified at runtime)
 
       maxAge: 1000 * 60 * 60 * 24 * 30,

@@ -148,7 +148,7 @@ export default {
       }
 
       await ecoIslandStore.addEcoIsland(result)
-        .then(response => {
+        .then(() => {
           notifySuccess('Ecoilha adicionada com sucesso')
         }
         )
@@ -156,7 +156,6 @@ export default {
           notifyError('Alguma coisa correu mal - ' + e)
         })
 
-      emit('updateTable')
       emit('update:showDialog', false)
       resetFields()
     }

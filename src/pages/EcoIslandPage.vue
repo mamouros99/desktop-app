@@ -4,7 +4,10 @@
 
       <NewIslandDialog v-model:showDialog="showDialog"/>
 
-      <div class="q-my-md row justify-between">
+      <div
+        v-if="userStore.hasEditPermissions()"
+        class="q-my-md row justify-between"
+      >
         <div>
           <q-btn
             class="q-ml-lg q-px-md"
@@ -116,6 +119,7 @@ import useVariables from 'src/composables/useVariables'
 import NewIslandDialog from 'components/Dialogs/NewIslandDialog.vue'
 import { useRouter } from 'vue-router'
 import useNotify from 'src/composables/UseNotify'
+import { useUserStore } from 'stores/UserStore'
 
 export default {
   components: {
@@ -212,7 +216,8 @@ export default {
       file,
       filteredIconBin,
       uploadFiles,
-      test
+      test,
+      userStore: useUserStore()
     }
   }
 }
