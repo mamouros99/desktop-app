@@ -32,7 +32,10 @@
               flat
               v-close-popup
               label="Logout"
-              @click="userStore.logoutUser()"
+              @click="() => {
+                userStore.logoutUser()
+                router.push('/')
+              }"
             >
             </q-btn>
             <q-separator/>
@@ -98,6 +101,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import { useUserStore } from 'stores/UserStore'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -105,13 +109,15 @@ export default defineComponent({
   setup () {
     const leftDrawerOpen = ref(false)
     const userStore = useUserStore()
+    const router = useRouter()
 
     return {
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
       },
-      userStore
+      userStore,
+      router
     }
   }
 })
