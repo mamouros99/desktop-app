@@ -90,7 +90,7 @@
     </q-card>
     <q-btn
       v-if="userStore.hasEditPermissions()"
-      class="glossy q-ml-lg q-mt-lg"
+      class="q-ml-lg q-mt-lg"
       rounded color="red-7"
       label="Apagar Relatório"
       @click="showDeleteDialog = !showDeleteDialog"
