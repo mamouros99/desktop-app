@@ -112,7 +112,7 @@ export default {
     const toggleBio = ref(false)
 
     const buildingOptions = [
-      'Pavilão de Civil',
+      'Pavilhão de Civil',
       'Pavilhão de Mecânica I'
     ]
 

@@ -28,35 +28,66 @@
       <div v-if="loaded">
         <q-card-section>
           <div class="text-h6">Localização</div>
-          <q-card-section class="row bg-grey-1">
-            <div class="col-4">
-              <b>Edifício</b>: {{ ecoIsland.building }}
+          <q-card-section class="row bg-grey-1 items-center">
+            <div class="col-4 row">
+              <div class="text-bold q-mr-sm">Edifício:</div>
+              <div>
+                {{ ecoIsland.building }}
+              </div>
             </div>
-            <div class="col-2">
-              <b>Piso</b>: {{ ecoIsland.floor }}
+            <div class="col-2 row items-center">
+              <div class="text-bold q-mr-sm">Piso:</div>
+              <q-select
+                v-model="ecoIsland.floor"
+                hide-dropdown-icon borderless
+                :options="buildingFloors(ecoIsland.building)"
+                @update:modelValue="hasChanges = true"
+              />
+
             </div>
-            <div class="col-6">
-              <b>Descrição</b>: {{ ecoIsland.description }}
+            <div class="col-6 row items-center">
+              <div class="text-bold q-mr-sm">Descrição:</div>
+              <q-input
+                borderless
+                dense
+                v-model="ecoIsland.description"
+                @update:modelValue="hasChanges = true"
+              />
             </div>
           </q-card-section>
         </q-card-section>
-        <q-card-section>
-          <div class="text-h6">Caixotes</div>
-          <div class="row q-my-md bg-grey-1">
+        <q-card-section class="col-12">
+          <div class="row">
+            <div class="text-h6">Caixotes</div>
+            <q-btn flat dense color="primary" class="text-italic" label="edit"
+                   @click="binsDialogToggle = !binsDialogToggle"/>
+            <BinsEditDialog :bins="ecoIsland.bins" @updateBins="a => {
+              if(ecoIsland.bins !== a){
+                hasChanges = true
+                ecoIsland.bins = a
+              }
 
+            } " v-model:show-dialog="binsDialogToggle"/>
+          </div>
+          <q-card-section class="row q-my-md bg-grey-1">
             <q-btn
               :ripple="false"
               flat
               v-for="bin in getEcoIslandBins(ecoIsland.bins)"
               :key="bin.name"
-              class="col-8 col-sm-3"
+              :class="colSizeFromBins"
               icon="mdi-trash-can-outline"
               :color="bin.color"
               :label="bin.name"
+              @click="binsDialogToggle = !binsDialogToggle"
             />
 
-          </div>
+          </q-card-section>
         </q-card-section>
+        <q-card-actions class="justify-end q-mr-lg q-pb-md" v-if="hasChanges">
+          <q-btn dense color="positive" label="Save" @click="updateEcoisland"/>
+          <q-btn dense color="negative" label="Reset" @click="router.go(0)"/>
+        </q-card-actions>
       </div>
     </q-card>
     <q-btn
@@ -78,16 +109,18 @@
 
 <script>
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import useVariables from 'src/composables/useVariables'
 import QRCodeDialog from 'components/Dialogs/QRCodeDialog.vue'
 import useNotify from 'src/composables/UseNotify'
 import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
 import { useUserStore } from 'stores/UserStore'
+import BinsEditDialog from 'components/Dialogs/BinsEditDialog.vue'
 
 export default {
   components: {
+    BinsEditDialog,
     ConfirmationDialog,
     QRCodeDialog
   },
@@ -106,6 +139,7 @@ export default {
     const loaded = ref(false)
     const ecoIslandStore = useEcoIslandStore()
     const { getEcoIslandBins } = useVariables()
+    const binsDialogToggle = ref(false)
 
     const {
       notifyError,
@@ -128,6 +162,11 @@ export default {
         })
     }
 
+    const updateEcoisland = () => {
+      console.log('Got her')
+      ecoIslandStore.updateEcoIsland(ecoIsland.value)
+    }
+
     onMounted(async () => {
       await ecoIslandStore.getEcoIslandsById(islandId)
         .then((response) => {
@@ -139,16 +178,63 @@ export default {
         })
     })
 
+    const buildingOptions = [
+      'Pavilhão de Civil',
+      'Pavilhão de Mecânica I'
+    ]
+
+    const buildingFloors = (building) => {
+      switch (building.normalize('NFD').replace(/[\u0300-\u036f]/g, '')) {
+        case 'Pavilhao de Civil':
+          return ['-3', '-2', '-1', ' 0', '1', ' 2', ' 3 ', '4']
+        case 'Pavilhao de Mecânica I':
+          return ['1', '2', '3']
+        default:
+          return ['0']
+      }
+    }
+
+    const hasChanges = ref(false)
+
+    const colSizeFromBins = computed(() => {
+      let a
+      switch (ecoIsland.value.bins) {
+        case '11':
+          a = 'col-2'
+          break
+        case '10':
+        case '01':
+          a = 'col-3'
+          break
+        default:
+          // eslint-disable-next-line no-unused-vars
+          a = 'col-4'
+      }
+      return [a]
+    })
+
     return {
       router,
       islandId,
       getEcoIslandBins,
+
       showDialog,
+      binsDialogToggle,
+
       deleteIsland,
       showDeleteDialog,
       ecoIsland,
       loaded,
-      userStore: useUserStore()
+      userStore: useUserStore(),
+      buildingOptions,
+      buildingFloors,
+
+      colSizeFromBins,
+      test: (a) => {
+        console.log(a)
+      },
+      updateEcoisland,
+      hasChanges
     }
   }
 }

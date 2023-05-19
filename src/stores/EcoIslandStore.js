@@ -59,12 +59,24 @@ export const useEcoIslandStore = defineStore('island', () => {
       })
   }
 
+  const updateEcoIsland = async (ecoIsland) => {
+    return await api
+      .put('/ecoisland/update', ecoIsland)
+      .then(() => {
+        fetchEcoIslands()
+          .catch((errorMessage) => {
+            console.log(errorMessage)
+          })
+      })
+  }
+
   return {
     fetchEcoIslands,
     getEcoIslandsById,
     getEcoIslands,
     addEcoIsland,
     uploadEcoIslands,
+    updateEcoIsland,
     deleteById
   }
 })

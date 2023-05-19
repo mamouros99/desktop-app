@@ -19,7 +19,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const hasEditPermissions = () => {
-    return user.value.role === 'EDITOR' || user.value.role === 'ADMIN'
+    return user.value.role === 'EDITOR' || hasAdminPermissions()
   }
 
   const hasAdminPermissions = () => {

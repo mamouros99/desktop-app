@@ -33,9 +33,9 @@ export default route(function () {
   router.beforeEach((to, from, next) => {
     // eslint-disable-next-line no-unused-vars
     const userstore = useUserStore()
-    if ((to.meta.requiresAuth && !userstore.hasAuthenticatied()) || (to.meta.requiresAdmin && !userstore.hasAdminPermissions())) {
-      next('/')
-    }
+    /* if ((to.meta.requiresAuth && !userstore.hasAuthenticatied()) || (to.meta.requiresAdmin && !userstore.hasAdminPermissions())) {
+        next('/')
+      } */
     next()
   }
   )
