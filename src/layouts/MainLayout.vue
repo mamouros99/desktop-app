@@ -45,7 +45,9 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" bordered>
+    <q-drawer
+      v-if="userStore.hasAuthenticatied()"
+      v-model="leftDrawerOpen" bordered>
       <q-scroll-area class="fit">
         <q-list padding class="menu-list">
           <q-item clickable v-ripple exact :to="{name: 'home'}">

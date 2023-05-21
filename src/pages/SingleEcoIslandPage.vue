@@ -6,7 +6,7 @@
       label="Back"
       icon="arrow_back"
       class="q-ma-md"
-      @click="router.push('/ecoislands')"
+      @click="router.go(-1)"
     />
     <q-card>
       <q-card-section class="row justify-between items-center">
@@ -163,7 +163,6 @@ export default {
     }
 
     const updateEcoisland = () => {
-      console.log('Got her')
       ecoIslandStore.updateEcoIsland(ecoIsland.value)
     }
 

@@ -24,6 +24,7 @@
       <q-card-section>
         <q-card flat bordered v-if="loaded">
           <q-table
+            v-if="getInfoReport(report).length > 0"
             :rows="getInfoReport(report)"
             :columns="columns"
             row-key="name"
@@ -85,6 +86,23 @@
             color="primary"
             size="3em"
           />
+        </q-card>
+      </q-card-section>
+      <q-card-section
+        v-if="loaded"
+      >
+        <q-card
+          flat
+          bordered
+          v-if="report.message"
+        >
+          <q-card-section class="bg-teal-3 text-subtitle2">
+            Observações
+          </q-card-section>
+          <q-card-section>
+            {{ report.message }}
+          </q-card-section>
+
         </q-card>
       </q-card-section>
     </q-card>

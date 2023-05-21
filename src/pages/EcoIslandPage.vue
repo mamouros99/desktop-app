@@ -61,16 +61,31 @@
         :columns="columns"
         row-key="id"
         :filter="search"
+        :filter-method="customFilter"
       >
 
         <template v-slot:top>
           <div class="row full-width justify-between">
-            <div class="text-h5 q-pl-lg col-6 text-primary">
+            <div class="text-h5 q-pl-lg col-4 text-primary">
               Ecoilhas
             </div>
 
-            <div class="col-3 ">
-              <q-input class="" rounded v-model="search" label="Search">
+            <div class="col-6 row justify-end items-center">
+              <q-select
+                class="col-3 q-pr-lg"
+                :options="options"
+                v-model="tagFilter"
+                rounded
+                standout="bg-primary"
+                hide-dropdown-icon
+                dense
+              />
+              <q-input
+                class="col-3"
+                rounded
+                v-model="search"
+                label="Search"
+              >
                 <template v-slot:append>
                   <q-icon
                     name="search"
@@ -142,6 +157,8 @@ export default {
     const file = ref(null)
     const search = ref('')
 
+    const tagFilter = ref('None')
+
     const filteredIconBin = (condition) => {
       return [...iconBinsBase, ...iconBinsExtra.filter((e) => {
         return condition.charAt(e.position) === '1'
@@ -150,6 +167,34 @@ export default {
 
     const test = () => {
       console.log('test')
+    }
+
+    const customFilter = (rows, terms, cols) => {
+      if (!search.value) {
+        return rows
+      }
+
+      switch (tagFilter.value.toLowerCase()) {
+        case 'Piso':
+          return rows.filter(e => {
+            return e.floor.toLowerCase().includes(search.value)
+          })
+        case 'Id':
+          return rows.filter(e => {
+            return e.id.toString().toLowerCase().includes(search.value)
+          })
+        case 'Edifício':
+          return rows.filter(e => {
+            return e.building.toLowerCase().includes(search.value)
+          })
+        default:
+          return rows.filter(e => {
+            return e.id.toString().includes(search.value) ||
+              e.building.toLowerCase().includes(search.value) ||
+              e.floor.toLowerCase().includes(search.value) ||
+              e.bins.includes(search.value)
+          })
+      }
     }
 
     const columns = [
@@ -200,6 +245,13 @@ export default {
       fetch()
     })
 
+    const options = [
+      'None',
+      'Id',
+      'Edifício',
+      'Piso'
+    ]
+
     const fetch = () => {
       ecoIslandStore.fetchEcoIslands()
         .catch((errorMessage) => {
@@ -212,12 +264,16 @@ export default {
       columns,
       showDialog,
       router,
-      search,
       file,
       filteredIconBin,
       uploadFiles,
       test,
-      userStore: useUserStore()
+      userStore: useUserStore(),
+      options,
+
+      search,
+      tagFilter,
+      customFilter
     }
   }
 }

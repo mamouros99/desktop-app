@@ -59,7 +59,6 @@ export const useUserStore = defineStore('user', () => {
     await api.get('/auth/fenix/' + code)
       .then((response) => {
         user.value = response.data
-        console.log(user.value)
       })
   }
 

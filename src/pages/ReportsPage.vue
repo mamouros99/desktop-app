@@ -79,6 +79,12 @@
               :color="bin.color"
               size="sm"
             />
+            <q-icon
+              v-if="props.row.message.length !== 0"
+              name="chat"
+              size="sm"
+              color="grey-5"
+            />
           </q-td>
         </q-tr>
       </template>

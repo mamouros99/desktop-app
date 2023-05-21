@@ -17,7 +17,6 @@ export const useReportStore = defineStore('report', () => {
   }
 
   const deleteById = async (id) => {
-    console.log('DEleting', id)
     await api.delete('/report/delete/' + id)
   }
 

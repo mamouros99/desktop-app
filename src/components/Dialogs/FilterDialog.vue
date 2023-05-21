@@ -137,16 +137,11 @@ export default {
       filter.value.problemsSelected = []
     }
 
-    const test = () => {
-      console.log()
-    }
-
     return {
       emitUpdate,
       filter,
       cleanDates,
-      cleanSelected,
-      test
+      cleanSelected
     }
   }
 }
