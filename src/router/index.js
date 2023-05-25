@@ -33,10 +33,15 @@ export default route(function () {
   router.beforeEach((to, from, next) => {
     // eslint-disable-next-line no-unused-vars
     const userstore = useUserStore()
+
     if ((to.meta.requiresAuth && !userstore.hasAuthenticatied()) || (to.meta.requiresAdmin && !userstore.hasAdminPermissions())) {
       next('/')
+    } else if (to.name === 'user' && (to.params.userid !== userstore.getUsername() && !userstore.hasAdminPermissions())) {
+      console.log(to.params.userid)
+      next('/')
+    } else {
+      next()
     }
-    next()
   }
   )
 

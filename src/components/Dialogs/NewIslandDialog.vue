@@ -10,8 +10,12 @@
         </q-card-section>
         <q-separator/>
         <q-card-section>
-          <q-select standout="bg-primary text-white" v-model="building" :options="buildingOptions" label="Edificio"
-                    @update:model-value="cleanFloorAndDesc"
+          <q-select standout="bg-primary text-white"
+                    v-model="building"
+                    :options="buildingOptions"
+                    :option-label="'name'"
+                    label="Edificio"
+                    @update:model-value="updateBuilding"
           >
             <template v-slot:append>
               <q-icon
@@ -23,7 +27,11 @@
         <q-card-section>
           <q-select
             :disable="building.length === 0"
-            standout="bg-primary text-white" v-model="floor" :options="buildingFloors(building)" label="Piso"
+            standout="bg-primary text-white"
+            v-model="floor"
+            :options="buildingFloors"
+            :option-label="'name'"
+            label="Piso"
           >
             <template v-slot:append>
               <q-icon
@@ -84,7 +92,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import useNotify from 'src/composables/UseNotify'
 
@@ -111,26 +119,14 @@ export default {
     const toggleGlass = ref(false)
     const toggleBio = ref(false)
 
-    const buildingOptions = [
-      'Pavilhão de Civil',
-      'Pavilhão de Mecânica I'
-    ]
+    const buildingOptions = ref([])
 
-    const buildingFloors = (building) => {
-      switch (building) {
-        case 'Pavilão de Civil':
-          return ['-3', '-2', '-1', ' 0', '1', ' 2', ' 3 ', '4']
-        case 'Pavilhão de Mecânica I':
-          return ['1', '2', '3']
-        default:
-          return ['0']
-      }
-    }
+    const buildingFloors = ref([])
 
     const createNewEcoIsland = async () => {
       const result = {
-        building: building.value,
-        floor: floor.value,
+        building: building.value.name,
+        floor: floor.value.name == null ? floor.value : floor.value.name,
         description: desc.value,
         bins: ''
       }
@@ -177,6 +173,51 @@ export default {
       desc.value = ''
     }
 
+    const updateBuilding = async () => {
+      cleanFloorAndDesc()
+      await ecoIslandStore.fetchBuilding(building.value.id)
+        .then((res) => {
+          const build = res.data.containedSpaces.filter(floor => {
+            return floor.type === 'FLOOR'
+          }).sort((a, b) => {
+            const nameA = a.name.toLowerCase()
+            const nameB = b.name.toLowerCase()
+
+            return nameA - nameB
+          })
+
+          if (build.length !== 0) {
+            buildingFloors.value = build
+          } else {
+            buildingFloors.value = ['0']
+          }
+        })
+    }
+
+    onMounted(async () => {
+      await ecoIslandStore.fetchAlamedaBuildings()
+        .then(res => {
+          const campus = res.data
+          const validKeys = ['id', 'name']
+          buildingOptions.value = campus.map((build) => {
+            Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
+            return build
+          })
+          buildingOptions.value.sort((a, b) => {
+            const nameA = a.name.toUpperCase() // ignore upper and lowercase
+            const nameB = b.name.toUpperCase() // ignore upper and lowercase
+            if (nameA < nameB) {
+              return -1
+            }
+            if (nameA > nameB) {
+              return 1
+            }
+            // names must be equal
+            return 0
+          })
+        })
+    })
+
     return {
       building,
       floor,
@@ -188,6 +229,8 @@ export default {
       emitUpdate,
       resetFields,
       createNewEcoIsland,
+
+      updateBuilding,
       cleanFloorAndDesc
     }
   }

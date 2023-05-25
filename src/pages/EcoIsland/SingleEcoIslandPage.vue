@@ -86,7 +86,10 @@
         </q-card-section>
         <q-card-actions class="justify-end q-mr-lg q-pb-md" v-if="hasChanges">
           <q-btn dense color="positive" label="Save" @click="updateEcoisland"/>
-          <q-btn dense color="negative" label="Reset" @click="router.go(0)"/>
+          <q-btn dense color="negative" label="Reset" @click="() => {
+            ecoIsland = Object.assign({}, currentEcoIsland)
+            hasChanges = false
+          }"/>
         </q-card-actions>
       </div>
     </q-card>
@@ -136,10 +139,12 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const ecoIsland = ref()
+    const currentEcoIsland = ref()
     const loaded = ref(false)
     const ecoIslandStore = useEcoIslandStore()
     const { getEcoIslandBins } = useVariables()
     const binsDialogToggle = ref(false)
+    const hasChanges = ref(false)
 
     const {
       notifyError,
@@ -164,6 +169,10 @@ export default {
 
     const updateEcoisland = () => {
       ecoIslandStore.updateEcoIsland(ecoIsland.value)
+        .then(() => {
+          hasChanges.value = false
+          notifySuccess('Ecoilha ' + islandId + ' foi atualizada com sucesso')
+        })
     }
 
     onMounted(async () => {
@@ -171,6 +180,7 @@ export default {
         .then((response) => {
           ecoIsland.value = response.data
           loaded.value = true
+          currentEcoIsland.value = Object.assign({}, response.data)
         })
         .catch((errorMessage) => {
           notifyError('Error Loading Island - ' + errorMessage)
@@ -192,8 +202,6 @@ export default {
           return ['0']
       }
     }
-
-    const hasChanges = ref(false)
 
     const colSizeFromBins = computed(() => {
       let a
@@ -233,7 +241,8 @@ export default {
         console.log(a)
       },
       updateEcoisland,
-      hasChanges
+      hasChanges,
+      currentEcoIsland
     }
   }
 }

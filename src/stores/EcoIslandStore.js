@@ -70,6 +70,14 @@ export const useEcoIslandStore = defineStore('island', () => {
       })
   }
 
+  const fetchAlamedaBuildings = async () => {
+    return await api.get('/building/all')
+  }
+
+  const fetchBuilding = async (id) => {
+    return await api.get('/building/' + id)
+  }
+
   return {
     fetchEcoIslands,
     getEcoIslandsById,
@@ -77,6 +85,9 @@ export const useEcoIslandStore = defineStore('island', () => {
     addEcoIsland,
     uploadEcoIslands,
     updateEcoIsland,
-    deleteById
+    deleteById,
+
+    fetchAlamedaBuildings,
+    fetchBuilding
   }
 })

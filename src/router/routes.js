@@ -11,25 +11,25 @@ const routes = [
       {
         path: 'reports',
         name: 'reports',
-        component: () => import('pages/ReportsPage.vue'),
+        component: () => import('pages/Report/ReportsPage.vue'),
         meta: { requiresAuth: true }
       },
       {
         path: 'ecoislands',
         name: 'ecoislands',
-        component: () => import('pages/EcoIslandPage.vue'),
+        component: () => import('pages/EcoIsland/EcoIslandPage.vue'),
         meta: { requiresAuth: true }
       },
       {
         path: 'report/:reportId',
         name: 'report',
-        component: () => import('pages/SingleReportPage.vue'),
+        component: () => import('pages/Report/SingleReportPage.vue'),
         meta: { requiresAuth: true }
       },
       {
         path: 'ecoisland/:ecoislandId',
         name: 'ecoisland',
-        component: () => import('pages/SingleEcoIslandPage.vue'),
+        component: () => import('pages/EcoIsland/SingleEcoIslandPage.vue'),
         meta: { requiresAuth: true }
       },
       {
@@ -41,15 +41,23 @@ const routes = [
       {
         path: 'autherror',
         name: 'autherror',
-        component: () => import('pages/AuthError.vue')
+        component: () => import('pages/Error/AuthError.vue')
       },
       {
         path: 'admin',
         name: 'admin',
-        component: () => import('pages/UserAdminPage.vue'),
+        component: () => import('pages/User/UserAdminPage.vue'),
         meta: {
           requiresAuth: true,
           requiresAdmin: true
+        }
+      },
+      {
+        path: 'user/:userid',
+        name: 'user',
+        component: () => import('pages/User/SingleUserPage.vue'),
+        meta: {
+          requiresAuth: true
         }
       }
     ]
@@ -59,7 +67,7 @@ const routes = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
+    component: () => import('pages/Error/ErrorNotFound.vue')
   }
 ]
 

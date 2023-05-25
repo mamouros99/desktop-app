@@ -2,7 +2,7 @@
   <q-page padding>
     <q-card flat class="q-pa-md">
 
-      <NewIslandDialog v-model:showDialog="showDialog"/>
+      <NewIslandDialog v-model:showDialog="showDialog" v-if="showDialog"/>
 
       <div
         v-if="userStore.hasEditPermissions()"
@@ -169,7 +169,7 @@ export default {
       console.log('test')
     }
 
-    const customFilter = (rows, terms, cols) => {
+    const customFilter = (rows) => {
       if (!search.value) {
         return rows
       }

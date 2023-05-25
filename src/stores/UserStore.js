@@ -83,6 +83,10 @@ export const useUserStore = defineStore('user', () => {
     return users.value
   }
 
+  const fetchUserById = async (id) => {
+    return await api.get('/user/get/' + id)
+  }
+
   return {
     getUser,
     checkAuth: getAuth,
@@ -98,6 +102,7 @@ export const useUserStore = defineStore('user', () => {
     hasAdminPermissions,
     fetchAllUsers,
     getUsers,
-    updateUser
+    updateUser,
+    fetchUserById
   }
 })

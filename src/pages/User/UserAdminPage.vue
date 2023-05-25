@@ -25,20 +25,13 @@
       </template>
 
       <template v-slot:body="props">
-        <q-tr :class="userStore.getUsername() === props.row.username ? 'bg-blue-1' : 'bg-white'">
+        <q-tr :class="userStore.getUsername() === props.row.username ? 'bg-blue-1' : 'bg-white'"
+              @click="router.push('user/'+ props.row.username)">
           <q-td class="text-center"> {{ props.row.username }}</q-td>
           <q-td class="text-center"> {{ props.row.name }}</q-td>
           <q-td class="text-center"> {{ props.row.email }}</q-td>
           <q-td class="text-center" :class="lineColor(props.row.role)">
             {{ firstUpper(props.row.role) }}
-            <q-popup-edit v-model="props.row.role" v-slot="scope" buttons label-set="Save" label-cancel="Cancel"
-                          @update:model-value="() => {
-                            props.row.role = props.row.role.toUpperCase()
-                          updateUserRole(props.row)
-                        }">
-              <q-select v-model="scope.value" :options="options" label="Role"/>
-
-            </q-popup-edit>
           </q-td>
         </q-tr>
       </template>
@@ -50,10 +43,12 @@
 import { onMounted, ref } from 'vue'
 import { useUserStore } from 'stores/UserStore'
 import useNotify from 'src/composables/UseNotify'
+import { useRouter } from 'vue-router'
 
 export default {
   // name: 'PageName',
   setup () {
+    const router = useRouter()
     const userStore = useUserStore()
     const { notifyError } = useNotify()
 
@@ -86,12 +81,6 @@ export default {
       }
     ]
 
-    const options = [
-      'Viewer',
-      'Editor',
-      'Admin'
-    ]
-
     const filter = ref('')
 
     onMounted(() => {
@@ -116,26 +105,16 @@ export default {
       }
     }
 
-    const updateUserRole = (user) => {
-      userStore.updateUser(user)
-        .catch((error) => {
-          notifyError(error)
-        })
-    }
-
     return {
       userStore,
+      router,
+
       columns,
       lineColor,
       firstUpper: role => {
         const str = role.toLowerCase()
         return str.charAt(0).toUpperCase() + str.slice(1)
       },
-      options,
-      test: (a) => {
-        console.log('test', a)
-      },
-      updateUserRole,
       filter
     }
   }
