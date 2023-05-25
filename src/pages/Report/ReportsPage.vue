@@ -175,14 +175,14 @@ export default {
           return val === undefined ? '--' : val
         },
         sortable: true,
-        sort: (a, b, row, rowb) => {
+        sort: (a, b) => {
           return (a.match(/1/g) || []).length - (b.match(/1/g) || []).length
         }
       }
     ]
 
     const { iconBins } = useVariables()
-    const customFilter = (rows, terms, cols) => {
+    const customFilter = (rows) => {
       const startDateFilter = filter.value.startDate !== '' ? rows.filter(e => {
         return +e.time > Date.parse(filter.value.startDate)
       }) : rows
