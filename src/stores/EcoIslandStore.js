@@ -32,6 +32,8 @@ export const useEcoIslandStore = defineStore('island', () => {
   }
 
   const addEcoIsland = async (ecoIsland) => {
+    console.log('ecoiland senubg', ecoIsland)
+
     return await api
       .post('/ecoisland/add', ecoIsland)
       .then(() => {

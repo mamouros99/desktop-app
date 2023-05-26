@@ -87,6 +87,17 @@ export const useUserStore = defineStore('user', () => {
     return await api.get('/user/get/' + id)
   }
 
+  const addBuildingToUser = async (userBuilding) => {
+    console.log('userBuilding', userBuilding)
+    return await api
+      .post('/building/add', userBuilding)
+  }
+
+  const fetchBuildsByUsername = async (username) => {
+    return await api
+      .get('/building/get/' + username)
+  }
+
   return {
     getUser,
     checkAuth: getAuth,
@@ -103,6 +114,8 @@ export const useUserStore = defineStore('user', () => {
     fetchAllUsers,
     getUsers,
     updateUser,
-    fetchUserById
+    fetchUserById,
+    addBuildingToUser,
+    fetchBuildsByUsername
   }
 })

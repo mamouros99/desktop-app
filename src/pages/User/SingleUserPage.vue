@@ -35,10 +35,30 @@
             color="primary"
             size="sm"
             round
+            @click="toggleBuildings = !toggleBuildings"
           />
-          <div v-for="build in buildings" :key="build"> {{ build }}</div>
+        </div>
+        <div v-if="toggleBuildings" class="row">
+          <div v-for="build in buildings" :key="build">
+            <q-btn
+              flat
+              :class="userHasBuilding(build)? 'text-blue' : 'text-grey'"
+              :label="build.name"
+              @click="() => {showConfiramtionDialog = !showConfiramtionDialog
+              buildingToAdd = build}"
+            />
+
+          </div>
         </div>
       </q-card-section>
+      <ConfirmationDialog
+        title="Tem a certeza que quer adicionar o Edificio?"
+        negative-label="Cancelar"
+        positive-label="Adicionar"
+        v-model:show-dialog="showConfiramtionDialog"
+        @positive-function="addUserBuilding"
+        @negaative-function="buildingToAdd = null"
+      />
 
     </q-card>
   </q-page>
@@ -49,11 +69,15 @@ import { useUserStore } from 'stores/UserStore'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import useNotify from 'src/composables/UseNotify'
+import { useEcoIslandStore } from 'stores/EcoIslandStore'
+import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
 
 export default {
   name: 'SingleUserPage',
+  components: { ConfirmationDialog },
   setup () {
     const userStore = useUserStore()
+    const ecoIslandStore = useEcoIslandStore()
     const { notifyError } = useNotify()
     const user = ref()
     const route = useRoute()
@@ -64,8 +88,13 @@ export default {
       'Editor',
       'Admin'
     ]
+    const toggleBuildings = ref(false)
 
     const buildings = ref([])
+    const userBuildings = ref([])
+
+    const showConfiramtionDialog = ref(false)
+    const buildingToAdd = ref()
 
     const firstUpper = (role) => {
       const str = role.toLowerCase()
@@ -74,6 +103,20 @@ export default {
 
     const updateUserRole = (user) => {
       userStore.updateUser(user)
+        .catch((error) => {
+          notifyError(error)
+        })
+    }
+
+    const addUserBuilding = () => {
+      console.log('build', buildingToAdd)
+      const userBuilding = {
+        buildingName: buildingToAdd.value.name,
+        buildingId: buildingToAdd.value.id,
+        username: user.value.username
+      }
+
+      userStore.addBuildingToUser(userBuilding)
         .catch((error) => {
           notifyError(error)
         })
@@ -90,7 +133,16 @@ export default {
       }
     }
 
-    onMounted(() => {
+    const userHasBuilding = (build) => {
+      for (const building in userBuildings) {
+        if (build.id === building.id) {
+          return true
+        }
+      }
+      return false
+    }
+
+    onMounted(async () => {
       if (userId === userStore.getUsername()) {
         user.value = userStore.getUser()
       } else {
@@ -98,6 +150,34 @@ export default {
           user.value = res.data
         })
       }
+
+      await ecoIslandStore.fetchAlamedaBuildings()
+        .then(res => {
+          const campus = res.data
+          const validKeys = ['id', 'name']
+          buildings.value = campus.map((build) => {
+            Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
+            return build
+          })
+          buildings.value.sort((a, b) => {
+            const nameA = a.name.toUpperCase() // ignore upper and lowercase
+            const nameB = b.name.toUpperCase() // ignore upper and lowercase
+            if (nameA < nameB) {
+              return -1
+            }
+            if (nameA > nameB) {
+              return 1
+            }
+            // names must be equal
+            return 0
+          })
+        })
+
+      await userStore.fetchBuildsByUsername(user.value.username)
+        .then((res) => {
+          userBuildings.value = res.data
+          console.log('user', userBuildings.value)
+        })
     })
 
     return {
@@ -105,11 +185,18 @@ export default {
       roleOptions,
       router,
       buildings,
+      toggleBuildings,
 
       firstUpper,
       lineColor,
 
-      updateUserRole
+      updateUserRole,
+      addUserBuilding,
+      userHasBuilding,
+
+      showConfiramtionDialog,
+      buildingToAdd
+
     }
   }
 }
