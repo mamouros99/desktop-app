@@ -1,11 +1,8 @@
 <template>
   <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
     <div>
-      <div style="font-size: 30vh">
-        401
-      </div>
 
-      <div class="text-h2" style="opacity:.4">
+      <div class="text-h2" style="opacity:.8">
         A sua sessão terminou, por favor faça login outra vez
       </div>
 
@@ -14,7 +11,7 @@
         color="white"
         text-color="blue"
         unelevated
-        to="/"
+        @click="reload()"
         label="Go Home"
         no-caps
       />
@@ -24,8 +21,16 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  name: 'ErrorNotFound'
+  name: 'ErrorNotFound',
+  setup () {
+    const router = useRouter()
+    const reload = () => {
+      router.push({ name: 'home' })
+    }
+    return { reload }
+  }
 })
 </script>

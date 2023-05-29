@@ -31,10 +31,11 @@
         <div class="row items-center">
           <div class="text-bold q-mr-sm">Edifícios:</div>
           <q-btn
-            icon="add"
+            icon="edit"
+            label="Editar"
             color="primary"
             size="sm"
-            round
+            rounded
             @click="toggleBuildings = !toggleBuildings"
           />
         </div>
@@ -44,10 +45,26 @@
               flat
               :class="userHasBuilding(build)? 'text-blue' : 'text-grey'"
               :label="build.name"
-              @click="() => {showConfiramtionDialog = !showConfiramtionDialog
-              buildingToAdd = build}"
+              @click="() => {
+                if(!userHasBuilding(build)){
+                  showAddDialog = !showAddDialog
+                }
+                else {
+                  showDeleteDialog = !showDeleteDialog
+                }
+                buildToEdit = build}"
             />
 
+          </div>
+        </div>
+        <div v-else class="row">
+          <div v-for="build in userBuildings" :key="build">
+            <q-btn
+              flat
+              class="text-blue"
+              :label="build.buildingName"
+              disable
+            />
           </div>
         </div>
       </q-card-section>
@@ -55,9 +72,17 @@
         title="Tem a certeza que quer adicionar o Edificio?"
         negative-label="Cancelar"
         positive-label="Adicionar"
-        v-model:show-dialog="showConfiramtionDialog"
+        v-model:show-dialog="showAddDialog"
         @positive-function="addUserBuilding"
-        @negaative-function="buildingToAdd = null"
+        @negative-function="buildToEdit = null"
+      />
+      <ConfirmationDialog
+        title="Tem a certeza que quer remover o Edificio?"
+        negative-label="Cancelar"
+        positive-label="Remover"
+        v-model:show-dialog="showDeleteDialog"
+        @positive-function="removeUserBuilding"
+        @negative-function="buildToEdit = null"
       />
 
     </q-card>
@@ -78,7 +103,10 @@ export default {
   setup () {
     const userStore = useUserStore()
     const ecoIslandStore = useEcoIslandStore()
-    const { notifyError } = useNotify()
+    const {
+      notifyError,
+      notifySuccess
+    } = useNotify()
     const user = ref()
     const route = useRoute()
     const router = useRouter()
@@ -93,8 +121,9 @@ export default {
     const buildings = ref([])
     const userBuildings = ref([])
 
-    const showConfiramtionDialog = ref(false)
-    const buildingToAdd = ref()
+    const showDeleteDialog = ref(false)
+    const showAddDialog = ref(false)
+    const buildToEdit = ref()
 
     const firstUpper = (role) => {
       const str = role.toLowerCase()
@@ -109,10 +138,9 @@ export default {
     }
 
     const addUserBuilding = () => {
-      console.log('build', buildingToAdd)
       const userBuilding = {
-        buildingName: buildingToAdd.value.name,
-        buildingId: buildingToAdd.value.id,
+        buildingName: buildToEdit.value.name,
+        buildingId: buildToEdit.value.id,
         username: user.value.username
       }
 
@@ -120,6 +148,26 @@ export default {
         .catch((error) => {
           notifyError(error)
         })
+        .then(() => {
+          notifySuccess('Edificio adicionado com sucesso')
+        })
+    }
+
+    const removeUserBuilding = () => {
+      userStore.deleteBuildingToUser(getIdFromUserBuildings(buildToEdit.value.id))
+        .then(() => {
+          notifySuccess('Edificio removido com sucesso')
+        })
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    const getIdFromUserBuildings = (id) => {
+      for (const building of userBuildings.value) {
+        if (building.buildingId === id) {
+          return building.id
+        }
+      }
+      return -1
     }
 
     const lineColor = (role) => {
@@ -134,12 +182,7 @@ export default {
     }
 
     const userHasBuilding = (build) => {
-      for (const building in userBuildings) {
-        if (build.id === building.id) {
-          return true
-        }
-      }
-      return false
+      return userBuildings.value.some(e => e.buildingId === build.id)
     }
 
     onMounted(async () => {
@@ -153,12 +196,12 @@ export default {
 
       await ecoIslandStore.fetchAlamedaBuildings()
         .then(res => {
-          const campus = res.data
-          const validKeys = ['id', 'name']
+          buildings.value = res.data
+          /* const validKeys = ['id', 'name']
           buildings.value = campus.map((build) => {
             Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
             return build
-          })
+          }) */
           buildings.value.sort((a, b) => {
             const nameA = a.name.toUpperCase() // ignore upper and lowercase
             const nameB = b.name.toUpperCase() // ignore upper and lowercase
@@ -185,6 +228,7 @@ export default {
       roleOptions,
       router,
       buildings,
+      userBuildings,
       toggleBuildings,
 
       firstUpper,
@@ -192,10 +236,12 @@ export default {
 
       updateUserRole,
       addUserBuilding,
+      removeUserBuilding,
       userHasBuilding,
 
-      showConfiramtionDialog,
-      buildingToAdd
+      showAddDialog,
+      showDeleteDialog,
+      buildToEdit
 
     }
   }

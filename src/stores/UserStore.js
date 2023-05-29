@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'boot/axios'
+import { LocalStorage } from 'quasar'
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref('')
+  const user = ref(LocalStorage.getItem('user'))
+
   const users = ref([])
 
   const getUser = () => {
@@ -44,21 +46,19 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const hasAuthenticatied = () => {
-    return user.value !== ''
-  }
-
-  const setUser = (newInfo) => {
-    user.value = newInfo
+    return user.value !== null
   }
 
   const logoutUser = () => {
-    setUser('')
+    LocalStorage.clear()
+    user.value = null
   }
 
   const getAuth = async (code) => {
     await api.get('/auth/fenix/' + code)
       .then((response) => {
-        user.value = response.data
+        LocalStorage.set('user', response.data)
+        user.value = LocalStorage.getItem('user')
       })
   }
 
@@ -88,9 +88,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const addBuildingToUser = async (userBuilding) => {
-    console.log('userBuilding', userBuilding)
     return await api
       .post('/building/add', userBuilding)
+  }
+
+  const deleteBuildingToUser = async (buildingId) => {
+    return await api
+      .delete('/building/delete/' + buildingId)
   }
 
   const fetchBuildsByUsername = async (username) => {
@@ -100,6 +104,7 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     getUser,
+
     checkAuth: getAuth,
     hasAuthenticatied,
     getUsername,
@@ -109,13 +114,17 @@ export const useUserStore = defineStore('user', () => {
     getToken,
     getRole,
     logoutUser,
+
     hasEditPermissions,
     hasAdminPermissions,
+
     fetchAllUsers,
     getUsers,
     updateUser,
     fetchUserById,
+
     addBuildingToUser,
+    deleteBuildingToUser,
     fetchBuildsByUsername
   }
 })

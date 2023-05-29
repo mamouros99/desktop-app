@@ -34,7 +34,7 @@
               label="Logout"
               @click="() => {
                 userStore.logoutUser()
-                router.push('/')
+                reload()
               }"
             >
             </q-btn>
@@ -119,7 +119,10 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value
       },
       userStore,
-      router
+      router,
+      reload: () => {
+        location.reload()
+      }
     }
   }
 })

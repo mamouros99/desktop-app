@@ -37,7 +37,6 @@ export default route(function () {
     if ((to.meta.requiresAuth && !userstore.hasAuthenticatied()) || (to.meta.requiresAdmin && !userstore.hasAdminPermissions())) {
       next('/')
     } else if (to.name === 'user' && (to.params.userid !== userstore.getUsername() && !userstore.hasAdminPermissions())) {
-      console.log(to.params.userid)
       next('/')
     } else {
       next()
