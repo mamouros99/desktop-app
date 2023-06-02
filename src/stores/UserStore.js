@@ -87,19 +87,24 @@ export const useUserStore = defineStore('user', () => {
     return await api.get('/user/get/' + id)
   }
 
-  const addBuildingToUser = async (userBuilding) => {
+  const addBuildingToUser = async (userBuilding, username) => {
     return await api
-      .post('/building/add', userBuilding)
+      .post('/building/add/' + username, userBuilding)
   }
 
-  const deleteBuildingToUser = async (buildingId) => {
+  const deleteBuildingFromUser = async (buildingId, username) => {
     return await api
-      .delete('/building/delete/' + buildingId)
+      .delete('/building/delete/' + username + '/' + buildingId)
   }
 
   const fetchBuildsByUsername = async (username) => {
     return await api
       .get('/building/get/' + username)
+  }
+
+  const fetchMyBuildings = async () => {
+    return await api
+      .get('/building/mybuildings')
   }
 
   return {
@@ -124,7 +129,8 @@ export const useUserStore = defineStore('user', () => {
     fetchUserById,
 
     addBuildingToUser,
-    deleteBuildingToUser,
-    fetchBuildsByUsername
+    deleteBuildingFromUser,
+    fetchBuildsByUsername,
+    fetchMyBuildings
   }
 })

@@ -95,6 +95,7 @@
 import { onMounted, ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import useNotify from 'src/composables/UseNotify'
+import { useUserStore } from 'stores/UserStore'
 
 export default {
   name: 'NewIslandDialog',
@@ -193,29 +194,38 @@ export default {
           }
         })
     }
+    const userStore = useUserStore()
 
     onMounted(async () => {
-      await ecoIslandStore.fetchAlamedaBuildings()
-        .then(res => {
-          const campus = res.data
-          const validKeys = ['id', 'name']
-          buildingOptions.value = campus.map((build) => {
-            Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
-            return build
+      if (!userStore.hasAdminPermissions()) {
+        await userStore.fetchMyBuildings()
+          .then(res => {
+            buildingOptions.value = res.data
           })
-          buildingOptions.value.sort((a, b) => {
-            const nameA = a.name.toUpperCase() // ignore upper and lowercase
-            const nameB = b.name.toUpperCase() // ignore upper and lowercase
-            if (nameA < nameB) {
-              return -1
-            }
-            if (nameA > nameB) {
-              return 1
-            }
-            // names must be equal
-            return 0
+      } else {
+        await ecoIslandStore.fetchAlamedaBuildings()
+          .then(res => {
+            const campus = res.data
+            const validKeys = ['id', 'name']
+            buildingOptions.value = campus.map((build) => {
+              Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
+              return build
+            })
           })
-        })
+      }
+
+      buildingOptions.value.sort((a, b) => {
+        const nameA = a.name.toUpperCase() // ignore upper and lowercase
+        const nameB = b.name.toUpperCase() // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1
+        }
+        // names must be equal
+        return 0
+      })
     })
 
     return {

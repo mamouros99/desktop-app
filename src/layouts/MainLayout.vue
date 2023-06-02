@@ -39,6 +39,20 @@
             >
             </q-btn>
             <q-separator/>
+
+            <q-btn
+              color="primary"
+              icon="settings"
+              class="full-width"
+              flat
+              v-close-popup
+              label="Profile"
+              @click="() => {
+                router.push({path: '/user/'+ userStore.getUsername()})
+              }"
+            >
+            </q-btn>
+            <q-separator/>
           </q-list>
         </q-btn-dropdown>
 

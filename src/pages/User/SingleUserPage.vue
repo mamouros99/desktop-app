@@ -62,7 +62,7 @@
             <q-btn
               flat
               class="text-blue"
-              :label="build.buildingName"
+              :label="build.name"
               disable
             />
           </div>
@@ -139,35 +139,27 @@ export default {
 
     const addUserBuilding = () => {
       const userBuilding = {
-        buildingName: buildToEdit.value.name,
-        buildingId: buildToEdit.value.id,
-        username: user.value.username
+        name: buildToEdit.value.name,
+        id: buildToEdit.value.id
       }
 
-      userStore.addBuildingToUser(userBuilding)
+      userStore.addBuildingToUser(userBuilding, user.value.username)
         .catch((error) => {
           notifyError(error)
         })
         .then(() => {
           notifySuccess('Edificio adicionado com sucesso')
+          // location.reload()
         })
     }
 
     const removeUserBuilding = () => {
-      userStore.deleteBuildingToUser(getIdFromUserBuildings(buildToEdit.value.id))
+      console.log('delete', buildToEdit.value.id, user.value.username)
+      userStore.deleteBuildingFromUser(buildToEdit.value.id, user.value.username)
         .then(() => {
           notifySuccess('Edificio removido com sucesso')
+          location.reload()
         })
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    const getIdFromUserBuildings = (id) => {
-      for (const building of userBuildings.value) {
-        if (building.buildingId === id) {
-          return building.id
-        }
-      }
-      return -1
     }
 
     const lineColor = (role) => {
@@ -182,49 +174,53 @@ export default {
     }
 
     const userHasBuilding = (build) => {
-      return userBuildings.value.some(e => e.buildingId === build.id)
+      return userBuildings.value.some(e => e.id === build.id)
     }
 
     onMounted(async () => {
       if (userId === userStore.getUsername()) {
         user.value = userStore.getUser()
       } else {
-        userStore.fetchUserById(userId).then((res) => {
-          user.value = res.data
-        })
+        userStore.fetchUserById(userId)
+          .then((res) => {
+            user.value = res.data
+          })
       }
 
       await ecoIslandStore.fetchAlamedaBuildings()
         .then(res => {
           buildings.value = res.data
-          /* const validKeys = ['id', 'name']
-          buildings.value = campus.map((build) => {
-            Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
-            return build
-          }) */
-          buildings.value.sort((a, b) => {
-            const nameA = a.name.toUpperCase() // ignore upper and lowercase
-            const nameB = b.name.toUpperCase() // ignore upper and lowercase
-            if (nameA < nameB) {
-              return -1
-            }
-            if (nameA > nameB) {
-              return 1
-            }
-            // names must be equal
-            return 0
+          buildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
+        })
+      if (userId !== userStore.getUsername()) {
+        await userStore.fetchBuildsByUsername(user.value.username)
+          .then((res) => {
+            userBuildings.value = res.data
           })
-        })
-
-      await userStore.fetchBuildsByUsername(user.value.username)
-        .then((res) => {
-          userBuildings.value = res.data
-          console.log('user', userBuildings.value)
-        })
+      } else {
+        await userStore.fetchMyBuildings()
+          .then((res) => {
+            userBuildings.value = res.data
+          })
+      }
+      console.log(userBuildings)
+      userBuildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
     })
+
+    function alphabeticalSort (a, b) {
+      if (a < b) {
+        return -1
+      }
+      if (a > b) {
+        return 1
+      }
+      // names must be equal
+      return 0
+    }
 
     return {
       user,
+      userStore,
       roleOptions,
       router,
       buildings,
