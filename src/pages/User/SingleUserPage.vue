@@ -18,15 +18,17 @@
         <div class="row items-center">
           <div class="text-bold q-mr-sm">Role:</div>
           <q-select
+            :disable="!userStore.hasAdminPermissions()"
             class="text-green"
-            v-model="user.role"
+            v-model="role"
             :options="roleOptions"
             borderless
             hide-dropdown-icon>
             <template v-slot:selected>
-              <div :class="lineColor(user.role)">{{ firstUpper(user.role) }}</div>
+              <div :class="lineColor(role)">{{ firstUpper(role) }}</div>
             </template>
           </q-select>
+
         </div>
         <div class="row items-center">
           <div class="text-bold q-mr-sm">Edifícios:</div>
@@ -67,6 +69,21 @@
             />
           </div>
         </div>
+        <div class="row justify-end" v-if="rolehasChanged && userStore.hasAdminPermissions()">
+          <q-btn
+            class="q-mr-lg"
+            dense
+            label="save"
+            color="positive"
+            @click="updateUserRole()"
+          />
+          <q-btn
+            dense
+            label="reset"
+            color="negative"
+            @click="role = user.role"
+          />
+        </div>
       </q-card-section>
       <ConfirmationDialog
         title="Tem a certeza que quer adicionar o Edificio?"
@@ -84,6 +101,7 @@
         @positive-function="removeUserBuilding"
         @negative-function="buildToEdit = null"
       />
+      {{ role }} - {{ user.role }}
 
     </q-card>
   </q-page>
@@ -91,7 +109,7 @@
 
 <script>
 import { useUserStore } from 'stores/UserStore'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import useNotify from 'src/composables/UseNotify'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
@@ -108,13 +126,14 @@ export default {
       notifySuccess
     } = useNotify()
     const user = ref()
+    const role = ref()
     const route = useRoute()
     const router = useRouter()
     const userId = route.params.userid
     const roleOptions = [
-      'Viewer',
-      'Editor',
-      'Admin'
+      'VIEWER',
+      'EDITOR',
+      'ADMIN'
     ]
     const toggleBuildings = ref(false)
 
@@ -125,13 +144,17 @@ export default {
     const showAddDialog = ref(false)
     const buildToEdit = ref()
 
+    const rolehasChanged = computed(() => {
+      return role.value !== user.value.role
+    })
+
     const firstUpper = (role) => {
       const str = role.toLowerCase()
       return str.charAt(0).toUpperCase() + str.slice(1)
     }
 
     const updateUserRole = (user) => {
-      userStore.updateUser(user)
+      userStore.updateUserRole(user.value.username, user.value.role)
         .catch((error) => {
           notifyError(error)
         })
@@ -149,12 +172,11 @@ export default {
         })
         .then(() => {
           notifySuccess('Edificio adicionado com sucesso')
-          // location.reload()
+          location.reload()
         })
     }
 
     const removeUserBuilding = () => {
-      console.log('delete', buildToEdit.value.id, user.value.username)
       userStore.deleteBuildingFromUser(buildToEdit.value.id, user.value.username)
         .then(() => {
           notifySuccess('Edificio removido com sucesso')
@@ -174,16 +196,18 @@ export default {
     }
 
     const userHasBuilding = (build) => {
-      return userBuildings.value.some(e => e.id === build.id)
+      return userBuildings.value.some(e => e.id.id === build.id)
     }
 
     onMounted(async () => {
       if (userId === userStore.getUsername()) {
-        user.value = userStore.getUser()
+        user.value = Object.assign({}, userStore.getUser())
+        role.value = user.value.role
       } else {
         userStore.fetchUserById(userId)
           .then((res) => {
-            user.value = res.data
+            user.value = Object.assign({}, res.data)
+            role.value = user.value.role
           })
       }
 
@@ -203,7 +227,6 @@ export default {
             userBuildings.value = res.data
           })
       }
-      console.log(userBuildings)
       userBuildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
     })
 
@@ -219,10 +242,14 @@ export default {
     }
 
     return {
-      user,
       userStore,
-      roleOptions,
       router,
+
+      user,
+      rolehasChanged,
+      role,
+
+      roleOptions,
       buildings,
       userBuildings,
       toggleBuildings,

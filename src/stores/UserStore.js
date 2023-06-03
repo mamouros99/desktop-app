@@ -69,8 +69,9 @@ export const useUserStore = defineStore('user', () => {
       })
   }
 
-  const updateUser = async (user) => {
-    await api.put('/user/update', user)
+  const updateUserRole = async (username, role) => {
+    console.log(username, role)
+    await api.put('/user/update/' + username + '/' + role)
       .then(() => {
         fetchAllUsers()
           .catch((errorMessage) => {
@@ -125,7 +126,7 @@ export const useUserStore = defineStore('user', () => {
 
     fetchAllUsers,
     getUsers,
-    updateUser,
+    updateUserRole,
     fetchUserById,
 
     addBuildingToUser,
