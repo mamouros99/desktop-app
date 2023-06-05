@@ -1,25 +1,21 @@
 <template>
   <q-dialog
+    id="dialog"
+    full-width
+    full-height
     :model-value="showDialog"
     @update:modelValue="(value) => emitUpdate('update:showDialog', value )"
   >
-    <q-card
-      class="bg-blue"
-      style="height: 90%; width: 90%"
-    >
-      <q-img
-        id="clickme"
-        fit="scale-down"
-        :src="'data:image/jpeg;base64,' + imageData"
-      />
-    </q-card>
 
-    <!--    <q-page
-          class="bg-primary q-pa-lg rounded-borders"
-          style="max-height: 1000px"
-        >
-
-        </q-page>-->
+    <q-img
+      id="myImage"
+      style="overflow: hidden"
+      @click="(event) => {
+            emitUpdate('update:showDialog', false )
+          }"
+      fit="contain"
+      :src="'data:image/jpeg;base64,' + imageData"
+    />
 
   </q-dialog>
 </template>
@@ -45,6 +41,7 @@ export default {
     const ecoislandStore = useEcoIslandStore()
     const { notifyError } = useNotify()
     const imageData = ref('')
+
     const emitUpdate = (event, value) => {
       emit(event, value)
     }
@@ -62,6 +59,7 @@ export default {
     return {
       emitUpdate,
       imageData
+
     }
   }
 }
