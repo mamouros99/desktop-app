@@ -70,8 +70,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const updateUserRole = async (username, role) => {
-    console.log(username, role)
-    await api.put('/user/update/' + username + '/' + role)
+    return await api.put('/user/update/' + username + '/' + role)
       .then(() => {
         fetchAllUsers()
           .catch((errorMessage) => {

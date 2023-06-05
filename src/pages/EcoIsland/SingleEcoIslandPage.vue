@@ -10,11 +10,25 @@
     />
     <q-card>
       <q-card-section class="row justify-between items-center">
-        <div class="text-h4  text-grey-9">EcoIlha ID {{ islandId }}</div>
+        <div class="text-h4  text-grey-9 row">
+          EcoIlha ID {{ islandId }}
+          <div v-if="loaded">
+            <q-btn
+              v-if="ecoIsland.buildingId !== '-'"
+              color="primary"
+              dense
+              flat
+              icon="image"
+              @click="showDialogImage = true"
+            />
+            <EcoislandImageDialog v-if="showDialogImage" v-model:show-dialog="showDialogImage"
+                                  :islandid="ecoIsland.buildingId"/>
+          </div>
+        </div>
         <q-btn
           rounded
           color="secondary"
-          @click="showDialog = true"
+          @click="showDialogQR = true"
         >
           <q-icon
             class="q-mr-sm"
@@ -23,7 +37,7 @@
           Gerar QR Code
         </q-btn>
 
-        <QRCodeDialog v-model:show-dialog="showDialog" :islandid="islandId"/>
+        <QRCodeDialog v-model:show-dialog="showDialogQR" :islandid="islandId"/>
       </q-card-section>
       <div v-if="loaded">
         <q-card-section>
@@ -37,12 +51,7 @@
             </div>
             <div class="col-2 row items-center">
               <div class="text-bold q-mr-sm">Piso:</div>
-              <q-select
-                v-model="ecoIsland.floor"
-                hide-dropdown-icon borderless
-                :options="buildingFloors(ecoIsland.building)"
-                @update:modelValue="hasChanges = true"
-              />
+              {{ ecoIsland.floor }}
 
             </div>
             <div class="col-6 row items-center">
@@ -120,9 +129,11 @@ import useNotify from 'src/composables/UseNotify'
 import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
 import { useUserStore } from 'stores/UserStore'
 import BinsEditDialog from 'components/Dialogs/BinsEditDialog.vue'
+import EcoislandImageDialog from 'components/Dialogs/EcoislandImageDialog.vue'
 
 export default {
   components: {
+    EcoislandImageDialog,
     BinsEditDialog,
     ConfirmationDialog,
     QRCodeDialog
@@ -153,7 +164,8 @@ export default {
     } = useNotify()
 
     const islandId = route.params.ecoislandId
-    const showDialog = ref(false)
+    const showDialogQR = ref(false)
+    const showDialogImage = ref(false)
     const showDeleteDialog = ref(false)
 
     const deleteIsland = () => {
@@ -225,7 +237,8 @@ export default {
       islandId,
       getEcoIslandBins,
 
-      showDialog,
+      showDialogQR,
+      showDialogImage,
       binsDialogToggle,
 
       deleteIsland,

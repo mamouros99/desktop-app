@@ -41,8 +41,7 @@ export default route(function () {
     } else {
       next()
     }
-  }
-  )
+  })
 
   return router
 })

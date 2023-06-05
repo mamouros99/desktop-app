@@ -129,7 +129,7 @@ export default {
     const role = ref()
     const route = useRoute()
     const router = useRouter()
-    const userId = route.params.userid
+    const userId = computed(() => route.params.userid)
     const roleOptions = [
       'VIEWER',
       'EDITOR',
@@ -153,8 +153,11 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     }
 
-    const updateUserRole = (user) => {
-      userStore.updateUserRole(user.value.username, user.value.role)
+    const updateUserRole = () => {
+      userStore.updateUserRole(user.value.username, role.value)
+        .then(() => {
+          location.reload()
+        })
         .catch((error) => {
           notifyError(error)
         })
@@ -200,11 +203,11 @@ export default {
     }
 
     onMounted(async () => {
-      if (userId === userStore.getUsername()) {
+      if (userId.value === userStore.getUsername()) {
         user.value = Object.assign({}, userStore.getUser())
         role.value = user.value.role
       } else {
-        userStore.fetchUserById(userId)
+        userStore.fetchUserById(userId.value)
           .then((res) => {
             user.value = Object.assign({}, res.data)
             role.value = user.value.role
@@ -216,7 +219,7 @@ export default {
           buildings.value = res.data
           buildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
         })
-      if (userId !== userStore.getUsername()) {
+      if (userId.value !== userStore.getUsername()) {
         await userStore.fetchBuildsByUsername(user.value.username)
           .then((res) => {
             userBuildings.value = res.data

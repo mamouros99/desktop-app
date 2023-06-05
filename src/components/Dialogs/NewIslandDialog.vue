@@ -32,6 +32,7 @@
             :options="buildingFloors"
             :option-label="'name'"
             label="Piso"
+            @update:modelValue="test(floor, building)"
           >
             <template v-slot:append>
               <q-icon
@@ -127,6 +128,7 @@ export default {
     const createNewEcoIsland = async () => {
       const result = {
         building: building.value.name,
+        buildingId: floor.value.id == null ? floor.value : floor.value.id,
         floor: floor.value.name == null ? floor.value : floor.value.name,
         description: desc.value,
         bins: ''
@@ -190,7 +192,7 @@ export default {
           if (build.length !== 0) {
             buildingFloors.value = build
           } else {
-            buildingFloors.value = ['0']
+            buildingFloors.value = ['-']
           }
         })
     }
@@ -241,7 +243,11 @@ export default {
       createNewEcoIsland,
 
       updateBuilding,
-      cleanFloorAndDesc
+      cleanFloorAndDesc,
+
+      test: (a, b) => {
+        console.log(a, b)
+      }
     }
   }
 }
