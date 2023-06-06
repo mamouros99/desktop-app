@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-md">
+
     <q-table
       card-class="bg-grey-2"
       flat bordered
@@ -15,6 +16,13 @@
         <div class="row full-width justify-between">
           <div class="text-h6 q-pl-lg">
             Relatórios
+            <q-btn
+              flat
+              round
+              icon="download"
+              color="secondary"
+              @click="downloadReports()"
+            />
           </div>
 
           <div class="row">
@@ -104,6 +112,7 @@ import useVariables from 'src/composables/useVariables'
 import BinsLegendCard from 'components/BinsLegendCard.vue'
 import FilterDialog from 'components/Dialogs/FilterDialog.vue'
 import useNotify from 'src/composables/UseNotify'
+import { saveAs } from 'file-saver'
 
 export default {
   components: {
@@ -263,6 +272,13 @@ export default {
         })
     }
 
+    const downloadReports = () => {
+      reportStore.downloadReports()
+        .then((res) => {
+          saveAs(res.data, 'reports.csv')
+        })
+    }
+
     const { formatDate } = useFunctions()
 
     function setCharAt (str, index, chr) {
@@ -293,7 +309,9 @@ export default {
 
       toggleDialog,
       showDialog,
-      filter
+      filter,
+
+      downloadReports
 
     }
   }

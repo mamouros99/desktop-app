@@ -68,6 +68,13 @@
           <div class="row full-width justify-between">
             <div class="text-h5 q-pl-lg col-4 text-primary">
               Ecoilhas
+              <q-btn
+                icon="download"
+                color="secondary"
+                round
+                flat
+                @click="downloadEcoislands()"
+              />
             </div>
 
             <div class="col-6 row justify-end items-center">
@@ -135,6 +142,7 @@ import NewIslandDialog from 'components/Dialogs/NewIslandDialog.vue'
 import { useRouter } from 'vue-router'
 import useNotify from 'src/composables/UseNotify'
 import { useUserStore } from 'stores/UserStore'
+import { saveAs } from 'file-saver'
 
 export default {
   components: {
@@ -167,6 +175,13 @@ export default {
 
     const test = () => {
       console.log('test')
+    }
+
+    const downloadEcoislands = () => {
+      ecoIslandStore.downloadEcoislands()
+        .then((res) => {
+          saveAs(res.data, 'ecoIslands.csv')
+        })
     }
 
     const customFilter = (rows) => {
@@ -273,7 +288,9 @@ export default {
 
       search,
       tagFilter,
-      customFilter
+      customFilter,
+
+      downloadEcoislands
     }
   }
 }

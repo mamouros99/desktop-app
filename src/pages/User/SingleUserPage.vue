@@ -101,7 +101,6 @@
         @positive-function="removeUserBuilding"
         @negative-function="buildToEdit = null"
       />
-      {{ role }} - {{ user.role }}
 
     </q-card>
   </q-page>

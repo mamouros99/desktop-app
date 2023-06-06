@@ -82,6 +82,12 @@ export const useEcoIslandStore = defineStore('island', () => {
     return await api.get('/building/image/' + id)
   }
 
+  const downloadEcoislands = async () => {
+    return await api.get('/ecoisland/export', {
+      responseType: 'blob'
+    })
+  }
+
   return {
     fetchEcoIslands,
     getEcoIslandsById,
@@ -93,6 +99,8 @@ export const useEcoIslandStore = defineStore('island', () => {
 
     fetchAlamedaBuildings,
     fetchBuilding,
-    fetchBuildingImage
+    fetchBuildingImage,
+
+    downloadEcoislands
   }
 })

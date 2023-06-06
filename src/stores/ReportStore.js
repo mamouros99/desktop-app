@@ -31,10 +31,17 @@ export const useReportStore = defineStore('report', () => {
     return await api.get('/report/' + id)
   }
 
+  const downloadReports = async () => {
+    return await api.get('/report/export', {
+      responseType: 'blob'
+    })
+  }
+
   return {
     fetchReports,
     getReports,
     getReportById,
-    deleteById
+    deleteById,
+    downloadReports
   }
 })

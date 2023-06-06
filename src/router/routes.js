@@ -59,6 +59,14 @@ const routes = [
         meta: {
           requiresAuth: true
         }
+      },
+      {
+        path: 'image',
+        name: 'image',
+        component: () => import('pages/ImagePage.vue'),
+        meta: {
+          requiresAuth: true
+        }
       }
     ]
   },
