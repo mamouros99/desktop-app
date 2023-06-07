@@ -79,7 +79,9 @@ export const useEcoIslandStore = defineStore('island', () => {
   }
 
   const fetchBuildingImage = async (id) => {
-    return await api.get('/building/image/' + id)
+    if (id !== undefined) {
+      return await api.get('/building/image/' + id)
+    }
   }
 
   const downloadEcoislands = async () => {

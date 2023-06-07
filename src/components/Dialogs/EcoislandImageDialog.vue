@@ -1,31 +1,27 @@
 <template>
   <q-dialog
     id="dialog"
-    full-width
-    full-height
+    class="row "
     :model-value="showDialog"
     @update:modelValue="(value) => emitUpdate('update:showDialog', value )"
   >
 
-    <q-img
-      id="myImage"
-      style="overflow: hidden"
-      @click="(event) => {
-            emitUpdate('update:showDialog', false )
-          }"
-      fit="contain"
-      :src="'data:image/jpeg;base64,' + imageData"
-    />
+    <div class="col-12 q-my-lg bg-grey-2">
+      <div class="text-center text-h4 full-width q-pa-md"> Posição da Ecoilha</div>
+      <ImagePage
+        :island-id="islandid"
+      />
+    </div>
 
   </q-dialog>
 </template>
 
 <script>
 import { onMounted, ref } from 'vue'
-import { useEcoIslandStore } from 'stores/EcoIslandStore'
-import useNotify from 'src/composables/UseNotify'
+import ImagePage from 'pages/ImagePage.vue'
 
 export default {
+  components: { ImagePage },
   emits: ['update:showDialog'],
   props: {
     showDialog: {
@@ -38,23 +34,13 @@ export default {
     }
   },
   setup (props, { emit }) {
-    const ecoislandStore = useEcoIslandStore()
-    const { notifyError } = useNotify()
     const imageData = ref('')
-
+    onMounted(() => {
+      console.log(props.islandid)
+    })
     const emitUpdate = (event, value) => {
       emit(event, value)
     }
-
-    onMounted(async () => {
-      await ecoislandStore.fetchBuildingImage(props.islandid)
-        .then((res) => {
-          imageData.value = res.data
-        })
-        .catch(() => {
-          notifyError('Não foi possivel carregar a imagem')
-        })
-    })
 
     return {
       emitUpdate,

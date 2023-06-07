@@ -56,27 +56,53 @@
 
           </q-input>
         </q-card-section>
-        <q-card-section>
-          <div class="q-pl-md text-h6">Caixotes Extra:</div>
-          <q-card-section>
-            <q-toggle
-              label="Vidro"
-              class="text-bold"
-              v-model="toggleGlass"
-              checked-icon="check"
-              color="green"
-              unchecked-icon="clear"
+        <q-card-section class="col q-mx-sm ">
+          <q-btn
+            flat
+            icon="location_on"
+            label="Posição"
+            @click="toggleCoordsDialog = !toggleCoordsDialog"
+          >
+            <q-icon
+              v-if="hasCoords"
+              class="q-pl-sm"
+              name="check"
+              size="sm"
+              color="positive"
             />
-            <q-toggle
-              label="Biorresíduos"
-              class="text-bold"
-              v-model="toggleBio"
-              checked-icon="check"
-              color="green"
-              unchecked-icon="clear"
+            <q-icon
+              v-else
+              class="q-pl-sm"
+              name="close"
+              size="sm"
+              color="negative"
             />
-          </q-card-section>
+          </q-btn>
+          <q-card-section horizontal>
+            <q-card-section>
+              <div class="q-pl-md text-h6">Caixotes Extra:</div>
+              <q-card-section>
+                <q-toggle
+                  label="Vidro"
+                  class="text-bold"
+                  v-model="toggleGlass"
+                  checked-icon="check"
+                  color="green"
+                  unchecked-icon="clear"
+                />
+                <q-toggle
+                  label="Biorresíduos"
+                  class="text-bold"
+                  v-model="toggleBio"
+                  checked-icon="check"
+                  color="green"
+                  unchecked-icon="clear"
+                />
+              </q-card-section>
 
+            </q-card-section>
+
+          </q-card-section>
         </q-card-section>
         <q-card-actions class="row justify-around">
           <q-btn
@@ -88,18 +114,24 @@
           />
         </q-card-actions>
       </q-form>
+
+      <EcoislandImageDialog
+        v-if="toggleCoordsDialog && hasFloor"
+        islandid="" v-model:show-dialog="toggleCoordsDialog"/>
     </q-card>
   </q-dialog>
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import useNotify from 'src/composables/UseNotify'
 import { useUserStore } from 'stores/UserStore'
+import EcoislandImageDialog from 'components/Dialogs/EcoislandImageDialog.vue'
 
 export default {
   name: 'NewIslandDialog',
+  components: { EcoislandImageDialog },
   emits: ['update:showDialog'],
   props: {
     showDialog: {
@@ -120,18 +152,34 @@ export default {
     const desc = ref('')
     const toggleGlass = ref(false)
     const toggleBio = ref(false)
+    const coords = ref({
+      xPos: null,
+      yPos: null
+    })
+
+    const toggleCoordsDialog = ref(false)
 
     const buildingOptions = ref([])
 
     const buildingFloors = ref([])
 
+    const hasCoords = computed(() => {
+      return coords.value.xPos !== null && coords.value.yPos !== null
+    })
+
+    const hasFloor = computed(() => {
+      return floor.value !== ''
+    })
+
     const createNewEcoIsland = async () => {
       const result = {
         building: building.value.name,
-        buildingId: floor.value.id == null ? floor.value : floor.value.id,
+        buildingId: floor.value.id == null ? building.value.id : floor.value.id,
         floor: floor.value.name == null ? floor.value : floor.value.name,
         description: desc.value,
-        bins: ''
+        bins: '',
+        xPos: coords.value.xPos,
+        yPos: coords.value.yPos
       }
 
       if (toggleGlass.value) {
@@ -236,6 +284,12 @@ export default {
       desc,
       toggleBio,
       toggleGlass,
+      coords,
+
+      hasCoords,
+      hasFloor,
+      toggleCoordsDialog,
+
       buildingFloors,
       buildingOptions,
       emitUpdate,

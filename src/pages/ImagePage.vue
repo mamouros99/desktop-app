@@ -1,21 +1,73 @@
 <template>
-  <q-page>
-    <canvas ref="c"></canvas>
-  </q-page>
+  <div id="q-app" style="min-height: 100vh;">
+    <div class="q-pa-md row items-center q-gutter-md">
+      <q-card class="my-card row" flat bordered>
+        <q-card-section class="col-12">
+          <canvas class="" ref="canvas" @click="onClick"></canvas>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useEcoIslandStore } from 'stores/EcoIslandStore'
 
 export default {
   name: 'ImagePage',
-  setup () {
-    const c = ref(null)
-    onMounted(() => {
-      console.log(c)
+  props: ['islandId', 'x', 'y'],
+  setup (props) {
+    const canvas = ref()
+    const ecoIslandStore = useEcoIslandStore()
+    const image = new Image()
+
+    const hasCoord = computed(() => {
+      return typeof props.x === 'number' && typeof props.y === 'number'
     })
+
+    onMounted(async () => {
+      let imageSource
+      await ecoIslandStore.fetchBuildingImage(props.islandId)
+        .then((res) => {
+          imageSource = 'data:image/jpeg;base64,' + res.data
+        })
+
+      const ctx = canvas.value.getContext('2d')
+      image.crossOrigin = '*'
+      image.onload = () => {
+        canvas.value.width = image.width
+        canvas.value.height = image.height
+        ctx.drawImage(image, 0, 0, image.width, image.height)
+        if (hasCoord.value) {
+          console.log('test', props.x, props.y)
+        }
+      }
+      image.src = imageSource
+    })
+
+    function onClick (evt) {
+      const rect = canvas.value.getBoundingClientRect()
+      const x = canvas.value.width / rect.width * evt.clientX
+      const y = canvas.value.height / rect.height * evt.clientY
+
+      const ctx = canvas.value.getContext('2d')
+      ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
+      ctx.drawImage(image, 0, 0, image.width, image.height)
+      drawCircle(ctx, x - rect.x, y - rect.y)
+    }
+
+    const drawCircle = (ctx, x, y) => {
+      ctx.beginPath()
+      ctx.arc(x, y, 10, 0, 2 * Math.PI)
+      ctx.lineWidth = 7
+      ctx.strokeStyle = '#FBC02D'
+      ctx.stroke()
+    }
+
     return {
-      c
+      canvas,
+      onClick
     }
   }
 }
