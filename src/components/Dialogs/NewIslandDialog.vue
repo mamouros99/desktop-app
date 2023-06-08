@@ -32,7 +32,6 @@
             :options="buildingFloors"
             :option-label="'name'"
             label="Piso"
-            @update:modelValue="test(floor, building)"
           >
             <template v-slot:append>
               <q-icon
@@ -58,6 +57,7 @@
         </q-card-section>
         <q-card-section class="col q-mx-sm ">
           <q-btn
+            :disable="!hasFloor"
             flat
             icon="location_on"
             label="Posição"
@@ -117,7 +117,12 @@
 
       <EcoislandImageDialog
         v-if="toggleCoordsDialog && hasFloor"
-        islandid="" v-model:show-dialog="toggleCoordsDialog"/>
+        :islandid="buildingId"
+        v-model:show-dialog="toggleCoordsDialog"
+        :x="coords.xPos"
+        :y="coords.yPos"
+        @updateCoords="updateCoordinates"
+      />
     </q-card>
   </q-dialog>
 </template>
@@ -171,10 +176,14 @@ export default {
       return floor.value !== ''
     })
 
+    const buildingId = computed(() => {
+      return floor.value.id == null ? building.value.id : floor.value.id
+    })
+
     const createNewEcoIsland = async () => {
       const result = {
         building: building.value.name,
-        buildingId: floor.value.id == null ? building.value.id : floor.value.id,
+        buildingId: buildingId.value,
         floor: floor.value.name == null ? floor.value : floor.value.name,
         description: desc.value,
         bins: '',
@@ -246,6 +255,12 @@ export default {
     }
     const userStore = useUserStore()
 
+    const updateCoordinates = (newValue) => {
+      coords.value.xPos = newValue.x
+      coords.value.yPos = newValue.y
+      console.log(coords.value)
+    }
+
     onMounted(async () => {
       if (!userStore.hasAdminPermissions()) {
         await userStore.fetchMyBuildings()
@@ -287,6 +302,7 @@ export default {
       coords,
 
       hasCoords,
+      buildingId,
       hasFloor,
       toggleCoordsDialog,
 
@@ -298,6 +314,7 @@ export default {
 
       updateBuilding,
       cleanFloorAndDesc,
+      updateCoordinates,
 
       test: (a, b) => {
         console.log(a, b)

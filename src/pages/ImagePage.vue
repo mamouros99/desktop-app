@@ -16,14 +16,15 @@ import { useEcoIslandStore } from 'stores/EcoIslandStore'
 
 export default {
   name: 'ImagePage',
-  props: ['islandId', 'x', 'y'],
-  setup (props) {
+  props: ['islandId', 'x', 'y', 'disable'],
+  emits: ['updateCoords'],
+  setup (props, { emit }) {
     const canvas = ref()
     const ecoIslandStore = useEcoIslandStore()
     const image = new Image()
 
     const hasCoord = computed(() => {
-      return typeof props.x === 'number' && typeof props.y === 'number'
+      return props.x != null && props.y != null
     })
 
     onMounted(async () => {
@@ -41,12 +42,18 @@ export default {
         ctx.drawImage(image, 0, 0, image.width, image.height)
         if (hasCoord.value) {
           console.log('test', props.x, props.y)
+          drawCircle(ctx, props.x, props.y)
+          drawCircle2(ctx, props.x, props.y)
         }
       }
       image.src = imageSource
     })
 
     function onClick (evt) {
+      if (props.disable) {
+        return
+      }
+
       const rect = canvas.value.getBoundingClientRect()
       const x = canvas.value.width / rect.width * evt.clientX
       const y = canvas.value.height / rect.height * evt.clientY
@@ -55,19 +62,39 @@ export default {
       ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
       ctx.drawImage(image, 0, 0, image.width, image.height)
       drawCircle(ctx, x - rect.x, y - rect.y)
+      drawCircle2(ctx, x - rect.x, y - rect.y)
+      emit('updateCoords', {
+        x: Math.round(x - rect.x),
+        y: Math.round(y - rect.y)
+      })
+    }
+
+    const emitEvent = (event, value) => {
+      emit(event, value)
     }
 
     const drawCircle = (ctx, x, y) => {
       ctx.beginPath()
       ctx.arc(x, y, 10, 0, 2 * Math.PI)
-      ctx.lineWidth = 7
-      ctx.strokeStyle = '#FBC02D'
+      ctx.lineWidth = 5
+      ctx.strokeStyle = '#03c04a'
       ctx.stroke()
+      console.log('draw', x, y)
+    }
+
+    const drawCircle2 = (ctx, x, y) => {
+      ctx.beginPath()
+      ctx.arc(x, y, 4, 0, 2 * Math.PI)
+      ctx.fillStyle = '#03c04a'
+      ctx.fill()
+      console.log('draw', x, y)
     }
 
     return {
       canvas,
-      onClick
+      onClick,
+      emitEvent,
+      drawCircle
     }
   }
 }

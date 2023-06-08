@@ -12,18 +12,7 @@
       <q-card-section class="row justify-between items-center">
         <div class="text-h4  text-grey-9 row">
           EcoIlha ID {{ islandId }}
-          <div v-if="loaded">
-            <q-btn
-              v-if="ecoIsland.buildingId !== '-'"
-              color="primary"
-              dense
-              flat
-              icon="image"
-              @click="showDialogImage = true"
-            />
-            <EcoislandImageDialog v-if="showDialogImage" v-model:show-dialog="showDialogImage"
-                                  :islandid="ecoIsland.buildingId"/>
-          </div>
+
         </div>
         <q-btn
           rounded
@@ -41,7 +30,28 @@
       </q-card-section>
       <div v-if="loaded">
         <q-card-section>
-          <div class="text-h6">Localização</div>
+          <div class="text-h6">
+            <div v-if="loaded" class="row">
+              Localização
+              <q-btn
+                v-if="ecoIsland.buildingId !== '-'"
+                color="primary"
+                dense
+                flat
+                icon="location_on"
+                @click="showDialogImage = true"
+              />
+              <EcoislandImageDialog
+                v-if="showDialogImage"
+                :disable="!userStore.hasEditPermissions()"
+                v-model:show-dialog="showDialogImage"
+                :islandid="ecoIsland.buildingId"
+                :x="ecoIsland.xPos"
+                :y="ecoIsland.yPos"
+                @updateCoords="updateCoordinates"
+              />
+            </div>
+          </div>
           <q-card-section class="row bg-grey-1 items-center">
             <div class="col-4 row">
               <div class="text-bold q-mr-sm">Edifício:</div>
@@ -57,6 +67,7 @@
             <div class="col-6 row items-center">
               <div class="text-bold q-mr-sm">Descrição:</div>
               <q-input
+                :disable="!userStore.hasEditPermissions()"
                 borderless
                 dense
                 v-model="ecoIsland.description"
@@ -68,7 +79,7 @@
         <q-card-section class="col-12">
           <div class="row">
             <div class="text-h6">Caixotes</div>
-            <q-btn flat dense color="primary" class="text-italic" label="edit"
+            <q-btn v-if="userStore.hasEditPermissions()" flat dense color="primary" class="text-italic" label="editar"
                    @click="binsDialogToggle = !binsDialogToggle"/>
             <BinsEditDialog :bins="ecoIsland.bins" @updateBins="a => {
               if(ecoIsland.bins !== a){
@@ -204,6 +215,14 @@ export default {
       'Pavilhão de Mecânica I'
     ]
 
+    const updateCoordinates = (value) => {
+      if (ecoIsland.value.xPos !== value.x && ecoIsland.value.yPos !== value.y) {
+        hasChanges.value = true
+        ecoIsland.value.xPos = value.x
+        ecoIsland.value.yPos = value.y
+      }
+    }
+
     const buildingFloors = (building) => {
       switch (building.normalize('NFD').replace(/[\u0300-\u036f]/g, '')) {
         case 'Pavilhao de Civil':
@@ -254,6 +273,7 @@ export default {
         console.log(a)
       },
       updateEcoisland,
+      updateCoordinates,
       hasChanges,
       currentEcoIsland
     }
