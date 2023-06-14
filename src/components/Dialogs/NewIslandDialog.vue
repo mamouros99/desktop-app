@@ -122,6 +122,8 @@
         :x="coords.xPos"
         :y="coords.yPos"
         @updateCoords="updateCoordinates"
+        :floor="floor.name"
+        :building-name="building.name"
       />
     </q-card>
   </q-dialog>

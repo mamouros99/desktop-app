@@ -79,7 +79,6 @@ export default {
       ctx.lineWidth = 5
       ctx.strokeStyle = '#03c04a'
       ctx.stroke()
-      console.log('draw', x, y)
     }
 
     const drawCircle2 = (ctx, x, y) => {
@@ -87,7 +86,6 @@ export default {
       ctx.arc(x, y, 4, 0, 2 * Math.PI)
       ctx.fillStyle = '#03c04a'
       ctx.fill()
-      console.log('draw', x, y)
     }
 
     return {

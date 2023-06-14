@@ -33,6 +33,7 @@
         <div class="row items-center">
           <div class="text-bold q-mr-sm">Edifícios:</div>
           <q-btn
+            v-if="userStore.hasAdminPermissions()"
             icon="edit"
             label="Editar"
             color="primary"
@@ -41,7 +42,7 @@
             @click="toggleBuildings = !toggleBuildings"
           />
         </div>
-        <div v-if="toggleBuildings" class="row">
+        <div v-if="toggleBuildings" class="q-px-lg">
           <div v-for="build in buildings" :key="build">
             <q-btn
               flat
@@ -59,7 +60,7 @@
 
           </div>
         </div>
-        <div v-else class="row">
+        <div v-else class="q-px-lg">
           <div v-for="build in userBuildings" :key="build">
             <q-btn
               flat

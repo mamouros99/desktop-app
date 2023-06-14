@@ -20,8 +20,8 @@ export default {
   // name: 'PageName',
 
   setup () {
-    const url = process.env.VUE_APP_FENIX_URL
     const route = useRoute()
+    const href = window.location.href
     const router = useRouter()
     const userStore = useUserStore()
     const {
@@ -34,7 +34,7 @@ export default {
 
     onMounted(async () => {
       if (!code.value) {
-        window.location = process.env.VUE_APP_FENIX_URL
+        window.location = process.env.VUE_APP_FENIX_URL + href
       } else {
         await userStore.checkAuth(code.value)
           .then(() => {
@@ -50,7 +50,6 @@ export default {
     })
 
     return {
-      url,
       test: function () {
         console.log('user', userStore.getUser())
       },

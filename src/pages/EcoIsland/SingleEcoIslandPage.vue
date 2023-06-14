@@ -49,6 +49,9 @@
                 :x="ecoIsland.xPos"
                 :y="ecoIsland.yPos"
                 @updateCoords="updateCoordinates"
+                :floor="ecoIsland.floor"
+                :building-name="ecoIsland.building"
+
               />
             </div>
           </div>
