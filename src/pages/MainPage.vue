@@ -50,7 +50,7 @@ export default defineComponent({
       userStore,
       router,
       test: function () {
-        console.log('user', userStore.getUser())
+        console.log('I\'m on a development build')
       }
     }
   }

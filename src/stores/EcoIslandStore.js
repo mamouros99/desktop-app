@@ -6,7 +6,7 @@ export const useEcoIslandStore = defineStore('island', () => {
   const ecoIslands = ref([])
 
   async function fetchEcoIslands () {
-    await api.get('http://localhost:3001/ecoisland/all')
+    await api.get('/ecoisland/all')
       .then((response) => {
         ecoIslands.value = response.data
       })
@@ -17,7 +17,7 @@ export const useEcoIslandStore = defineStore('island', () => {
   }
 
   const deleteById = async (id) => {
-    return await api.delete('http://localhost:3001/ecoisland/delete/' + id)
+    return await api.delete('/ecoisland/delete/' + id)
   }
 
   const getEcoIslandsById = async (id) => {
