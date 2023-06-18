@@ -151,9 +151,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: 'DesktopApp',
-        short_name: 'DesktopApp',
-        description: 'A Quasar Project',
+        name: 'EcoTecnico Desktop',
+        short_name: 'ET Desk',
+        description: 'Projeto Tese EcoTecnico',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',

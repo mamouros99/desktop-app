@@ -1,8 +1,8 @@
 {
-  "name": "desktop-app",
+  "name": "eco-tecnico",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "DesktopApp",
+  "description": "Projeto Tese: monitorização de residuos",
+  "productName": "Eco Tecnico Desktop",
   "author": "mamouros99 <tiago.mamouros@tecnico.ulisboa.pt>",
   "private": true,
   "scripts": {
