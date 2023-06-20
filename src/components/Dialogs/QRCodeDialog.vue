@@ -21,7 +21,7 @@
             :value="generateQrCode(islandid)"
             :size="300"
           />
-          <div class="q-pt-lg" v-if="showUrl"><b>URL:</b> http://193.136.129.238:8081/report/{{ islandid }}</div>
+          <div class="q-pt-lg" v-if="showUrl"><b>URL:</b> http://193.136.129.238:8080/report/{{ islandid }}</div>
         </div>
       </q-card-section>
       <q-card-actions class="row justify-around ">
@@ -71,7 +71,7 @@ export default {
     const showUrl = ref(false)
 
     const generateQrCode = (id) => {
-      return 'http://193.136.129.238:8081/report/' + id
+      return 'http://193.136.129.238:8080/report/' + id
     }
 
     const downloadQRCode = (id) => {
