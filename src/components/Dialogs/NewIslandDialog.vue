@@ -55,6 +55,23 @@
 
           </q-input>
         </q-card-section>
+        <q-card-section>
+          <q-input
+            :disable="building.length === 0"
+            standout="bg-primary text-white"
+            v-model="identifier"
+            label="Identificador"
+            placeholder="Ex: 1"
+            type="number"
+          >
+            <template v-slot:append>
+              <q-icon
+                name="fingerprint"
+              />
+            </template>
+
+          </q-input>
+        </q-card-section>
         <q-card-section class="col q-mx-sm ">
           <q-btn
             :disable="!hasFloor"
@@ -106,7 +123,7 @@
         </q-card-section>
         <q-card-actions class="row justify-around">
           <q-btn
-            :disable="building.length === 0 || floor.length === 0"
+            :disable="building.length === 0 || floor.length === 0 || identifier.length === 0"
             label="submit"
             icon="send"
             color="positive"
@@ -164,11 +181,15 @@ export default {
       yPos: null
     })
 
+    const userStore = useUserStore()
+
     const toggleCoordsDialog = ref(false)
 
     const buildingOptions = ref([])
 
     const buildingFloors = ref([])
+
+    const identifier = ref('')
 
     const hasCoords = computed(() => {
       return coords.value.xPos !== null && coords.value.yPos !== null
@@ -184,13 +205,15 @@ export default {
 
     const createNewEcoIsland = async () => {
       const result = {
+        id: createId(building.value.name) + identifier.value,
         building: building.value.name,
         buildingId: buildingId.value,
         floor: floor.value.name == null ? floor.value : floor.value.name,
         description: desc.value,
         bins: '',
         xPos: coords.value.xPos,
-        yPos: coords.value.yPos
+        yPos: coords.value.yPos,
+        identifier: identifier.value
       }
 
       if (toggleGlass.value) {
@@ -255,7 +278,25 @@ export default {
           }
         })
     }
-    const userStore = useUserStore()
+
+    /**
+     * Takes the building name and creates the basis of the identifier for the Ecoisland
+     * @param buildingName - Name of the currently selected building
+     * @returns {string}
+     */
+    const createId = (buildingName) => {
+      const newBuildingName = buildingName
+        .normalize('NFD').replace(/\p{Diacritic}/gu, '') // removes accents and other weird characters
+        .toLowerCase()
+        .split(' ')
+        .map((value) => {
+          return value.slice(0, 3) // gets first 3 letters of each word
+        })
+        .filter(e => !(e === 'da' || e === 'de' || e === 'dos' || e === 'do' || e.length === 0)) // remove certain words
+        .join('_')
+
+      return 'E_' + newBuildingName + '_'
+    }
 
     const updateCoordinates = (newValue) => {
       coords.value.xPos = newValue.x
@@ -302,6 +343,7 @@ export default {
       toggleBio,
       toggleGlass,
       coords,
+      identifier,
 
       hasCoords,
       buildingId,

@@ -69,7 +69,10 @@
       </template>
 
       <template v-slot:body="props">
-        <q-tr :props="props" @click="openReport(props.row.id)" class="bg-grey-1">
+        <q-tr :props="props" @click="() =>
+          { test(props.row)
+          openReport(props.row.id)
+          }" class="bg-grey-1">
           <q-td
             v-for="col in props.cols.filter(e => e.name !== 'caixotes')"
             :key="col.name"
@@ -135,10 +138,14 @@ export default {
 
     const columns = [
       {
-        name: 'id',
-        label: 'ID',
-        field: 'id',
-        sortable: true
+        name: 'ecoisland',
+        label: 'Edifício',
+        field: 'ecoIsland',
+        sortable: true,
+        align: 'center',
+        format: (val) => {
+          return val.building
+        }
       },
       {
         name: 'ecoisland',
@@ -147,7 +154,7 @@ export default {
         sortable: true,
         align: 'center',
         format: (val) => {
-          return val === undefined ? '--' : val.id
+          return val.identifier
         }
       },
       {
@@ -311,7 +318,10 @@ export default {
       showDialog,
       filter,
 
-      downloadReports
+      downloadReports,
+      test: (a) => {
+        console.log(a)
+      }
 
     }
   }

@@ -15,9 +15,9 @@
       </q-card-section>
       <div class="q-ml-lg text-subtitle2 text-grey-7" style="cursor: pointer; display: inline-block" v-if="loaded">
         <div @click="router.push('/ecoisland/' + report.ecoIsland.id)">
-          Ecoílha {{ report.ecoIsland.id + ' - ' }}
+          Ecoílha {{ report.ecoIsland.identifier + ' - ' }}
           {{ report.ecoIsland.building + ',' }}
-          {{ report.ecoIsland.floor + ',' }}
+          Piso {{ report.ecoIsland.floor + ',' }}
           {{ report.ecoIsland.description }}
         </div>
       </div>

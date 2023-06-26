@@ -8,10 +8,10 @@
       class="q-ma-md"
       @click="router.go(-1)"
     />
-    <q-card>
+    <q-card v-if="loaded">
       <q-card-section class="row justify-between items-center">
         <div class="text-h4  text-grey-9 row">
-          Ecoílha ID {{ islandId }}
+          Ecoílha ID {{ ecoIsland.identifier }}
 
         </div>
         <q-btn
@@ -28,7 +28,7 @@
 
         <QRCodeDialog v-model:show-dialog="showDialogQR" :islandid="islandId"/>
       </q-card-section>
-      <div v-if="loaded">
+      <div>
         <q-card-section>
           <div class="text-h6">
             <div v-if="loaded" class="row">

@@ -173,8 +173,8 @@ export default {
       })]
     }
 
-    const test = () => {
-      console.log('test')
+    const test = (a) => {
+      console.log(a)
     }
 
     const downloadEcoislands = () => {
@@ -214,9 +214,9 @@ export default {
 
     const columns = [
       {
-        name: 'id',
+        name: 'identifier',
         label: 'ID',
-        field: 'id',
+        field: 'identifier',
         sortable: true,
         align: 'center'
 
@@ -291,6 +291,7 @@ export default {
       customFilter,
 
       downloadEcoislands
+
     }
   }
 }
