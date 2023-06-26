@@ -70,7 +70,7 @@
 
       <template v-slot:body="props">
         <q-tr :props="props" @click="() =>
-          { test(props.row)
+          {
           openReport(props.row.id)
           }" class="bg-grey-1">
           <q-td
