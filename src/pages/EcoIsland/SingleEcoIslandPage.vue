@@ -11,7 +11,7 @@
     <q-card>
       <q-card-section class="row justify-between items-center">
         <div class="text-h4  text-grey-9 row">
-          EcoIlha ID {{ islandId }}
+          Ecoílha ID {{ islandId }}
 
         </div>
         <q-btn
@@ -120,11 +120,11 @@
       v-if="userStore.hasEditPermissions()"
       class="glossy q-ml-lg q-mt-lg"
       rounded color="red-7"
-      label="Apagar Ecoilha"
+      label="Apagar Ecoílha"
       @click="showDeleteDialog = !showDeleteDialog"
     />
     <ConfirmationDialog
-      title="Tem a certeza que quer apagar a ecoilha?"
+      title="Tem a certeza que quer apagar a ecoílha?"
       negative-label="Apagar"
       positive-label="Cancelar"
       v-model:show-dialog="showDeleteDialog"
@@ -185,7 +185,7 @@ export default {
     const deleteIsland = () => {
       ecoIslandStore.deleteById(islandId)
         .then(() => {
-          notifySuccess('Ecoilha ' + islandId + ' foi apagada com sucesso')
+          notifySuccess('Ecoílha ' + islandId + ' foi apagada com sucesso')
           router.push('/ecoislands')
         })
         .catch((e) => {
@@ -197,7 +197,7 @@ export default {
       ecoIslandStore.updateEcoIsland(ecoIsland.value)
         .then(() => {
           hasChanges.value = false
-          notifySuccess('Ecoilha ' + islandId + ' foi atualizada com sucesso')
+          notifySuccess('Ecoílha ' + islandId + ' foi atualizada com sucesso')
         })
     }
 

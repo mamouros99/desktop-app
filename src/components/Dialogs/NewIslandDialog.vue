@@ -6,7 +6,7 @@
     <q-card class="col-4 bg-grey-3" style=" width: 40%">
       <q-form>
         <q-card-section class="text-center">
-          <div class="text-h6 text-primary">Criar Nova Ecoilha</div>
+          <div class="text-h6 text-primary">Criar Nova Ecoílha</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
@@ -207,7 +207,7 @@ export default {
 
       await ecoIslandStore.addEcoIsland(result)
         .then(() => {
-          notifySuccess('Ecoilha adicionada com sucesso')
+          notifySuccess('Ecoílha adicionada com sucesso')
         }
         )
         .catch(e => {

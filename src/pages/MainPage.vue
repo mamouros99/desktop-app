@@ -19,7 +19,7 @@
         <div v-else class="row full-width justify-around">
           <q-btn
             color="primary"
-            label="Ecoilhas"
+            label="Ecoílhas"
             @click="router.push('/ecoislands')"
           />
           <q-btn

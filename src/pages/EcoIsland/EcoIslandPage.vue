@@ -20,7 +20,7 @@
               name="add"
               class="q-pr-sm"
             />
-            <div>Nova EcoIlha</div>
+            <div>Nova Ecoílha</div>
 
           </q-btn>
         </div>
@@ -67,7 +67,7 @@
         <template v-slot:top>
           <div class="row full-width justify-between">
             <div class="text-h5 q-pl-lg col-4 text-primary">
-              Ecoilhas
+              Ecoílhas
               <q-btn
                 icon="download"
                 color="secondary"

@@ -90,7 +90,7 @@
             </q-item-section>
 
             <q-item-section>
-              Ecoilhas
+              Ecoílhas
             </q-item-section>
           </q-item>
 
