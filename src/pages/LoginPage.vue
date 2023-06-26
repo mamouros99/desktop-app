@@ -34,7 +34,7 @@ export default {
 
     onMounted(async () => {
       if (!code.value) {
-        window.location = process.env.DEV ? 'https://fenix.tecnico.ulisboa.pt/oauth/userdialog?client_id=288540197912751&redirect_uri=' + href : process.env.VUE_APP_FENIX_URL + href
+        window.location = process.env.VUE_APP_FENIX_URL + href
       } else {
         await userStore.checkAuth(code.value)
           .then(() => {

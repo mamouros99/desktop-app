@@ -8,7 +8,8 @@ COPY . .
 # build stage
 
 FROM develop-stage as build-stage
-RUN npm instal
+RUN npm install
+ARG VUE_APP_ENV_FILE
 RUN quasar build
 
 # prod stage
