@@ -14,14 +14,16 @@
 
         <div
           id="my-qr"
-          class="row q-pa-lg rounded-borders bg-white justify-center"
-          style="border: 2px solid black">
+          class="row q-pa-lg bg-white justify-center"
+        >
+
           <qrcode-vue
 
             :value="generateQrCode(islandid)"
             :size="300"
           />
           <div class="q-pt-lg" v-if="showUrl"><b>URL:</b> {{ generateQrCode(islandid) }}</div>
+
         </div>
       </q-card-section>
       <q-card-actions class="row justify-around ">
@@ -30,7 +32,7 @@
           color="secondary"
           icon="download"
           label="Descarregar Imagem"
-          @click="downloadQRCode(islandid)"
+          @click="downloadQRCode3(islandid)"
         />
         <q-toggle
           size="sm"
@@ -44,9 +46,8 @@
 
 <script>
 import QrcodeVue from 'qrcode.vue'
-import { toBlob } from 'html-to-image'
-import { saveAs } from 'file-saver'
 import { ref } from 'vue'
+import html2canvas from 'html2canvas'
 
 export default {
   // name: 'ComponentName',
@@ -74,15 +75,15 @@ export default {
       return process.env.VUE_APP_MOBILE_URL + '/report/' + id
     }
 
-    const downloadQRCode = (id) => {
-      toBlob(document.getElementById('my-qr'))
-        .then(function (blob) {
-          if (window.saveAs) {
-            window.saveAs(blob, 'qr-' + id + '.png')
-          } else {
-            saveAs(blob, 'qr-' + id + '.png')
-          }
-        })
+    const downloadQRCode = async () => {
+      const element = document.getElementById('my-qr'),
+        canvas = await html2canvas(element),
+        data = canvas.toDataURL('image/png', 1)
+
+      const link = document.createElement('a')
+      link.download = 'qr-code.png'
+      link.href = data
+      link.click()
     }
 
     return {
