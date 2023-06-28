@@ -10,9 +10,9 @@
     />
     <q-card v-if="loaded">
       <q-card-section class="row justify-between items-center">
-        <div class="text-h4  text-grey-9 row">
-          Ecoílha ID {{ ecoIsland.identifier }}
-
+        <div>
+          <span class="text-h4  text-grey-9">Ecoílha {{ ecoIsland.identifier }}</span>
+          <span class="text-primary text-subtitle1"> ID: <span class="text-italic">{{ ecoIsland.id }}</span></span>
         </div>
         <q-btn
           rounded
