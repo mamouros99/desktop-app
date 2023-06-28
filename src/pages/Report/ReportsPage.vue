@@ -113,7 +113,7 @@ import { useRouter } from 'vue-router'
 import useFunctions from 'src/composables/UseFunctions'
 import useVariables from 'src/composables/useVariables'
 import BinsLegendCard from 'components/BinsLegendCard.vue'
-import FilterDialog from 'components/Dialogs/FilterDialog.vue'
+import FilterDialog from 'components/Dialogs/ReportFilterDialog.vue'
 import useNotify from 'src/composables/UseNotify'
 import { saveAs } from 'file-saver'
 

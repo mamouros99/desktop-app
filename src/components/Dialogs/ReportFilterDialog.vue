@@ -100,7 +100,7 @@ import { ref } from 'vue'
 import FilterButton from 'components/FilterButton.vue'
 
 export default {
-  name: 'FilterDialog',
+  name: 'ReportFilterDialog',
   components: {
     FilterButton,
     DatePicker
@@ -109,9 +109,6 @@ export default {
   props: {
     showDialog: {
       type: Boolean,
-      required: true
-    },
-    oldFilter: {
       required: true
     }
   },

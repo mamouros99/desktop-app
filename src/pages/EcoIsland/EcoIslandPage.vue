@@ -60,13 +60,13 @@
         :rows="ecoIslandStore.getEcoIslands()"
         :columns="columns"
         row-key="id"
-        :filter="search"
+        :filter="currentFilter"
         :filter-method="customFilter"
       >
 
         <template v-slot:top>
           <div class="row full-width justify-between">
-            <div class="text-h5 q-pl-lg col-4 text-primary">
+            <div class="text-h5 q-pl-lg col-3 text-primary">
               Ecoílhas
               <q-btn
                 icon="download"
@@ -77,28 +77,58 @@
               />
             </div>
 
-            <div class="col-6 row justify-end items-center">
-              <q-select
-                class="col-3 q-pr-lg"
-                :options="options"
-                v-model="tagFilter"
-                rounded
-                standout="bg-primary"
-                hide-dropdown-icon
-                dense
+            <q-scroll-area class=" col-7">
+              <div class="row no-wrap">
+                <q-chip
+                  v-for="(id,index) in currentFilter.id"
+                  :key="id"
+                  removable
+                  @remove="currentFilter.id.splice(index, 1)"
+                  color="blue-5"
+                  icon="tag"
+                  :label="id"
+                />
+                <q-chip
+                  v-for="(ident,index) in currentFilter.identifier"
+                  :key="ident"
+                  removable
+                  @remove="currentFilter.identifier.splice(index, 1)"
+                  color="green-5"
+                  icon="fingerprint"
+                  :label="ident"
+                />
+                <q-chip
+                  v-for="(build,index) in currentFilter.building"
+                  :key="build"
+                  removable
+                  @remove="currentFilter.building.splice(index, 1)"
+                  color="yellow-5"
+                  icon="mdi-office-building"
+                  :label="build"
+                />
+                <q-chip
+                  v-for="(floor,index) in currentFilter.floor"
+                  :key="floor"
+                  removable
+                  @remove="currentFilter.floor.splice(index, 1)"
+                  color="orange-5"
+                  icon="mdi-stairs"
+                  :label="floor"
+                />
+              </div>
+            </q-scroll-area>
+
+            <div class="col-2 row justify-end items-center">
+              <q-btn
+                flat
+                color="primary"
+                label="Filtro"
+                icon="filter_alt"
+                @click="showFilterDialog = !showFilterDialog"
               />
-              <q-input
-                class="col-3"
-                rounded
-                v-model="search"
-                label="Search"
-              >
-                <template v-slot:append>
-                  <q-icon
-                    name="search"
-                  />
-                </template>
-              </q-input>
+              <EcoislandFilterDialog :old-filter="currentFilter"
+                                     v-model:show-dialog="showFilterDialog"
+                                     @update-filters="updateFilters"/>
             </div>
           </div>
 
@@ -143,9 +173,11 @@ import { useRouter } from 'vue-router'
 import useNotify from 'src/composables/UseNotify'
 import { useUserStore } from 'stores/UserStore'
 import { saveAs } from 'file-saver'
+import EcoislandFilterDialog from 'components/Dialogs/EcoislandFilterDialog.vue'
 
 export default {
   components: {
+    EcoislandFilterDialog,
     NewIslandDialog
   },
   // name: 'PageName',
@@ -155,6 +187,15 @@ export default {
       iconBinsExtra,
       iconBinsBase
     } = useVariables()
+
+    const showFilterDialog = ref(false)
+
+    const currentFilter = ref({
+      id: [],
+      identifier: [],
+      building: [],
+      floor: []
+    })
 
     const router = useRouter()
     const {
@@ -177,6 +218,13 @@ export default {
       console.log(a)
     }
 
+    const updateFilters = ({
+      name,
+      value
+    }) => {
+      currentFilter.value[name].push(value)
+    }
+
     const downloadEcoislands = () => {
       ecoIslandStore.downloadEcoislands()
         .then((res) => {
@@ -185,33 +233,41 @@ export default {
     }
 
     const customFilter = (rows) => {
-      if (!search.value) {
-        return rows
-      }
+      const filterIDRows = currentFilter.value.id.length === 0 ? rows : rows.filter(e => {
+        for (const id of currentFilter.value.id) {
+          if (e.id.includes(id)) {
+            return true
+          }
+        }
+        return false
+      })
 
-      const currentSearch = search.value.toLowerCase()
+      const filterIdentifierRows = currentFilter.value.identifier.length === 0 ? filterIDRows : filterIDRows.filter(e => {
+        for (const id of currentFilter.value.identifier) {
+          if (e.identifier.includes(id)) {
+            return true
+          }
+        }
+        return false
+      })
 
-      switch (tagFilter.value.toLowerCase()) {
-        case 'piso':
-          return rows.filter(e => {
-            return e.floor.toLowerCase().includes(currentSearch)
-          })
-        case 'id':
-          return rows.filter(e => {
-            return e.id.toString().toLowerCase().includes(currentSearch)
-          })
-        case 'edifício':
-          return rows.filter(e => {
-            return e.building.toLowerCase().includes(currentSearch)
-          })
-        default:
-          return rows.filter(e => {
-            return e.id.toString().includes(currentSearch) ||
-              e.building.toLowerCase().includes(currentSearch) ||
-              e.floor.toLowerCase().includes(currentSearch) ||
-              e.bins.includes(currentSearch)
-          })
-      }
+      const filteredBuildingRows = currentFilter.value.building.length === 0 ? filterIdentifierRows : filterIdentifierRows.filter(e => {
+        for (const id of currentFilter.value.building) {
+          if (e.building.includes(id)) {
+            return true
+          }
+        }
+        return false
+      })
+
+      return currentFilter.value.floor.length === 0 ? filteredBuildingRows : filteredBuildingRows.filter(e => {
+        for (const id of currentFilter.value.id) {
+          if (e.id.includes(id)) {
+            return true
+          }
+        }
+        return false
+      })
     }
 
     const columns = [
@@ -279,7 +335,12 @@ export default {
     return {
       ecoIslandStore,
       columns,
+
       showDialog,
+
+      showFilterDialog,
+      currentFilter,
+
       router,
       file,
       filteredIconBin,
@@ -291,6 +352,7 @@ export default {
       search,
       tagFilter,
       customFilter,
+      updateFilters,
 
       downloadEcoislands
 
