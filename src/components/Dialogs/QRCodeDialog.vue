@@ -32,7 +32,7 @@
           color="secondary"
           icon="download"
           label="Descarregar Imagem"
-          @click="downloadQRCode3(islandid)"
+          @click="downloadQRCode(islandid)"
         />
         <q-toggle
           size="sm"
