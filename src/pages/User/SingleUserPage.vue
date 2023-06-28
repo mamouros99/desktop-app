@@ -87,7 +87,8 @@
         </div>
       </q-card-section>
       <ConfirmationDialog
-        title="Tem a certeza que quer adicionar o Edificio?"
+        v-if="showAddDialog"
+        :title="'Tem a certeza que quer adicionar o edificio ' + buildToEdit.name+'?'"
         negative-label="Cancelar"
         positive-label="Adicionar"
         v-model:show-dialog="showAddDialog"
@@ -95,7 +96,9 @@
         @negative-function="buildToEdit = null"
       />
       <ConfirmationDialog
-        title="Tem a certeza que quer remover o Edificio?"
+        v-if="showDeleteDialog"
+
+        :title="'Tem a certeza que quer remover o edificio ' + buildToEdit.name+'?'"
         negative-label="Cancelar"
         positive-label="Remover"
         v-model:show-dialog="showDeleteDialog"
