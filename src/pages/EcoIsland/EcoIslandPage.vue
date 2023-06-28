@@ -189,25 +189,27 @@ export default {
         return rows
       }
 
+      const currentSearch = search.value.toLowerCase()
+
       switch (tagFilter.value.toLowerCase()) {
-        case 'Piso':
+        case 'piso':
           return rows.filter(e => {
-            return e.floor.toLowerCase().includes(search.value)
+            return e.floor.toLowerCase().includes(currentSearch)
           })
-        case 'Id':
+        case 'id':
           return rows.filter(e => {
-            return e.id.toString().toLowerCase().includes(search.value)
+            return e.id.toString().toLowerCase().includes(currentSearch)
           })
-        case 'Edifício':
+        case 'edifício':
           return rows.filter(e => {
-            return e.building.toLowerCase().includes(search.value)
+            return e.building.toLowerCase().includes(currentSearch)
           })
         default:
           return rows.filter(e => {
-            return e.id.toString().includes(search.value) ||
-              e.building.toLowerCase().includes(search.value) ||
-              e.floor.toLowerCase().includes(search.value) ||
-              e.bins.includes(search.value)
+            return e.id.toString().includes(currentSearch) ||
+              e.building.toLowerCase().includes(currentSearch) ||
+              e.floor.toLowerCase().includes(currentSearch) ||
+              e.bins.includes(currentSearch)
           })
       }
     }
