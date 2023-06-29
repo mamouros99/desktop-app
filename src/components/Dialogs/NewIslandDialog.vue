@@ -1,5 +1,6 @@
 <template>
   <q-dialog
+    no-backdrop-dismiss
     :model-value="showDialog"
     @update:modelValue="(value) => emitUpdate('update:showDialog', value )"
   >
@@ -32,6 +33,7 @@
             :options="buildingFloors"
             :option-label="'name'"
             label="Piso"
+            @update:modelValue="updateFloor"
           >
             <template v-slot:append>
               <q-icon
@@ -39,6 +41,16 @@
               />
             </template>
           </q-select>
+          <q-card-section v-if="subBuildingFloors.length !== 0">
+            <q-select
+              standout="bg-primary text-white"
+              v-model="subFloor"
+              :options="subBuildingFloors"
+              :option-label="'name'"
+              label="SubPiso"
+              @update:modelValue="cleanCoords()"
+            />
+          </q-card-section>
         </q-card-section>
         <q-card-section>
           <q-input
@@ -72,33 +84,24 @@
 
           </q-input>
         </q-card-section>
-        <q-card-section class="col q-mx-sm ">
-          <q-btn
-            :disable="!hasFloor"
-            flat
-            icon="location_on"
-            label="Posição"
-            @click="toggleCoordsDialog = !toggleCoordsDialog"
-          >
-            <q-icon
-              v-if="hasCoords"
-              class="q-pl-sm"
-              name="check"
-              size="sm"
-              color="positive"
-            />
-            <q-icon
-              v-else
-              class="q-pl-sm"
-              name="close"
-              size="sm"
-              color="negative"
-            />
-          </q-btn>
-          <q-card-section horizontal>
+        <q-card-section horizontal class="row q-mx-sm ">
+          <q-card-section horizontal class="col-4 q-pl-lg">
+            <q-btn
+              :disable="!hasFloor"
+              :color="hasCoords ? 'primary' : 'grey-8' "
+              flat
+              label="Posição"
+              @click="toggleCoordsDialog = !toggleCoordsDialog"
+            >
+              <q-icon
+                name="location_on"
+              />
+            </q-btn>
+          </q-card-section>
+          <q-card-section class="col">
             <q-card-section>
               <div class="q-pl-md text-h6">Caixotes Extra:</div>
-              <q-card-section>
+              <q-card-section h>
                 <q-toggle
                   label="Vidro"
                   class="text-bold"
@@ -123,12 +126,30 @@
         </q-card-section>
         <q-card-actions class="row justify-around">
           <q-btn
-            :disable="building.length === 0 || floor.length === 0 || identifier.length === 0"
-            label="submit"
+            label="cancelar"
+            icon="close"
+            color="negative"
+            @click="() => {
+              resetFields
+              emitUpdate('update:showDialog', false )
+            }"
+          />
+
+          <q-btn
             icon="send"
             color="positive"
-            @click="createNewEcoIsland"
-          />
+            label="Submeter"
+            @click="() => {
+
+              if(checkFields()){
+                createNewEcoIsland()}
+            }"
+          >
+            <q-tooltip>
+              Tesst
+            </q-tooltip>
+          </q-btn>
+
         </q-card-actions>
       </q-form>
 
@@ -168,11 +189,13 @@ export default {
     const ecoIslandStore = useEcoIslandStore()
     const {
       notifyError,
+      notifyWarning,
       notifySuccess
     } = useNotify()
 
     const building = ref('')
     const floor = ref('')
+    const subFloor = ref('')
     const desc = ref('')
     const toggleGlass = ref(false)
     const toggleBio = ref(false)
@@ -188,6 +211,7 @@ export default {
     const buildingOptions = ref([])
 
     const buildingFloors = ref([])
+    const subBuildingFloors = ref([])
 
     const identifier = ref('')
 
@@ -200,7 +224,11 @@ export default {
     })
 
     const buildingId = computed(() => {
-      return floor.value.id == null ? building.value.id : floor.value.id
+      if (subFloor.value) {
+        return subFloor.value.id
+      } else {
+        return floor.value.id == null ? building.value.id : floor.value.id
+      }
     })
 
     const createNewEcoIsland = async () => {
@@ -208,7 +236,7 @@ export default {
         id: createId(building.value.name) + identifier.value,
         building: building.value.name,
         buildingId: buildingId.value,
-        floor: floor.value.name == null ? floor.value : floor.value.name,
+        floor: subFloor.value ? subFloor.value.name : (floor.value.name == null ? floor.value : floor.value.name),
         description: desc.value,
         bins: '',
         xPos: coords.value.xPos,
@@ -246,20 +274,56 @@ export default {
       desc.value = ''
     }
 
+    const cleanSubFloor = () => {
+      subFloor.value = ''
+    }
+
     const emitUpdate = (event, value) => {
       emit(event, value)
     }
 
     const resetFields = () => {
+      building.value = ''
+      cleanFloorAndDesc()
+      cleanSubFloor()
+      cleanCoords()
+      cleanBins()
+    }
+
+    const cleanCoords = () => {
+      coords.value.yPos = null
+      coords.value.xPos = null
+    }
+
+    const cleanBins = () => {
       toggleBio.value = false
       toggleGlass.value = false
-      building.value = ''
-      floor.value = ''
-      desc.value = ''
+    }
+
+    const checkFields = () => {
+      if (building.value.length === 0) {
+        notifyWarning('Selecione um edifício', 'top')
+        return false
+      } else if (floor.value.length === 0) {
+        notifyWarning('Selecione um piso', 'top')
+        return false
+      } else if (identifier.value.length === 0) {
+        notifyWarning('Insira um identificador', 'top')
+        return false
+      } else if (subBuildingFloors.value.length > 0 && !subFloor.value) {
+        notifyWarning('Selecione um subpiso', 'top')
+        return false
+      } else {
+        return true
+      }
     }
 
     const updateBuilding = async () => {
       cleanFloorAndDesc()
+      cleanCoords()
+      cleanSubFloor()
+      cleanBins()
+
       await ecoIslandStore.fetchBuilding(building.value.id)
         .then((res) => {
           const build = res.data.containedSpaces.filter(floor => {
@@ -275,6 +339,30 @@ export default {
             buildingFloors.value = build
           } else {
             buildingFloors.value = ['-']
+          }
+        })
+    }
+
+    const updateFloor = async () => {
+      cleanSubFloor()
+      cleanCoords()
+      if (floor.value === '-') {
+        return
+      }
+
+      await ecoIslandStore.fetchBuilding(floor.value.id)
+        .then((res) => {
+          const build = res.data.containedSpaces.filter(floor => {
+            return floor.type === 'FLOOR'
+          }).sort((a, b) => {
+            const nameA = a.name.toLowerCase()
+            const nameB = b.name.toLowerCase()
+
+            return nameA - nameB
+          })
+
+          if (build.length !== 0) {
+            subBuildingFloors.value = build
           }
         })
     }
@@ -338,6 +426,7 @@ export default {
 
     return {
       building,
+      subFloor,
       floor,
       desc,
       toggleBio,
@@ -351,14 +440,20 @@ export default {
       toggleCoordsDialog,
 
       buildingFloors,
+      subBuildingFloors,
       buildingOptions,
       emitUpdate,
       resetFields,
       createNewEcoIsland,
 
       updateBuilding,
+      updateFloor,
       cleanFloorAndDesc,
+      cleanSubFloor,
+      cleanCoords,
       updateCoordinates,
+
+      checkFields,
 
       test: (a, b) => {
         console.log(a, b)

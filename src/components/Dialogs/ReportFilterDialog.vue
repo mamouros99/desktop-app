@@ -81,15 +81,7 @@
           </q-card-section>
         </q-card>
       </q-card-section>
-      <q-card-actions class="row justify-center">
-        <q-btn
-          rounded
-          color="secondary"
-          @click="emitUpdate('update:showDialog',false)"
-        >
-          Aplicar Filtos
-        </q-btn>
-      </q-card-actions>
+
     </q-card>
 
   </q-dialog>

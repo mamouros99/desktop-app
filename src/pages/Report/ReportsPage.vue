@@ -35,13 +35,10 @@
             </q-input>
 
             <q-btn
-              rounded
               flat
-              class="bg-primary text-white q-px-sm q-mx-lg"
-              dense
+              color="primary"
               label="Filtro"
               icon="filter_alt"
-              size="sm"
               @click="toggleDialog"
             />
           </div>
@@ -154,7 +151,7 @@ export default {
         sortable: true,
         align: 'center',
         format: (val) => {
-          return val.identifier
+          return val.id
         }
       },
       {

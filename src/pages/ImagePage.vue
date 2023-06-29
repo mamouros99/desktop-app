@@ -41,7 +41,6 @@ export default {
         canvas.value.height = image.height
         ctx.drawImage(image, 0, 0, image.width, image.height)
         if (hasCoord.value) {
-          console.log('test', props.x, props.y)
           drawCircle(ctx, props.x, props.y)
           drawCircle2(ctx, props.x, props.y)
         }

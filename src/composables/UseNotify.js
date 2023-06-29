@@ -3,20 +3,22 @@ import { useQuasar } from 'quasar'
 export default function useNotify () {
   const quasar = useQuasar()
 
-  const notifySuccess = (msg) => {
+  const notifySuccess = (msg, position) => {
     quasar.notify({
       message: msg || 'Obrigado pela ajuda!',
       color: 'positive',
-      timeout: 3000,
+      timeout: 5000,
+      position: position || 'bottom',
       icon: 'park'
     })
   }
 
-  const notifyWarning = (msg) => {
+  const notifyWarning = (msg, position) => {
     quasar.notify({
       message: msg,
       color: 'warning',
-      timeout: 3000,
+      timeout: 5000,
+      position: position || 'bottom',
       icon: 'warning'
     })
   }
@@ -24,9 +26,9 @@ export default function useNotify () {
   const notifyError = (msg) => {
     quasar.notify({
       message: msg,
-      location: top,
+      position: 'top',
       color: 'negative',
-      timeout: 3000,
+      timeout: 5000,
       icon: 'error'
     })
   }

@@ -273,7 +273,7 @@ export default {
     const columns = [
       {
         name: 'identifier',
-        label: 'ID',
+        label: 'Identificador',
         field: 'identifier',
         sortable: true,
         align: 'center'
