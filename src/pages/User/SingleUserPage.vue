@@ -66,8 +66,13 @@
               flat
               class="text-blue"
               :label="build.name"
-              disable
-            />
+            >
+              <q-icon
+                right
+                name="email"
+                :color="build.receiveEmails ? 'primary' : 'red-5'"
+              />
+            </q-btn>
           </div>
         </div>
         <div class="row justify-end" v-if="rolehasChanged && userStore.hasAdminPermissions()">
@@ -231,6 +236,7 @@ export default {
         await userStore.fetchMyBuildings()
           .then((res) => {
             userBuildings.value = res.data
+            console.log(userBuildings)
           })
       }
       userBuildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
