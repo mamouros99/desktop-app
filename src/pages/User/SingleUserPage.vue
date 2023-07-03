@@ -33,10 +33,19 @@
         <div class="row items-center">
           <div class="text-bold q-mr-sm">Edifícios:</div>
           <q-btn
-            v-if="userStore.hasAdminPermissions()"
+            v-if="userStore.hasAdminPermissions() && !toggleBuildings"
             icon="edit"
             label="Editar"
             color="primary"
+            size="sm"
+            rounded
+            @click="toggleBuildings = !toggleBuildings"
+          />
+          <q-btn
+            v-if="userStore.hasAdminPermissions() && toggleBuildings"
+            icon="stop"
+            label="Cancelar"
+            color="secondary"
             size="sm"
             rounded
             @click="toggleBuildings = !toggleBuildings"
@@ -61,18 +70,22 @@
           </div>
         </div>
         <div v-else class="q-px-lg">
-          <div v-for="build in userBuildings" :key="build">
-            <q-btn
-              flat
-              class="text-blue"
-              :label="build.name"
-            >
-              <q-icon
-                right
-                name="email"
-                :color="build.receiveEmails ? 'primary' : 'red-5'"
+          <div class="row justify-start" v-for="build in userBuildings" :key="build">
+            <div class="col-4">
+              <q-btn
+                flat
+                class="text-blue"
+                :label="build.name"
+                @click="toogleReceiveEmail(build.id)"
               />
-            </q-btn>
+            </div>
+            <q-icon
+              class="col-2"
+              size="md"
+              name="email"
+              :color="build.receiveEmails ? 'primary' : 'red-5'"
+              @click="toogleReceiveEmail(build.id)"
+            />
           </div>
         </div>
         <div class="row justify-end" v-if="rolehasChanged && userStore.hasAdminPermissions()">
@@ -236,11 +249,28 @@ export default {
         await userStore.fetchMyBuildings()
           .then((res) => {
             userBuildings.value = res.data
-            console.log(userBuildings)
           })
       }
       userBuildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
     })
+
+    const toogleReceiveEmail = async (buildingId) => {
+      await userStore.toogleReceiveEmailStatus(buildingId.id)
+
+      if (userId.value !== userStore.getUsername()) {
+        await userStore.fetchBuildsByUsername(user.value.username)
+          .then((res) => {
+            userBuildings.value = res.data
+          })
+      } else {
+        await userStore.fetchMyBuildings()
+          .then((res) => {
+            userBuildings.value = res.data
+          })
+      }
+
+      userBuildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
+    }
 
     function alphabeticalSort (a, b) {
       if (a < b) {
@@ -276,7 +306,9 @@ export default {
 
       showAddDialog,
       showDeleteDialog,
-      buildToEdit
+      buildToEdit,
+
+      toogleReceiveEmail
 
     }
   }

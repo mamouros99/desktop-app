@@ -107,6 +107,11 @@ export const useUserStore = defineStore('user', () => {
       .get('/building/mybuildings')
   }
 
+  const toogleReceiveEmailStatus = async (buildingId) => {
+    return await api
+      .put('/building/' + buildingId + '/emailstatus')
+  }
+
   return {
     getUser,
 
@@ -131,6 +136,7 @@ export const useUserStore = defineStore('user', () => {
     addBuildingToUser,
     deleteBuildingFromUser,
     fetchBuildsByUsername,
-    fetchMyBuildings
+    fetchMyBuildings,
+    toogleReceiveEmailStatus
   }
 })
