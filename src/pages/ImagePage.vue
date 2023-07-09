@@ -16,7 +16,7 @@ import { useEcoIslandStore } from 'stores/EcoIslandStore'
 
 export default {
   name: 'ImagePage',
-  props: ['islandId', 'x', 'y', 'disable'],
+  props: ['islandId', 'x', 'y', 'disable', 'bins'],
   emits: ['updateCoords'],
   setup (props, { emit }) {
     const canvas = ref()
@@ -41,8 +41,7 @@ export default {
         canvas.value.height = image.height
         ctx.drawImage(image, 0, 0, image.width, image.height)
         if (hasCoord.value) {
-          drawCircle(ctx, props.x, props.y)
-          drawCircle2(ctx, props.x, props.y)
+          drawCircle(props.x, props.y)
         }
       }
       image.src = imageSource
@@ -60,8 +59,7 @@ export default {
       const ctx = canvas.value.getContext('2d')
       ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
       ctx.drawImage(image, 0, 0, image.width, image.height)
-      drawCircle(ctx, x - rect.x, y - rect.y)
-      drawCircle2(ctx, x - rect.x, y - rect.y)
+      drawCircle(x - rect.x, y - rect.y)
       emit('updateCoords', {
         x: Math.round(x - rect.x),
         y: Math.round(y - rect.y)
@@ -72,18 +70,47 @@ export default {
       emit(event, value)
     }
 
-    const drawCircle = (ctx, x, y) => {
-      ctx.beginPath()
-      ctx.arc(x, y, 10, 0, 2 * Math.PI)
-      ctx.lineWidth = 5
-      ctx.strokeStyle = '#03c04a'
-      ctx.stroke()
+    /**
+     * Draws a circle. The circle depends on the bins that exist on the ecoisland
+     * @param x - x coordinate of where to draw the circle
+     * @param y - y coordinate of where to draw the circle
+     */
+    const drawCircle = (x, y) => {
+      const ctx = canvas.value.getContext('2d')
+
+      switch (props.bins) {
+        case '11':
+          drawPartialCircle(ctx, x, y, 15, 0, 2 * Math.PI / 5, '#FFD133')
+          drawPartialCircle(ctx, x, y, 15, 2 * Math.PI / 5, 4 * Math.PI / 5, '#111111')
+          drawPartialCircle(ctx, x, y, 15, 4 * Math.PI / 5, 6 * Math.PI / 5, '#338AFF')
+          drawPartialCircle(ctx, x, y, 15, 6 * Math.PI / 5, 8 * Math.PI / 5, '#5bfd02')
+          drawPartialCircle(ctx, x, y, 15, 8 * Math.PI / 5, 0, '#785802')
+          break
+        case '01':
+          drawPartialCircle(ctx, x, y, 15, 0, Math.PI / 2, '#FFD133')
+          drawPartialCircle(ctx, x, y, 15, Math.PI / 2, Math.PI, '#111111')
+          drawPartialCircle(ctx, x, y, 15, Math.PI, 3 * Math.PI / 2, '#338AFF')
+          drawPartialCircle(ctx, x, y, 15, 3 * Math.PI / 2, 0, '#5bfd02')
+          break
+        case '10':
+          drawPartialCircle(ctx, x, y, 15, 0, Math.PI / 2, '#FFD133')
+          drawPartialCircle(ctx, x, y, 15, Math.PI / 2, Math.PI, '#111111')
+          drawPartialCircle(ctx, x, y, 15, Math.PI, 3 * Math.PI / 2, '#338AFF')
+          drawPartialCircle(ctx, x, y, 15, 3 * Math.PI / 2, 0, '#785802')
+          break
+        default:
+          drawPartialCircle(ctx, x, y, 15, 0, 2 * Math.PI / 3, '#FFD133')
+          drawPartialCircle(ctx, x, y, 15, 2 * Math.PI / 3, 4 * Math.PI / 3, '#111111')
+          drawPartialCircle(ctx, x, y, 15, 4 * Math.PI / 3, 0, '#338AFF')
+      }
     }
 
-    const drawCircle2 = (ctx, x, y) => {
+    const drawPartialCircle = (ctx, x, y, radius, startRad, endRad, color) => {
       ctx.beginPath()
-      ctx.arc(x, y, 4, 0, 2 * Math.PI)
-      ctx.fillStyle = '#03c04a'
+      ctx.moveTo(x, y)
+      ctx.arc(x, y, radius, startRad, endRad)
+      ctx.closePath()
+      ctx.fillStyle = color
       ctx.fill()
     }
 

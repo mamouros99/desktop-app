@@ -48,6 +48,7 @@
                 :islandid="ecoIsland.buildingId"
                 :x="ecoIsland.xPos"
                 :y="ecoIsland.yPos"
+                :bins="ecoIsland.bins"
                 @updateCoords="updateCoordinates"
                 :floor="ecoIsland.floor"
                 :building-name="ecoIsland.building"

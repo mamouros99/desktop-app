@@ -159,6 +159,7 @@
         v-model:show-dialog="toggleCoordsDialog"
         :x="coords.xPos"
         :y="coords.yPos"
+        :bins="bins"
         @updateCoords="updateCoordinates"
         :floor="floor.name ? floor.name : floor"
         :building-name="building.name"
@@ -244,17 +245,7 @@ export default {
         identifier: identifier.value
       }
 
-      if (toggleGlass.value) {
-        result.bins = '1' + result.bins
-      } else {
-        result.bins = '0' + result.bins
-      }
-
-      if (toggleBio.value) {
-        result.bins = '1' + result.bins
-      } else {
-        result.bins = '0' + result.bins
-      }
+      result.bins = bins.value
 
       await ecoIslandStore.addEcoIsland(result)
         .then(() => {
@@ -278,6 +269,18 @@ export default {
       subFloor.value = ''
       subBuildingFloors.value = []
     }
+
+    const bins = computed(() => {
+      if (toggleBio.value && toggleGlass.value) {
+        return '11'
+      } else if (toggleBio.value) {
+        return '10'
+      } else if (toggleGlass.value) {
+        return '01'
+      } else {
+        return '00'
+      }
+    })
 
     const emitUpdate = (event, value) => {
       emit(event, value)
@@ -433,6 +436,7 @@ export default {
       buildingId,
       hasFloor,
       toggleCoordsDialog,
+      bins,
 
       buildingFloors,
       subBuildingFloors,

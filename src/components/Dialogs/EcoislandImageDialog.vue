@@ -14,6 +14,7 @@
         :island-id="islandid"
         :x="x"
         :y="y"
+        :bins="bins"
         @updateCoords="update"
         :disable="disable"
       />
@@ -56,6 +57,10 @@ export default {
       required: true
     },
     buildingName: {
+      type: String,
+      required: true
+    },
+    bins: {
       type: String,
       required: true
     }

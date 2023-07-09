@@ -25,7 +25,7 @@
               :size="300"
             />
           </div>
-          <div class="col-12 q-pt-lg text-center" v-if="showUrl"><b>URL:</b> {{ generateQrCode(islandid) }}</div>
+          <div class="col-12 q-pt-lg text-center" v-if="showUrl">{{ generateQrCode(islandid) }}</div>
 
         </div>
       </q-card-section>
