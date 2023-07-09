@@ -52,7 +52,7 @@
           />
         </div>
         <div v-if="toggleBuildings" class="q-px-lg">
-          <div v-for="build in buildings" :key="build">
+          <div class=" q-mb-sm" v-for="build in buildings" :key="build">
             <q-btn
               flat
               :class="userHasBuilding(build)? 'text-blue' : 'text-grey'"
@@ -70,19 +70,23 @@
           </div>
         </div>
         <div v-else class="q-px-lg">
-          <div class="row justify-start" v-for="build in userBuildings" :key="build">
+          <div class="row justify-start q-mb-sm" v-for="build in userBuildings" :key="build">
             <div class="col-4">
               <q-btn
+                :disable="userStore.getUsername() !== user.username"
                 flat
                 class="text-blue"
                 :label="build.name"
                 @click="toogleReceiveEmail(build.id)"
               />
             </div>
-            <q-icon
-              class="col-2"
+            <q-btn
+              :disable="userStore.getUsername() !== user.username"
+              round
+              unelevated
+              dense
               size="md"
-              name="email"
+              icon="email"
               :color="build.receiveEmails ? 'primary' : 'red-5'"
               @click="toogleReceiveEmail(build.id)"
             />

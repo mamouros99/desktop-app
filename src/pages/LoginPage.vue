@@ -15,6 +15,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { computed, onMounted } from 'vue'
 import { useUserStore } from 'stores/UserStore'
 import useNotify from 'src/composables/UseNotify'
+import { LocalStorage } from 'quasar'
 
 export default {
   // name: 'PageName',
@@ -44,7 +45,13 @@ export default {
             notifyError(errorMessage)
           })
           .finally(() => {
-            router.push('/')
+            if (LocalStorage.has('beforePath')) {
+              const path = LocalStorage.getItem('beforePath')
+              LocalStorage.remove('beforePath')
+              router.push(path)
+            } else {
+              router.push({ name: 'home' })
+            }
           })
       }
     })

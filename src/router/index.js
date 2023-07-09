@@ -2,6 +2,7 @@ import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
 import { useUserStore } from 'stores/UserStore'
+import { LocalStorage } from 'quasar'
 
 /*
  * If not building with SSR mode, you can
@@ -38,6 +39,10 @@ export default route(function () {
       next('/')
     } else if (to.name === 'user' && (to.params.userid !== userstore.getUsername() && !userstore.hasAdminPermissions())) {
       next('/')
+    } else if (to.name === 'autherror') {
+      LocalStorage.set('beforePath', from.path)
+      console.log(from.path)
+      next()
     } else {
       next()
     }

@@ -53,7 +53,7 @@ module.exports = configure(function (ctx) {
       vueRouterMode: 'history', // available values: 'hash', 'history',
       env: require('dotenv').config({ path: '.env.' + process.env.VUE_APP_ENV_FILE }).parsed,
       // transpile: false,
-      publicPath: '/',
+      publicPath: process.env.VUE_APP_ENV_FILE === 'local' ? '/' : '/desktop',
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).

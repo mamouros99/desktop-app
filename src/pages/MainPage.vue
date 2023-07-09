@@ -35,9 +35,10 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import { useUserStore } from 'stores/UserStore'
 import { useRouter } from 'vue-router'
+import { LocalStorage } from 'quasar'
 
 export default defineComponent({
   name: 'IndexPage',
@@ -45,6 +46,10 @@ export default defineComponent({
   setup () {
     const userStore = useUserStore()
     const router = useRouter()
+
+    onMounted(() => {
+      LocalStorage.remove('beforePath')
+    })
 
     return {
       userStore,

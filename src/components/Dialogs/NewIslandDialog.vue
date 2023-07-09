@@ -276,6 +276,7 @@ export default {
 
     const cleanSubFloor = () => {
       subFloor.value = ''
+      subBuildingFloors.value = []
     }
 
     const emitUpdate = (event, value) => {
@@ -326,9 +327,9 @@ export default {
 
       await ecoIslandStore.fetchBuilding(building.value.id)
         .then((res) => {
-          const build = res.data.containedSpaces.filter(floor => {
-            return floor.type === 'FLOOR'
-          }).sort((a, b) => {
+          console.log(res.data)
+
+          const build = res.data.containedSpaces.sort((a, b) => {
             const nameA = a.name.toLowerCase()
             const nameB = b.name.toLowerCase()
 
@@ -340,21 +341,22 @@ export default {
           } else {
             buildingFloors.value = ['-']
           }
+
+          console.log(build)
         })
     }
 
     const updateFloor = async () => {
       cleanSubFloor()
       cleanCoords()
+      console.log(floor.value)
       if (floor.value === '-') {
         return
       }
 
       await ecoIslandStore.fetchBuilding(floor.value.id)
         .then((res) => {
-          const build = res.data.containedSpaces.filter(floor => {
-            return floor.type === 'FLOOR'
-          }).sort((a, b) => {
+          const build = res.data.containedSpaces.sort((a, b) => {
             const nameA = a.name.toLowerCase()
             const nameB = b.name.toLowerCase()
 

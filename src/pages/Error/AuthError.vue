@@ -7,10 +7,17 @@
       </div>
 
       <q-btn
-        class="q-mt-xl"
+        class="q-mt-xl q-mr-lg"
         color="white"
         text-color="blue"
-        unelevated
+        @click="login()"
+        label="Login"
+        no-caps
+      />
+
+      <q-btn
+        class="q-mt-xl q-ml-lg"
+        color="teal-4"
         @click="reload()"
         label="Go Home"
         no-caps
@@ -30,7 +37,14 @@ export default defineComponent({
     const reload = () => {
       router.push({ name: 'home' })
     }
-    return { reload }
+
+    const login = () => {
+      router.push({ name: 'login' })
+    }
+    return {
+      reload,
+      login
+    }
   }
 })
 </script>

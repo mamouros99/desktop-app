@@ -276,6 +276,7 @@ export default {
         label: 'Identificador',
         field: 'identifier',
         sortable: true,
+        sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
         align: 'center'
 
       },
