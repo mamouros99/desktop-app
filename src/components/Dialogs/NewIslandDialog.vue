@@ -160,7 +160,7 @@
         :x="coords.xPos"
         :y="coords.yPos"
         @updateCoords="updateCoordinates"
-        :floor="floor.name"
+        :floor="floor.name ? floor.name : floor"
         :building-name="building.name"
       />
     </q-card>
@@ -327,29 +327,23 @@ export default {
 
       await ecoIslandStore.fetchBuilding(building.value.id)
         .then((res) => {
-          console.log(res.data)
-
           const build = res.data.containedSpaces.sort((a, b) => {
             const nameA = a.name.toLowerCase()
             const nameB = b.name.toLowerCase()
 
             return nameA - nameB
-          })
-
+          }).filter(e => e.name !== '' && !isNaN(e.name) && !e.name.includes('.'))
           if (build.length !== 0) {
             buildingFloors.value = build
           } else {
             buildingFloors.value = ['-']
           }
-
-          console.log(build)
         })
     }
 
     const updateFloor = async () => {
       cleanSubFloor()
       cleanCoords()
-      console.log(floor.value)
       if (floor.value === '-') {
         return
       }
@@ -364,7 +358,7 @@ export default {
           })
 
           if (build.length !== 0) {
-            subBuildingFloors.value = build
+            subBuildingFloors.value = build.filter(e => e.name !== '' && !isNaN(e.name) && !e.name.includes('.'))
           }
         })
     }
@@ -391,7 +385,6 @@ export default {
     const updateCoordinates = (newValue) => {
       coords.value.xPos = newValue.x
       coords.value.yPos = newValue.y
-      console.log(coords.value)
     }
 
     onMounted(async () => {
