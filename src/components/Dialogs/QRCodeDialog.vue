@@ -2,6 +2,7 @@
   <q-dialog
     :model-value="showDialog"
     @update:modelValue="(value) => emitUpdate('update:showDialog', value )"
+    @before-show="fileName = 'qr-' + islandid.toLowerCase()"
   >
     <q-card
       style="max-width: 500px; width: 50%"
@@ -29,22 +30,35 @@
         </div>
       </q-card-section>
       <q-card-actions class="row justify-around ">
-        <q-btn
-          class="q-mb-sm"
-          color="secondary"
-          icon="download"
-          label="Descarregar Imagem"
-          @click="downloadQRCode(islandid)"
-        />
-        <q-toggle
-          size="sm"
-          label="Show ID"
-          v-model="showId"/>
-        <q-toggle
-          size="sm"
-          label="Show URL"
-          v-model="showUrl"
-        />
+        <q-card-section>
+          <q-input
+            filled
+            dense
+            v-model="fileName"
+            placeholder="default: qr-code"
+            class="q-pb-sm"
+            label="Nome Ficheiro"
+          />
+          <q-btn
+            class="q-mb-sm"
+            color="secondary"
+            icon="download"
+            label="Descarregar Imagem"
+            @click="downloadQRCode(islandid)"
+          />
+        </q-card-section>
+        <q-card-section>
+          <q-toggle
+            size="sm"
+            label="Show ID"
+            v-model="showId"/>
+          <q-toggle
+            size="sm"
+            label="Show URL"
+            v-model="showUrl"
+          />
+        </q-card-section>
+
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -78,6 +92,8 @@ export default {
     const showUrl = ref(false)
     const showId = ref(true)
 
+    const fileName = ref('')
+
     const generateQrCode = (id) => {
       return process.env.VUE_APP_MOBILE_URL + '/report/' + id
     }
@@ -88,7 +104,7 @@ export default {
         data = canvas.toDataURL('image/png', 1)
 
       const link = document.createElement('a')
-      link.download = 'qr-code.png'
+      link.download = fileName.value
       link.href = data
       link.click()
     }
@@ -98,7 +114,9 @@ export default {
       emitUpdate,
       downloadQRCode,
       showUrl,
-      showId
+      showId,
+
+      fileName
     }
   }
 }
