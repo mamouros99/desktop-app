@@ -14,15 +14,17 @@
 
         <div
           id="my-qr"
-          class="row q-pa-lg bg-white justify-center"
+          class=" q-pa-lg bg-white"
+          style="position: relative"
         >
-
-          <qrcode-vue
-
-            :value="generateQrCode(islandid)"
-            :size="300"
-          />
-          <div class="q-pt-lg" v-if="showUrl"><b>URL:</b> {{ generateQrCode(islandid) }}</div>
+          <div class="col-12 text-center q-pb-sm text-subtitle2" v-if="showId">{{ islandid }}</div>
+          <div class="col-12 row justify-center">
+            <qrcode-vue
+              :value="generateQrCode(islandid)"
+              :size="300"
+            />
+          </div>
+          <div class="col-12 q-pt-lg text-center" v-if="showUrl"><b>URL:</b> {{ generateQrCode(islandid) }}</div>
 
         </div>
       </q-card-section>
@@ -34,6 +36,10 @@
           label="Descarregar Imagem"
           @click="downloadQRCode(islandid)"
         />
+        <q-toggle
+          size="sm"
+          label="Show ID"
+          v-model="showId"/>
         <q-toggle
           size="sm"
           label="Show URL"
@@ -70,6 +76,7 @@ export default {
       emit(event, value)
     }
     const showUrl = ref(false)
+    const showId = ref(true)
 
     const generateQrCode = (id) => {
       return process.env.VUE_APP_MOBILE_URL + '/report/' + id
@@ -90,7 +97,8 @@ export default {
       generateQrCode,
       emitUpdate,
       downloadQRCode,
-      showUrl
+      showUrl,
+      showId
     }
   }
 }
