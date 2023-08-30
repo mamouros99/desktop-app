@@ -37,7 +37,14 @@ const routes = [
         name: 'login',
         component: () => import('pages/LoginPage.vue')
       },
-
+      {
+        path: 'question',
+        name: 'question',
+        component: () => import('pages/QuestionPage.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
       {
         path: 'autherror',
         name: 'autherror',

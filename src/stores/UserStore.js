@@ -55,7 +55,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const getAuth = async (code) => {
-    await api.get('/auth/fenix/' + code)
+    await api.get('/auth/fenix/desktop/' + code)
       .then((response) => {
         LocalStorage.set('user', response.data)
         user.value = LocalStorage.getItem('user')

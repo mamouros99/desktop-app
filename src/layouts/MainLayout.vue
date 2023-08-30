@@ -94,6 +94,16 @@
             </q-item-section>
           </q-item>
 
+          <q-item clickable v-ripple :to="{name: 'question'}">
+            <q-item-section avatar>
+              <q-icon name="question_mark"/>
+            </q-item-section>
+
+            <q-item-section>
+              Perguntas
+            </q-item-section>
+          </q-item>
+
           <q-item
             v-if="userStore.hasAdminPermissions()"
             clickable v-ripple :to="{name: 'admin'}">
