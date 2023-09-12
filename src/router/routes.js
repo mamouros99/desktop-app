@@ -38,12 +38,18 @@ const routes = [
         component: () => import('pages/LoginPage.vue')
       },
       {
-        path: 'question',
-        name: 'question',
+        path: 'questions',
+        name: 'questions',
         component: () => import('pages/QuestionPage.vue'),
         meta: {
           requiresAuth: true
         }
+      },
+      {
+        path: 'question/:questionId',
+        name: 'question',
+        component: () => import('pages/QuestionChatPage.vue'),
+        meta: { requiresAuth: true }
       },
       {
         path: 'autherror',

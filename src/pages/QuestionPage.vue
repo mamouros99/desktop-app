@@ -10,10 +10,7 @@
 
       <template v-slot:body="props">
         <q-tr :props="props"
-              @click="() => {
-                  props.expand = !props.expand
-                   test(props.expand)
-              }"
+              @click="router.push('/question/' + props.row.id) "
         >
           <q-td auto-width key="question" :props="props">
             {{ formatDateTime(props.row.time) }}
@@ -37,37 +34,7 @@
 
           </q-td>
         </q-tr>
-        <q-tr v-if="props.expand" :props="props">
-          <q-td colspan="100%" class="bg-grey-2">
-            <q-card flat class="bg-transparent">
-              <q-card-section horizontal class="justify-between">
-                <div class="text-primary text-subtitle2 q-pr-lg">Resposta</div>
-                <q-btn
-                  v-if="props.row.answer && !props.row.archived"
-                  right
-                  dense
-                  flat
-                  icon="send"
-                  color="secondary"
-                  @click="submitAnswer(props.row)"
-                />
-                <div
-                  v-else>
-                  {{ props.row.answer }}
-                </div>
-              </q-card-section>
-              <q-item-label class="q-ml-sm">
-                <q-input
-                  v-if="!props.row.archived"
-                  label="Escreva aqui a resposta..."
-                  v-model="props.row.answer"
-                  type="text"
-                />
 
-              </q-item-label>
-            </q-card>
-          </q-td>
-        </q-tr>
       </template>
 
     </q-table>
@@ -78,11 +45,14 @@
 import { onMounted, ref } from 'vue'
 import { useQuestionStore } from 'stores/QuestionStore'
 import useFunctions from 'src/composables/UseFunctions'
+import { useRouter } from 'vue-router'
 
 export default {
 
   setup () {
     const { formatDateTime } = useFunctions()
+
+    const router = useRouter()
 
     const columns = [
       {
@@ -124,26 +94,23 @@ export default {
     const questionStore = useQuestionStore()
     onMounted(async () => {
       await questionStore.fetchQuestions()
-        .catch(res => {
+        .catch(() => {
           console.log('Something went wrong')
         })
     }
     )
 
-    const submitAnswer = async (question) => {
-      await questionStore.submitAnswer(question)
-    }
-
     const hideArchived = ref(false)
 
     return {
+      router,
+
       questionStore,
       formatDateTime,
       columns,
       test: (va) => {
         console.log(va)
       },
-      submitAnswer,
       hideArchived
     }
   }

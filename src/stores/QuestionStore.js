@@ -28,17 +28,27 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
     await api.get('/question/get/all')
       .then((response) => {
         questions.value = response.data
+        console.log(questions.value)
       })
   }
 
-  const submitAnswer = async (answer) => {
-    await api.put('/question/put', answer)
-      .then((response) => {
-        notification.notifySuccess('Resposta submetida com sucesso')
-        fetchQuestions()
+  const fetchQuestionById = async (id) => {
+    return await api.get('/question/get/' + id)
+  }
+
+  const archiveQuestion = async (id) => {
+    await api.put('/question/archive/' + id)
+  }
+
+  const addNewAnswer = async (answer, questionId) => {
+    console.log(questionId, '-', answer)
+
+    return await api.post('/question/answer/' + questionId, answer)
+      .then(() => {
+        notification.notifySuccess('Mensagem foi enviada com sucesso')
       })
       .catch(() => {
-        notification.notifyError('Houve um problema na subnissão da resposta')
+        notification.notifyError()
       })
   }
 
@@ -47,8 +57,12 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
 
   return {
     addNewQuestion,
+    archiveQuestion,
     fetchQuestions,
     getQuestions,
-    submitAnswer
+
+    addNewAnswer,
+
+    fetchQuestionById
   }
 })

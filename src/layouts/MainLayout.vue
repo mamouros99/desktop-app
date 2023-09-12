@@ -94,7 +94,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple :to="{name: 'question'}">
+          <q-item clickable v-ripple :to="{name: 'questions'}">
             <q-item-section avatar>
               <q-icon name="question_mark"/>
             </q-item-section>
