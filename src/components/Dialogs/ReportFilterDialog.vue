@@ -70,7 +70,7 @@
                 <q-checkbox v-model="filter.binsSelected" val="glass" label="Vidro" color="green-6"/>
                 <q-checkbox v-model="filter.binsSelected" val="bio" label="Biorresíduos" color="brown-5"/>
               </div>
-              <div class="text-subtitle2"> Mostrar relatórios que contêm caixotes:</div>
+              <div class="text-subtitle2"> Mostrar alertas que contêm caixotes:</div>
               <div class="q-gutter-sm">
                 <q-checkbox v-model="filter.problemsSelected" val="dirty" label="Sujos"/>
                 <q-checkbox v-model="filter.problemsSelected" val="full" label="Cheios"/>

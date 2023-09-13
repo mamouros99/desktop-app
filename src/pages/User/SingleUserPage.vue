@@ -33,7 +33,7 @@
         <div class="row items-center">
           <div class="text-bold q-mr-sm">Edifícios:</div>
           <q-btn
-            v-if="userStore.hasAdminPermissions() && !toggleBuildings"
+            v-if=" !toggleBuildings"
             icon="edit"
             label="Editar"
             color="primary"
@@ -42,7 +42,7 @@
             @click="toggleBuildings = !toggleBuildings"
           />
           <q-btn
-            v-if="userStore.hasAdminPermissions() && toggleBuildings"
+            v-if=" toggleBuildings"
             icon="stop"
             label="Cancelar"
             color="secondary"
@@ -80,16 +80,18 @@
                 @click="toogleReceiveEmail(build.id)"
               />
             </div>
-            <q-btn
-              :disable="userStore.getUsername() !== user.username"
-              round
-              unelevated
-              dense
-              size="md"
-              icon="email"
-              :color="build.receiveEmails ? 'primary' : 'red-5'"
-              @click="toogleReceiveEmail(build.id)"
-            />
+            <div class="row items-center">
+              <q-btn
+                :disable="userStore.getUsername() !== user.username"
+                round
+                unelevated
+                dense
+                size="md"
+                icon="email"
+                :color="build.receiveEmails ? 'primary' : 'red-5'"
+                @click="toogleReceiveEmail(build.id)"
+              />
+            </div>
           </div>
         </div>
         <div class="row justify-end" v-if="rolehasChanged && userStore.hasAdminPermissions()">
@@ -195,12 +197,12 @@ export default {
       }
 
       userStore.addBuildingToUser(userBuilding, user.value.username)
-        .catch((error) => {
-          notifyError(error)
-        })
         .then(() => {
           notifySuccess('Edificio adicionado com sucesso')
           location.reload()
+        })
+        .catch((error) => {
+          notifyError(error)
         })
     }
 

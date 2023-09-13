@@ -80,7 +80,7 @@
             </q-item-section>
 
             <q-item-section>
-              Relatórios
+              Alertas
             </q-item-section>
           </q-item>
 

@@ -35,13 +35,12 @@ export default route(function () {
     // eslint-disable-next-line no-unused-vars
     const userstore = useUserStore()
 
-    if ((to.meta.requiresAuth && !userstore.hasAuthenticatied()) || (to.meta.requiresAdmin && !userstore.hasAdminPermissions())) {
+    if ((to.meta.requiresAuth && !userstore.hasAuthenticatied()) || (to.meta.requiresAdmin && !userstore.hasAdminPermissions()) || (to.meta.requiresEditor && !userstore.hasEditPermissions())) {
       next('/')
     } else if (to.name === 'user' && (to.params.userid !== userstore.getUsername() && !userstore.hasAdminPermissions())) {
       next('/')
     } else if (to.name === 'autherror') {
       LocalStorage.set('beforePath', from.path)
-      console.log(from.path)
       next()
     } else {
       next()

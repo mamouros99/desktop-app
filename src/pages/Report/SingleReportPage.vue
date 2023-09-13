@@ -10,7 +10,7 @@
     />
     <q-card flat bordered class="bg-grey-2">
       <q-card-section class="row justify-between items-center">
-        <div class="text-h4  text-grey-9">Relatório ID {{ reportId }}</div>
+        <div class="text-h4  text-grey-9">Alerta ID {{ reportId }}</div>
         <div class="q-pr-md text-h5  text-grey-8" v-if="loaded"> {{ formatDateTime(report.time) }}</div>
       </q-card-section>
       <div class="q-ml-lg text-subtitle2 text-grey-7" style="cursor: pointer; display: inline-block" v-if="loaded">
@@ -110,11 +110,11 @@
       v-if="userStore.hasEditPermissions()"
       class="q-ml-lg q-mt-lg"
       rounded color="red-7"
-      label="Apagar Relatório"
+      label="Apagar Alerta"
       @click="showDeleteDialog = !showDeleteDialog"
     />
     <ConfirmationDialog
-      title="Tem a certeza que quer apagar o relatório?"
+      title="Tem a certeza que quer apagar o alerta?"
       negative-label="Apagar"
       positive-label="Cancelar"
       v-model:show-dialog="showDeleteDialog"

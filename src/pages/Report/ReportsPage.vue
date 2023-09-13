@@ -4,7 +4,7 @@
     <q-table
       card-class="bg-grey-2"
       flat bordered
-      title="Relatórios"
+      title="Alertas"
       :rows="reportStore.getReports()"
       :columns="columns"
       :filter="filter"
@@ -15,7 +15,7 @@
       <template v-slot:top>
         <div class="row full-width justify-between">
           <div class="text-h6 q-pl-lg">
-            Relatórios
+            Alertas
             <q-btn
               flat
               round

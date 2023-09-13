@@ -2,7 +2,7 @@
   "name": "eco-tecnico",
   "version": "0.0.1",
   "description": "Projeto Tese: monitorização de residuos",
-  "productName": "Eco Tecnico Desktop",
+  "productName": "TFaD Desktop",
   "author": "mamouros99 <tiago.mamouros@tecnico.ulisboa.pt>",
   "private": true,
   "scripts": {

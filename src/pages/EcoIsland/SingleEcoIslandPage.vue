@@ -83,8 +83,13 @@
         <q-card-section class="col-12">
           <div class="row">
             <div class="text-h6">Caixotes</div>
-            <q-btn v-if="userStore.hasEditPermissions()" flat dense color="primary" class="text-italic" label="editar"
-                   @click="binsDialogToggle = !binsDialogToggle"/>
+            <q-btn
+              v-if="userStore.hasEditPermissions()"
+              flat dense color="primary"
+              class="text-italic"
+              label="editar"
+              @click="binsDialogToggle = !binsDialogToggle"
+            />
             <BinsEditDialog :bins="ecoIsland.bins" @updateBins="a => {
               if(ecoIsland.bins !== a){
                 hasChanges = true
@@ -99,6 +104,7 @@
               flat
               v-for="bin in getEcoIslandBins(ecoIsland.bins)"
               :key="bin.name"
+              :disable="!userStore.hasEditPermissions()"
               :class="colSizeFromBins"
               icon="mdi-trash-can-outline"
               :color="bin.color"

@@ -5,8 +5,8 @@
       <q-card-section>
         <img
           alt="Quasar logo"
-          src="~assets/ecologo.png"
-          style="max-width: 300px">
+          src="~assets/logo.png"
+          style="max-width: 400px">
       </q-card-section>
       <q-card-actions class="row justify-around">
         <q-btn
@@ -24,8 +24,15 @@
           />
           <q-btn
             color="primary"
-            label="Relatórios"
+            label="Alertas"
+            class="q-mx-xl"
             @click="router.push('/reports')"
+          />
+          <q-btn
+            v-if="userStore.hasEditPermissions()"
+            color="primary"
+            label="Questões"
+            @click="router.push('/questions')"
           />
         </div>
 

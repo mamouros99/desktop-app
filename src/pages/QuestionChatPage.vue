@@ -24,47 +24,54 @@
           :stamp="functions.formatDateTime(q.time)"
         />
       </q-card-section>
-      <q-card-section v-if="!question.archived" horizontal class="justify-end q-mr-sm ">
-        <div class="row items-center justify-start col ">
+      <q-separator/>
+      <q-card-section horizontal class="justify-between q-mr-sm row">
+        <div class="row items-center col-3">
           <q-btn
             icon="save"
-            label="Arquivar"
+            :label="question.archived? 'Desarquivar' : 'Arquivar'"
             color="warning"
-            @click="archiveQuestion()"
+            @click="question.archived? unarchiveQuestion() : archiveQuestion()"
             dense
             rounded
             unelevated
             class="q-pa-sm q-ml-md"
           />
         </div>
-        <div class="row items-center">
-          <q-btn
-            flat
-            round
-            dense
-            class="q-mx-md"
-            color="primary"
-            icon="send"
-            @click="() => {addAnswer()
+        <div
+          v-if="!question.archived"
+          class="row col-9 "
+        >
+          <div class="row items-center">
+            <q-btn
+              flat
+              round
+              dense
+              class="q-mx-md col-2"
+              color="primary"
+              icon="send"
+              @click="() => {addAnswer()
             newAnswer = ''
           }"
+            />
+          </div>
+          <q-input
+            placeholder="Nova Mensagem..."
+            color="secondary"
+            class="q-my-md col-10"
+
+            v-model="newAnswer"
+            type="text"
+            rounded
+            dense
+            outlined
           />
         </div>
-        <q-input
-          placeholder="Nova Mensagem..."
-          color="secondary"
-          class="q-my-md"
-          style="width: 70%"
-          v-model="newAnswer"
-          type="text"
-          rounded
-          dense
-          outlined
-        />
+        <q-card-section v-else>
+          Este chat foi arquivado.
+        </q-card-section>
       </q-card-section>
-      <q-card-section v-else>
-        Este chat foi arquivado.
-      </q-card-section>
+
     </q-card>
   </q-page>
 </template>
@@ -87,6 +94,10 @@ export default {
     const functions = useFunctions()
 
     const addAnswer = async () => {
+      if (!newAnswer.value) {
+        return
+      }
+
       const auxAnswer = {
         text: newAnswer.value,
         fromApp: true,
@@ -105,6 +116,11 @@ export default {
       fetch()
     }
 
+    const unarchiveQuestion = async () => {
+      await questionStore.unarchiveQuestion(id)
+      fetch()
+    }
+
     const fetch = () => {
       questionStore.fetchQuestionById(id)
         .then((result) => {
@@ -115,6 +131,7 @@ export default {
     return {
       addAnswer,
       archiveQuestion,
+      unarchiveQuestion,
 
       functions,
       question,
