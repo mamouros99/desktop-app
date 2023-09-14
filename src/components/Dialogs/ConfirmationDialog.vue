@@ -11,7 +11,7 @@
       <q-card-section class="row justify-around">
         <q-btn
           rounded
-          icon="close"
+          :icon=" negativeIcon || 'close'"
           :label="negativeLabel"
           v-close-popup
           color="negative"
@@ -36,7 +36,7 @@
 <script>
 
 export default {
-  props: ['title', 'positiveLabel', 'negativeLabel', 'showDialog'],
+  props: ['title', 'positiveLabel', 'negativeLabel', 'showDialog', 'negativeIcon'],
   emits: ['positiveFunction', 'negativeFunction', 'update:showDialog'],
   setup (props, { emit }) {
     const emitEvent = (event, value) => {

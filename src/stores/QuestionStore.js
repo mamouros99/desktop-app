@@ -44,6 +44,10 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
     await api.put('/question/unarchive/' + id)
   }
 
+  const deleteQuestion = async (id) => {
+    await api.delete('/question/delete/' + id)
+  }
+
   const addNewAnswer = async (answer, questionId) => {
     console.log(questionId, '-', answer)
 
@@ -68,6 +72,7 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
     getQuestions,
 
     addNewAnswer,
+    deleteQuestion,
 
     fetchQuestionById
   }

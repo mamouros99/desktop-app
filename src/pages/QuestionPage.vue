@@ -6,7 +6,18 @@
       row-key="id"
       title="Dúvidas e Questões"
       title-class="text-primary text-h4"
+      :filter="filterObject"
+      :filter-method="customFilter"
+      :rows-per-page-options="[10,20,0]"
     >
+
+      <template v-slot:top-right>
+        <q-toggle
+          label="Arquivados"
+          left-label
+          v-model="filterObject.showArchived"
+        />
+      </template>
 
       <template v-slot:body="props">
         <q-tr :props="props"
@@ -22,14 +33,14 @@
             <q-icon
               class="q-ml-md"
               v-if="props.row.archived"
-              name="check"
-              color="positive"
+              name="lock"
+              color="warning"
             />
             <q-icon
               class="q-ml-md"
               v-else
               name="pending"
-              color="negative"
+              color="positive"
             />
 
           </q-td>
@@ -53,6 +64,8 @@ export default {
     const { formatDateTime } = useFunctions()
 
     const router = useRouter()
+    const questionStore = useQuestionStore()
+    const filterObject = ref({ showArchived: false })
 
     const columns = [
       {
@@ -81,7 +94,7 @@ export default {
       {
         name: 'archived',
         required: true,
-        label: 'Archived',
+        label: 'Arquivados',
         field: row => row.archived,
         align: 'center',
         format: val => {
@@ -91,7 +104,14 @@ export default {
       }
     ]
 
-    const questionStore = useQuestionStore()
+    const customFilter = (rows) => {
+      if (!filterObject.value.showArchived) {
+        return rows.filter(e => !e.archived)
+      } else {
+        return rows
+      }
+    }
+
     onMounted(async () => {
       await questionStore.fetchQuestions()
         .catch(() => {
@@ -99,8 +119,6 @@ export default {
         })
     }
     )
-
-    const hideArchived = ref(false)
 
     return {
       router,
@@ -111,7 +129,8 @@ export default {
       test: (va) => {
         console.log(va)
       },
-      hideArchived
+      filterObject,
+      customFilter
     }
   }
 }

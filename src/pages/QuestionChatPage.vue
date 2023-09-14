@@ -1,13 +1,31 @@
 <template>
   <q-page padding>
     <q-card flat v-if="question" class="">
-      <q-card-section class="text-h4">
+      <q-card-section class="text-h4 q-py-md justify-between" horizontal>
+        <div>
+          <q-btn
+            flat
+            icon="arrow_back"
+            @click="router.push('/questions')"
+          />
+          {{ question.question }}
+        </div>
         <q-btn
-          flat
-          icon="arrow_back"
-          @click="router.push('/questions')"
+          label="Apagar"
+          color="negative"
+          icon-right="delete"
+          rounded
+          class="q-mr-md"
+          @click="deleteDialogToggle = ! deleteDialogToggle"
         />
-        {{ question.question }}
+        <ConfirmationDialog
+          title="Tem a certeza que quer apagar a Pergunta"
+          negative-label="Apagar"
+          negative-icon="delete"
+          positive-label="Cancelar"
+          v-model:show-dialog="deleteDialogToggle"
+          @negative-function="deleteQuestion()"
+        />
       </q-card-section>
       <q-separator/>
       <q-card-section>
@@ -81,8 +99,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { useQuestionStore } from 'stores/QuestionStore'
 import useFunctions from 'src/composables/UseFunctions'
+import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
 
 export default {
+  components: { ConfirmationDialog },
   // name: 'PageName',
   setup () {
     const route = useRoute()
@@ -92,6 +112,8 @@ export default {
     const questionStore = useQuestionStore()
     const newAnswer = ref('')
     const functions = useFunctions()
+
+    const deleteDialogToggle = ref(false)
 
     const addAnswer = async () => {
       if (!newAnswer.value) {
@@ -121,6 +143,11 @@ export default {
       fetch()
     }
 
+    const deleteQuestion = async () => {
+      await questionStore.deleteQuestion(id)
+      await router.push('/questions')
+    }
+
     const fetch = () => {
       questionStore.fetchQuestionById(id)
         .then((result) => {
@@ -136,9 +163,12 @@ export default {
       functions,
       question,
       id,
-      newAnswer,
 
-      router
+      newAnswer,
+      deleteQuestion,
+      router,
+
+      deleteDialogToggle
     }
   }
 }
