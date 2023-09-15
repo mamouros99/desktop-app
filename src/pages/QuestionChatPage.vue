@@ -8,9 +8,10 @@
             icon="arrow_back"
             @click="router.push('/questions')"
           />
-          {{ question.question }}
+          {{ question.user.username }} - {{ formatDate(question.time) }}
         </div>
         <q-btn
+          unelevated
           label="Apagar"
           color="negative"
           icon-right="delete"
@@ -31,7 +32,7 @@
       <q-card-section>
         <q-chat-message
           :text="[question.question]"
-          :stamp="functions.formatDateTime(question.time)"
+          :stamp="formatDateTime(question.time)"
         />
 
         <q-chat-message
@@ -107,12 +108,15 @@ export default {
   setup () {
     const route = useRoute()
     const router = useRouter()
+    const questionStore = useQuestionStore()
+    const {
+      formatDateTime,
+      formatDate
+    } = useFunctions()
+
     const id = route.params.questionId
     const question = ref()
-    const questionStore = useQuestionStore()
     const newAnswer = ref('')
-    const functions = useFunctions()
-
     const deleteDialogToggle = ref(false)
 
     const addAnswer = async () => {
@@ -160,7 +164,8 @@ export default {
       archiveQuestion,
       unarchiveQuestion,
 
-      functions,
+      formatDate,
+      formatDateTime,
       question,
       id,
 
