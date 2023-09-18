@@ -30,6 +30,17 @@
           </q-select>
 
         </div>
+        <div class="row items-center" v-if="userStore.hasEditPermissions()">
+          <div class="text-bold q-mr-sm">Receber Questões:</div>
+          <q-toggle
+            :disable="user.username !== userStore.getUsername()"
+            v-model="currentQuestion"
+            color="secondary"
+            checked-icon="check"
+            unchecked-icon="clear"
+            @update:model-value="updateReceiveQuestions"
+          />
+        </div>
         <div class="row items-center">
           <div class="text-bold q-mr-sm">Edifícios:</div>
           <q-btn
@@ -171,6 +182,8 @@ export default {
     const showAddDialog = ref(false)
     const buildToEdit = ref()
 
+    const currentQuestion = ref()
+
     const rolehasChanged = computed(() => {
       return role.value !== user.value.role
     })
@@ -230,16 +243,7 @@ export default {
     }
 
     onMounted(async () => {
-      if (userId.value === userStore.getUsername()) {
-        user.value = Object.assign({}, userStore.getUser())
-        role.value = user.value.role
-      } else {
-        userStore.fetchUserById(userId.value)
-          .then((res) => {
-            user.value = Object.assign({}, res.data)
-            role.value = user.value.role
-          })
-      }
+      fetchUser()
 
       await ecoIslandStore.fetchAlamedaBuildings()
         .then(res => {
@@ -278,6 +282,29 @@ export default {
       userBuildings.value.sort((a, b) => alphabeticalSort(a.name.toUpperCase(), b.name.toUpperCase()))
     }
 
+    const fetchUser = () => {
+      if (userStore.hasAdminPermissions()) {
+        userStore.fetchUserById(userId.value)
+          .then((res) => {
+            user.value = Object.assign({}, res.data)
+            role.value = user.value.role
+            currentQuestion.value = user.value.receiveQuestions
+          })
+      } else {
+        userStore.findMyUser()
+          .then((res) => {
+            user.value = Object.assign({}, res.data)
+            role.value = user.value.role
+            currentQuestion.value = user.value.receiveQuestions
+          })
+      }
+    }
+
+    const updateReceiveQuestions = async () => {
+      await userStore.toggleReceiveQuestionById(user.value.username)
+      fetchUser()
+    }
+
     function alphabeticalSort (a, b) {
       if (a < b) {
         return -1
@@ -314,8 +341,10 @@ export default {
       showDeleteDialog,
       buildToEdit,
 
-      toogleReceiveEmail
-
+      toogleReceiveEmail,
+      currentQuestion,
+      fetchUser,
+      updateReceiveQuestions
     }
   }
 }

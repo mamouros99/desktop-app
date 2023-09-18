@@ -90,6 +90,10 @@ export const useEcoIslandStore = defineStore('island', () => {
     })
   }
 
+  const archiveAllIslandReports = async (islandId) => {
+    await api.put('/ecoisland/archive/' + islandId)
+  }
+
   return {
     fetchEcoIslands,
     getEcoIslandsById,
@@ -103,6 +107,7 @@ export const useEcoIslandStore = defineStore('island', () => {
     fetchBuilding,
     fetchBuildingImage,
 
-    downloadEcoislands
+    downloadEcoislands,
+    archiveAllIslandReports
   }
 })

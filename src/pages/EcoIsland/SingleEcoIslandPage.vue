@@ -123,13 +123,23 @@
         </q-card-actions>
       </div>
     </q-card>
-    <q-btn
-      v-if="userStore.hasEditPermissions()"
-      class="glossy q-ml-lg q-mt-lg"
-      rounded color="red-7"
-      label="Apagar Ecoílha"
-      @click="showDeleteDialog = !showDeleteDialog"
-    />
+    <div class="row justify-between">
+      <q-btn
+        v-if="userStore.hasEditPermissions()"
+        class="glossy q-ml-lg q-mt-lg"
+        rounded color="red-7"
+        label="Apagar Ecoílha"
+        @click="showDeleteDialog = !showDeleteDialog"
+      />
+
+      <q-btn
+        v-if="userStore.hasEditPermissions()"
+        class="glossy q-mr-lg q-mt-lg"
+        rounded color="primary"
+        label="Arquivar Relatórios"
+        @click="archiveAllIslandReports()"
+      />
+    </div>
     <ConfirmationDialog
       title="Tem a certeza que quer apagar a ecoílha?"
       negative-label="Apagar"
@@ -261,6 +271,10 @@ export default {
       return [a]
     })
 
+    const archiveAllIslandReports = () => {
+      ecoIslandStore.archiveAllIslandReports(islandId)
+    }
+
     return {
       router,
       islandId,
@@ -285,7 +299,9 @@ export default {
       updateEcoisland,
       updateCoordinates,
       hasChanges,
-      currentEcoIsland
+      currentEcoIsland,
+
+      archiveAllIslandReports
     }
   }
 }

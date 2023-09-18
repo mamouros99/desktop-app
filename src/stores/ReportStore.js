@@ -21,13 +21,6 @@ export const useReportStore = defineStore('report', () => {
   }
 
   const getReportById = async (id) => {
-    const result = {
-      data: reports
-        .value.find(e => e.id === +id)
-    }
-    if (result.data !== undefined) {
-      return result
-    }
     return await api.get('/report/' + id)
   }
 
@@ -37,11 +30,17 @@ export const useReportStore = defineStore('report', () => {
     })
   }
 
+  const toggleArchiveReport = async (id) => {
+    await api.put('/report/archive/' + id)
+  }
+
   return {
     fetchReports,
     getReports,
     getReportById,
     deleteById,
-    downloadReports
+    downloadReports,
+
+    toggleArchiveReport
   }
 })

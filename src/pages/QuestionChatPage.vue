@@ -40,7 +40,7 @@
           :key="q.id"
           :text="[q.text]"
           :sent="q.fromApp"
-          :stamp="functions.formatDateTime(q.time)"
+          :stamp="formatDateTime(q.time)"
         />
       </q-card-section>
       <q-separator/>
@@ -57,11 +57,15 @@
             class="q-pa-sm q-ml-md"
           />
         </div>
+        <div v-if="!question.showQuestion" class="row items-center">
+          Esta mensagem foi apagado pelo autor
+        </div>
         <div
-          v-if="!question.archived"
+          v-else-if="!question.archived"
           class="row col-9 "
         >
-          <div class="row items-center">
+          <div
+            class="row full-width  items-center">
             <q-btn
               flat
               round
@@ -73,19 +77,21 @@
             newAnswer = ''
           }"
             />
-          </div>
-          <q-input
-            placeholder="Nova Mensagem..."
-            color="secondary"
-            class="q-my-md col-10"
+            <q-input
+              placeholder="Nova Mensagem..."
+              color="secondary"
+              class="q-my-md col-9"
 
-            v-model="newAnswer"
-            type="text"
-            rounded
-            dense
-            outlined
-          />
+              v-model="newAnswer"
+              type="text"
+              rounded
+              dense
+              outlined
+            />
+          </div>
+
         </div>
+
         <q-card-section v-else>
           Este chat foi arquivado.
         </q-card-section>

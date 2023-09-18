@@ -86,6 +86,13 @@ export const useUserStore = defineStore('user', () => {
   const fetchUserById = async (id) => {
     return await api.get('/user/get/' + id)
   }
+  const findMyUser = async () => {
+    return await api.get('/user/findMyUser')
+  }
+
+  const toggleReceiveQuestionById = async (id) => {
+    await api.put('/user/receiveQuestion/' + id)
+  }
 
   const addBuildingToUser = async (userBuilding, username) => {
     return await api
@@ -129,9 +136,11 @@ export const useUserStore = defineStore('user', () => {
     hasAdminPermissions,
 
     fetchAllUsers,
+    findMyUser,
     getUsers,
     updateUserRole,
     fetchUserById,
+    toggleReceiveQuestionById,
 
     addBuildingToUser,
     deleteBuildingFromUser,

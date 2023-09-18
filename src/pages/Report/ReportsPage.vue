@@ -11,7 +11,6 @@
       :filter-method="customFilter"
       row-key="id"
     >
-
       <template v-slot:top>
         <div class="row full-width justify-between">
           <div class="text-h6 q-pl-lg">
@@ -71,7 +70,7 @@
           openReport(props.row.id)
           }" class="bg-grey-1">
           <q-td
-            v-for="col in props.cols.filter(e => e.name !== 'caixotes')"
+            v-for="col in props.cols.filter(e => e.name !== 'caixotes' && e.name !== 'archived')"
             :key="col.name"
             :props="props"
           >
@@ -92,6 +91,13 @@
               name="chat"
               size="sm"
               color="grey-5"
+            />
+          </q-td>
+          <q-td class="text-center">
+            <q-icon
+              :name="props.row.archived? 'lock' : 'schedule'"
+              size="sm"
+              :color="props.row.archived? 'positive' : 'warning'"
             />
           </q-td>
         </q-tr>
@@ -191,6 +197,13 @@ export default {
         sort: (a, b) => {
           return (a.match(/1/g) || []).length - (b.match(/1/g) || []).length
         }
+      },
+      {
+        name: 'archived',
+        label: 'Arquivados',
+        field: 'archived',
+        sortable: true,
+        align: 'center'
       }
     ]
 

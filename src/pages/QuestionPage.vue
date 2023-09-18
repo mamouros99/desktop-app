@@ -29,6 +29,9 @@
           <q-td key="question" :props="props">
             {{ props.row.question }}
           </q-td>
+          <q-td key="question" :props="props">
+            {{ props.row.user.username }}
+          </q-td>
           <q-td auto-width key="question" :props="props">
             <q-icon
               class="q-ml-md"
@@ -86,6 +89,17 @@ export default {
         label: 'Pergunta',
         align: 'left',
         field: row => row.question,
+        format: val => {
+          return val
+        },
+        sortable: true
+      },
+      {
+        name: 'user',
+        required: true,
+        label: 'Autor',
+        field: row => row.user.username,
+        align: 'left',
         format: val => {
           return val
         },

@@ -11,8 +11,6 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
     return questions.value
   }
   const addNewQuestion = async (question) => {
-    console.log(question)
-
     return await api
       .post('question/add', question)
       .then(() => {
@@ -28,7 +26,6 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
     await api.get('/question/get/all')
       .then((response) => {
         questions.value = response.data
-        console.log(questions.value)
       })
   }
 
@@ -49,8 +46,6 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
   }
 
   const addNewAnswer = async (answer, questionId) => {
-    console.log(questionId, '-', answer)
-
     return await api.post('/question/answer/' + questionId, answer)
       .then(() => {
         notification.notifySuccess('Mensagem foi enviada com sucesso')

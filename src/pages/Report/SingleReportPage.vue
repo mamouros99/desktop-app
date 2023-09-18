@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page v-if="report" padding>
     <q-btn
       flat
       color="primary"
@@ -10,7 +10,11 @@
     />
     <q-card flat bordered class="bg-grey-2">
       <q-card-section class="row justify-between items-center">
-        <div class="text-h4  text-grey-9">Alerta ID {{ reportId }}</div>
+        <div class="text-h4  text-grey-9">Alerta ID {{ reportId }}
+          <q-icon
+            :name=" report.archived? 'lock' : 'lock_open'"
+          />
+        </div>
         <div class="q-pr-md text-h5  text-grey-8" v-if="loaded"> {{ formatDateTime(report.time) }}</div>
       </q-card-section>
       <div class="q-ml-lg text-subtitle2 text-grey-7" style="cursor: pointer; display: inline-block" v-if="loaded">
@@ -113,6 +117,14 @@
       label="Apagar Alerta"
       @click="showDeleteDialog = !showDeleteDialog"
     />
+    <q-btn
+      v-if="userStore.hasEditPermissions() && report"
+      class="q-ml-lg q-mt-lg"
+      rounded color="warning"
+      :label="report.archived? 'Desarquivar Alerta': 'Arquivar Alerta'"
+      :icon="report.archived? 'lock_open' : 'lock'"
+      @click="toggleArchiveReport"
+    />
     <ConfirmationDialog
       title="Tem a certeza que quer apagar o alerta?"
       negative-label="Apagar"
@@ -154,6 +166,11 @@ export default {
     const report = ref()
     const loaded = ref(false)
     const showDeleteDialog = ref(false)
+
+    const toggleArchiveReport = async () => {
+      await reportStore.toggleArchiveReport(reportId)
+      await fetchReport()
+    }
 
     const deleteReport = () => {
       reportStore.deleteById(reportId)
@@ -270,6 +287,10 @@ export default {
     }
 
     onMounted(async () => {
+      await fetchReport()
+    })
+
+    const fetchReport = async () => {
       await reportStore.getReportById(reportId)
         .then((response) => {
           report.value = response.data
@@ -278,7 +299,7 @@ export default {
         .catch((error) => {
           notifyError('Error Loading Report' + error)
         })
-    })
+    }
 
     return {
       reportId,
@@ -291,7 +312,8 @@ export default {
       loaded,
       showDeleteDialog,
       deleteReport,
-      userStore: useUserStore()
+      userStore: useUserStore(),
+      toggleArchiveReport
     }
   }
 }
