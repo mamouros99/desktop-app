@@ -33,7 +33,10 @@
             color="primary"
             label="Questões"
             @click="router.push('/questions')"
-          />
+          >
+            <q-badge v-if="count !== 0" color="orange" rounded floating> {{ count }}
+            </q-badge>
+          </q-btn>
         </div>
 
       </q-card-actions>
@@ -42,10 +45,11 @@
 </template>
 
 <script>
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { useUserStore } from 'stores/UserStore'
 import { useRouter } from 'vue-router'
 import { LocalStorage } from 'quasar'
+import { useQuestionStore } from 'stores/QuestionStore'
 
 export default defineComponent({
   name: 'IndexPage',
@@ -53,14 +57,25 @@ export default defineComponent({
   setup () {
     const userStore = useUserStore()
     const router = useRouter()
+    const questionStore = useQuestionStore()
+    const count = ref(0)
 
     onMounted(() => {
       LocalStorage.remove('beforePath')
+      if (userStore.hasAuthenticatied() && userStore.hasEditPermissions()) {
+        questionStore.countNotArchived()
+          .then((res) => {
+            count.value = res.data
+          })
+      }
     })
 
     return {
       userStore,
       router,
+      questionStore,
+
+      count,
       test: function () {
         console.log('I\'m on a development build')
       }

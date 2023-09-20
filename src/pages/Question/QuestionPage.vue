@@ -1,11 +1,13 @@
 <template>
   <q-page padding>
     <q-table
+      card-class="bg-grey-2"
       :columns="columns"
       :rows="questionStore.getQuestions()"
       row-key="id"
+      flat bordered
       title="Dúvidas e Questões"
-      title-class="text-primary text-h4"
+      title-class="text-primary text-h4  q-pl-lg"
       :filter="filterObject"
       :filter-method="customFilter"
       :rows-per-page-options="[10,20,0]"
@@ -21,6 +23,7 @@
 
       <template v-slot:body="props">
         <q-tr :props="props"
+              class="bg-grey-1"
               @click="router.push('/question/' + props.row.id) "
         >
           <q-td auto-width key="question" :props="props">

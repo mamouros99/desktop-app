@@ -1,166 +1,176 @@
 <template>
   <q-page padding>
-    <q-card flat class="q-pa-md">
 
-      <NewIslandDialog v-model:showDialog="showDialog" v-if="showDialog"/>
+    <NewIslandDialog v-model:showDialog="showDialog" v-if="showDialog"/>
 
-      <div
-        v-if="userStore.hasEditPermissions()"
-        class="q-my-md row justify-between"
-      >
-        <div>
-          <q-btn
-            class="q-ml-lg q-px-md"
-            rounded
-            dense
-            color="secondary"
-            @click="showDialog = true"
-          >
-            <q-icon
-              name="add"
-              class="q-pr-sm"
-            />
-            <div>Nova Ecoílha</div>
-
-          </q-btn>
-        </div>
-
-        <q-file
-          ref="fileInput"
-          class="q-mr-lg col-2"
+    <div
+      v-if="userStore.hasEditPermissions()"
+      class="q-my-md row justify-between"
+    >
+      <div>
+        <q-btn
+          class="q-ml-lg q-px-md"
           rounded
-          bg-color="primary"
           dense
-          label-color="white"
-          outlined
-          v-model="file"
-          label="Upload .CSV"
+          color="secondary"
+          @click="showDialog = true"
         >
-          <template v-slot:before>
-            <q-icon
-              v-if="file!== null"
-              color="secondary"
-              name="send"
-              @click=" uploadFiles(file)"
-            />
-          </template>
+          <q-icon
+            name="add"
+            class="q-pr-sm"
+          />
+          <div>Nova Ecoílha</div>
 
-          <template v-slot:append>
-            <q-icon v-if="file !== null" color="white" name="close" @click.stop.prevent="file = null"
-                    class="cursor-pointer"/>
-          </template>
-        </q-file>
-
+        </q-btn>
       </div>
 
-      <q-table
-        class="col-8"
-        card-class="bg-grey-2"
-        flat bordered
-        :rows="ecoIslandStore.getEcoIslands()"
-        :columns="columns"
-        row-key="id"
-        :filter="currentFilter"
-        :filter-method="customFilter"
+      <q-file
+        ref="fileInput"
+        class="q-mr-lg col-2"
+        rounded
+        bg-color="primary"
+        dense
+        label-color="white"
+        outlined
+        v-model="file"
+        label="Upload .CSV"
       >
+        <template v-slot:before>
+          <q-icon
+            v-if="file!== null"
+            color="secondary"
+            name="send"
+            @click=" uploadFiles(file)"
+          />
+        </template>
 
-        <template v-slot:top>
-          <div class="row full-width justify-between">
-            <div class="text-h5 q-pl-lg col-3 text-primary">
-              Ecoílhas
-              <q-btn
-                icon="download"
-                color="secondary"
-                round
-                flat
-                @click="downloadEcoislands()"
-              />
-            </div>
+        <template v-slot:append>
+          <q-icon v-if="file !== null" color="white" name="close" @click.stop.prevent="file = null"
+                  class="cursor-pointer"/>
+        </template>
+      </q-file>
 
-            <q-scroll-area class=" col-7">
-              <div class="row no-wrap">
-                <q-chip
-                  v-for="(id,index) in currentFilter.id"
-                  :key="id"
-                  removable
-                  @remove="currentFilter.id.splice(index, 1)"
-                  color="blue-5"
-                  icon="tag"
-                  :label="id"
-                />
-                <q-chip
-                  v-for="(ident,index) in currentFilter.identifier"
-                  :key="ident"
-                  removable
-                  @remove="currentFilter.identifier.splice(index, 1)"
-                  color="green-5"
-                  icon="fingerprint"
-                  :label="ident"
-                />
-                <q-chip
-                  v-for="(build,index) in currentFilter.building"
-                  :key="build"
-                  removable
-                  @remove="currentFilter.building.splice(index, 1)"
-                  color="yellow-5"
-                  icon="mdi-office-building"
-                  :label="build"
-                />
-                <q-chip
-                  v-for="(floor,index) in currentFilter.floor"
-                  :key="floor"
-                  removable
-                  @remove="currentFilter.floor.splice(index, 1)"
-                  color="orange-5"
-                  icon="mdi-stairs"
-                  :label="floor"
-                />
-              </div>
-            </q-scroll-area>
+    </div>
 
-            <div class="col-2 row justify-end items-center">
-              <q-btn
-                flat
-                color="primary"
-                label="Filtro"
-                icon="filter_alt"
-                @click="showFilterDialog = !showFilterDialog"
-              />
-              <EcoislandFilterDialog :old-filter="currentFilter"
-                                     v-model:show-dialog="showFilterDialog"
-                                     @update-filters="updateFilters"/>
-            </div>
+    <q-table
+      class="col-8"
+      card-class="bg-grey-2"
+      flat bordered
+      :rows="ecoIslandStore.getEcoIslands()"
+      :columns="columns"
+      row-key="id"
+      :filter="currentFilter"
+      :filter-method="customFilter"
+    >
+
+      <template v-slot:no-data>
+        <q-item>
+          De momento não tem ecoilhas disponiveis nos seus Edifícios. Pode adicionar mais edifícios no seu &nbsp;
+          <span
+            @click="router.push('/user/' + userStore.getUsername())"
+            class="text-primary text-bold"
+          > profile
+            </span>
+
+        </q-item>
+      </template>
+
+      <template v-slot:top>
+        <div class="row full-width justify-between">
+          <div class="text-h4 q-pl-lg col-3 text-primary">
+            Ecoílhas
+            <q-btn
+              icon="download"
+              color="secondary"
+              round
+              flat
+              @click="downloadEcoislands()"
+            />
           </div>
 
-        </template>
-
-        <template v-slot:body="props">
-          <q-tr :props="props"
-                class="bg-grey-1"
-                @click="router.push('/ecoisland/'+ props.row.id)"
-          >
-            <q-td
-              v-for="col in props.cols.filter(e => e.name !== 'bins')"
-              :key="col.name"
-              :props="props"
-            >
-              {{ col.value }}
-            </q-td>
-            <q-td
-              class="text-center"
-            >
-              <q-icon
-                v-for="bin in filteredIconBin(props.cols.find(e => e.name === 'bins').value)"
-                :key="bin.name"
-                name="mdi-trash-can-outline"
-                :color="bin.color"
-                size="sm"
+          <q-scroll-area class=" col-7">
+            <div class="row no-wrap">
+              <q-chip
+                v-for="(id,index) in currentFilter.id"
+                :key="id"
+                removable
+                @remove="currentFilter.id.splice(index, 1)"
+                color="blue-5"
+                icon="tag"
+                :label="id"
               />
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-    </q-card>
+              <q-chip
+                v-for="(ident,index) in currentFilter.identifier"
+                :key="ident"
+                removable
+                @remove="currentFilter.identifier.splice(index, 1)"
+                color="green-5"
+                icon="fingerprint"
+                :label="ident"
+              />
+              <q-chip
+                v-for="(build,index) in currentFilter.building"
+                :key="build"
+                removable
+                @remove="currentFilter.building.splice(index, 1)"
+                color="yellow-5"
+                icon="mdi-office-building"
+                :label="build"
+              />
+              <q-chip
+                v-for="(floor,index) in currentFilter.floor"
+                :key="floor"
+                removable
+                @remove="currentFilter.floor.splice(index, 1)"
+                color="orange-5"
+                icon="mdi-stairs"
+                :label="floor"
+              />
+            </div>
+          </q-scroll-area>
+
+          <div class="col-2 row justify-end items-center">
+            <q-btn
+              flat
+              color="primary"
+              label="Filtro"
+              icon="filter_alt"
+              @click="showFilterDialog = !showFilterDialog"
+            />
+            <EcoislandFilterDialog :old-filter="currentFilter"
+                                   v-model:show-dialog="showFilterDialog"
+                                   @update-filters="updateFilters"/>
+          </div>
+        </div>
+
+      </template>
+
+      <template v-slot:body="props">
+        <q-tr :props="props"
+              class="bg-grey-1"
+              @click="router.push('/ecoisland/'+ props.row.id)"
+        >
+          <q-td
+            v-for="col in props.cols.filter(e => e.name !== 'bins')"
+            :key="col.name"
+            :props="props"
+          >
+            {{ col.value }}
+          </q-td>
+          <q-td
+            class="text-center"
+          >
+            <q-icon
+              v-for="bin in filteredIconBin(props.cols.find(e => e.name === 'bins').value)"
+              :key="bin.name"
+              name="mdi-trash-can-outline"
+              :color="bin.color"
+              size="sm"
+            />
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
   </q-page>
 </template>
 
@@ -207,6 +217,8 @@ export default {
     const search = ref('')
 
     const tagFilter = ref('None')
+
+    const myUrl = process.env.VUE_APP_MY_URL
 
     const filteredIconBin = (condition) => {
       return [...iconBinsBase, ...iconBinsExtra.filter((e) => {
@@ -355,8 +367,8 @@ export default {
       customFilter,
       updateFilters,
 
-      downloadEcoislands
-
+      downloadEcoislands,
+      myUrl
     }
   }
 }

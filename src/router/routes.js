@@ -40,7 +40,7 @@ const routes = [
       {
         path: 'questions',
         name: 'questions',
-        component: () => import('pages/QuestionPage.vue'),
+        component: () => import('pages/Question/QuestionPage.vue'),
         meta: {
           requiresAuth: true,
           requiresEditor: true
@@ -49,7 +49,7 @@ const routes = [
       {
         path: 'question/:questionId',
         name: 'question',
-        component: () => import('pages/QuestionChatPage.vue'),
+        component: () => import('pages/Question/QuestionChatPage.vue'),
         meta: {
           requiresAuth: true,
           requiresEditor: true

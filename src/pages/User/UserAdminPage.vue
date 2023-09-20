@@ -3,7 +3,7 @@
     <q-table
       flat
       bordered
-      class="bg-grey-2 q-mx-md q-mt-lg"
+      class="bg-grey-2 "
       :rows="userStore.getUsers()"
       :columns="columns"
       row-key="username"
@@ -19,7 +19,7 @@
       </template>
 
       <template v-slot:top-left>
-        <div class="text-primary text-h5 q-pl-md">
+        <div class="text-primary text-h4 q-pl-lg">
           Utilizadores
         </div>
       </template>

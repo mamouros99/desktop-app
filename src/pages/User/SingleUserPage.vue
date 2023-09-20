@@ -6,7 +6,7 @@
       label="Back"
       icon="arrow_back"
       class="q-ma-md"
-      @click="router.go(-1)"
+      @click=" router.push(userStore.hasAdminPermissions()? '/users' : '/') "
     />
     <q-card>
       <q-card-section class="row items-end">
@@ -66,6 +66,7 @@
           <div class=" q-mb-sm" v-for="build in buildings" :key="build">
             <q-btn
               flat
+              :icon="userHasBuilding(build)? 'remove' : 'add'"
               :class="userHasBuilding(build)? 'text-blue' : 'text-grey'"
               :label="build.name"
               @click="() => {

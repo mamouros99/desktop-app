@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page padding>
 
     <q-table
       card-class="bg-grey-2"
@@ -13,7 +13,7 @@
     >
       <template v-slot:top>
         <div class="row full-width justify-between">
-          <div class="text-h6 q-pl-lg">
+          <div class="text-h4 text-primary q-pl-lg">
             Alertas
             <q-btn
               flat

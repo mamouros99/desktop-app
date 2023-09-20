@@ -29,6 +29,10 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
       })
   }
 
+  const countNotArchived = async () => {
+    return await api.get('/question/get/count')
+  }
+
   const fetchQuestionById = async (id) => {
     return await api.get('/question/get/' + id)
   }
@@ -69,6 +73,7 @@ export const useQuestionStore = defineStore('QuestionStore', () => {
     addNewAnswer,
     deleteQuestion,
 
-    fetchQuestionById
+    fetchQuestionById,
+    countNotArchived
   }
 })
