@@ -100,7 +100,7 @@
             </q-item-section>
 
             <q-item-section>
-              Perguntas
+              Questões
             </q-item-section>
           </q-item>
 

@@ -6,7 +6,7 @@
       label="Back"
       icon="arrow_back"
       class="q-ma-md"
-      @click=" router.push(userStore.hasAdminPermissions()? '/users' : '/') "
+      @click=" router.push(userStore.hasAdminPermissions()? '/admin' : '/') "
     />
     <q-card>
       <q-card-section class="row items-end">
@@ -102,7 +102,11 @@
                 icon="email"
                 :color="build.receiveEmails ? 'primary' : 'red-5'"
                 @click="toogleReceiveEmail(build.id)"
-              />
+              >
+                <q-tooltip>
+                  {{ build.receiveEmails ? 'Emails Ativados' : 'Emails Desativados' }}
+                </q-tooltip>
+              </q-btn>
             </div>
           </div>
         </div>
