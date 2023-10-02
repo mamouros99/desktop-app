@@ -328,7 +328,7 @@ export default {
       cleanSubFloor()
       cleanBins()
 
-      await ecoIslandStore.fetchBuilding(building.value.id)
+      await ecoIslandStore.fetchBuilding(typeof building.value.id.id === 'undefined' ? building.value.id : building.value.id.id)
         .then((res) => {
           const build = res.data.containedSpaces.sort((a, b) => {
             const nameA = a.name.toLowerCase()

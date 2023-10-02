@@ -37,3 +37,6 @@ Install npm:
 npm install
 
 Install quasar
+
+VUE_APP_ENV_FILE=local quasar dev
+
