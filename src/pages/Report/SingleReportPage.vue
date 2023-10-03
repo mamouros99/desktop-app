@@ -10,7 +10,7 @@
     />
     <q-card flat bordered class="bg-grey-2">
       <q-card-section class="row justify-between items-center">
-        <div class="text-h4  text-grey-9">Alerta ID {{ reportId }}
+        <div class="text-h4  text-grey-9"> {{ $t('alert') }} ID {{ reportId }}
           <q-icon
             :name=" report.archived? 'lock' : 'lock_open'"
           />
@@ -19,9 +19,9 @@
       </q-card-section>
       <div class="q-ml-lg text-subtitle2 text-grey-7" style="cursor: pointer; display: inline-block" v-if="loaded">
         <div @click="router.push('/ecoisland/' + report.ecoIsland.id)">
-          Ecoílha {{ report.ecoIsland.identifier + ' - ' }}
+          {{ $t('ecoisland') }} {{ report.ecoIsland.identifier + ' - ' }}
           {{ report.ecoIsland.building + ',' }}
-          Piso {{ report.ecoIsland.floor + ',' }}
+          {{ $t('floor') }} {{ report.ecoIsland.floor + ',' }}
           {{ report.ecoIsland.description }}
         </div>
       </div>
@@ -101,7 +101,7 @@
           v-if="report.message"
         >
           <q-card-section class="bg-teal-3 text-subtitle2">
-            Observações
+            {{ $t('observations') }}
           </q-card-section>
           <q-card-section>
             {{ report.message }}
@@ -114,21 +114,21 @@
       v-if="userStore.hasEditPermissions()"
       class="q-ml-lg q-mt-lg"
       rounded color="red-7"
-      label="Apagar Alerta"
+      :label="$t('delete') + $t('alert')"
       @click="showDeleteDialog = !showDeleteDialog"
     />
     <q-btn
       v-if="userStore.hasEditPermissions() && report"
       class="q-ml-lg q-mt-lg"
       rounded color="warning"
-      :label="report.archived? 'Desarquivar Alerta': 'Arquivar Alerta'"
+      :label="report.archived? $t('unarchive') + $t('alert'): $t('archive') + $t('alert')"
       :icon="report.archived? 'lock_open' : 'lock'"
       @click="toggleArchiveReport"
     />
     <ConfirmationDialog
-      title="Tem a certeza que quer apagar o alerta?"
-      negative-label="Apagar"
-      positive-label="Cancelar"
+      :title="$t('msg_delete_alert')"
+      :negative-label="$t('delete')"
+      :positive-label="$t('cancel')"
       v-model:show-dialog="showDeleteDialog"
       @negative-function="deleteReport()"
     />

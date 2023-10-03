@@ -12,7 +12,7 @@
         </div>
         <q-btn
           unelevated
-          label="Apagar"
+          :label="$t('delete')"
           color="negative"
           icon-right="delete"
           rounded
@@ -20,7 +20,7 @@
           @click="deleteDialogToggle = ! deleteDialogToggle"
         />
         <ConfirmationDialog
-          title="Tem a certeza que quer apagar a Pergunta"
+          title=""
           negative-label="Apagar"
           negative-icon="delete"
           positive-label="Cancelar"
@@ -48,7 +48,7 @@
         <div class="row items-center col-3">
           <q-btn
             icon="save"
-            :label="question.archived? 'Desarquivar' : 'Arquivar'"
+            :label="question.archived? $t('unarchive') : $t('archive')"
             color="warning"
             @click="question.archived? unarchiveQuestion() : archiveQuestion()"
             dense
@@ -58,7 +58,7 @@
           />
         </div>
         <div v-if="!question.showQuestion" class="row items-center">
-          Esta mensagem foi apagado pelo autor
+          {{ $t('msg_deleted') }}
         </div>
         <div
           v-else-if="!question.archived"
@@ -93,7 +93,7 @@
         </div>
 
         <q-card-section v-else>
-          Este chat foi arquivado.
+          {{ $t('msg_archived') }}
         </q-card-section>
       </q-card-section>
 

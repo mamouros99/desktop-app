@@ -5,7 +5,7 @@
     @before-show="fileName = 'qr-' + islandid.toLowerCase()"
   >
     <q-card
-      style="max-width: 500px; width: 50%"
+      style="max-width: 600px; width: 50%"
       class="bg-grey-2"
     >
       <q-card-section>
@@ -37,24 +37,24 @@
             v-model="fileName"
             placeholder="default: qr-code"
             class="q-pb-sm"
-            label="Nome Ficheiro"
+            :label="$t('file_name')"
           />
           <q-btn
             class="q-mb-sm"
             color="secondary"
             icon="download"
-            label="Descarregar Imagem"
+            :label="$t('download_image')"
             @click="downloadQRCode(islandid)"
           />
         </q-card-section>
         <q-card-section>
           <q-toggle
             size="sm"
-            label="Show ID"
+            :label="$t('show') + ' ID'"
             v-model="showId"/>
           <q-toggle
             size="sm"
-            label="Show URL"
+            :label="$t('show') + ' URL'"
             v-model="showUrl"
           />
         </q-card-section>

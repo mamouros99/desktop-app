@@ -1,7 +1,7 @@
 <template>
   <q-card flat bordered class="q-mt-lg bg-grey-2" style="">
     <q-card-section class="q-pl-lg text-grey-8">
-      Legenda Caixotes:
+      {{ $t('bins') }}
     </q-card-section>
     <q-separator/>
     <q-card-section class="q-pt-sm" horizontal>

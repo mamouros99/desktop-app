@@ -12,7 +12,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title>
+        <q-toolbar-title @click="router.push('/')">
           EcoTecnico Watcher
         </q-toolbar-title>
 
@@ -56,6 +56,34 @@
           </q-list>
         </q-btn-dropdown>
 
+        <q-btn-dropdown :label="$i18n.locale"
+                        flat
+                        dropdown-icon="none"
+        >
+          <q-list
+          >
+
+            <q-btn
+              flat
+              class="full-width"
+              label="pt-PT"
+              no-caps
+
+              @click="$i18n.locale = 'pt-PT'"
+            />
+
+            <q-separator/>
+
+            <q-btn
+              flat
+              no-caps
+              class="full-width"
+              label="en-US"
+              @click="$i18n.locale = 'en-US'"
+            />
+          </q-list>
+        </q-btn-dropdown>
+
       </q-toolbar>
     </q-header>
 
@@ -70,7 +98,8 @@
             </q-item-section>
 
             <q-item-section>
-              Home
+              {{ $t('home') }}
+
             </q-item-section>
           </q-item>
 
@@ -80,7 +109,7 @@
             </q-item-section>
 
             <q-item-section>
-              Alertas
+              {{ $t('alerts') }}
             </q-item-section>
           </q-item>
 
@@ -90,7 +119,7 @@
             </q-item-section>
 
             <q-item-section>
-              Ecoílhas
+              {{ $t('ecoislands') }}
             </q-item-section>
           </q-item>
 
@@ -100,7 +129,8 @@
             </q-item-section>
 
             <q-item-section>
-              Questões
+              {{ $t('questions') }}
+
             </q-item-section>
           </q-item>
 
@@ -112,7 +142,7 @@
             </q-item-section>
 
             <q-item-section>
-              Users
+              {{ $t('users') }}
             </q-item-section>
           </q-item>
         </q-list>

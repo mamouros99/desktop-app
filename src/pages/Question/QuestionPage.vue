@@ -2,11 +2,11 @@
   <q-page padding>
     <q-table
       card-class="bg-grey-2"
-      :columns="columns"
+      :columns="columnsI18n"
       :rows="questionStore.getQuestions()"
       row-key="id"
       flat bordered
-      title="Dúvidas e Questões"
+      :title="$t('questions')"
       title-class="text-primary text-h4  q-pl-lg"
       :filter="filterObject"
       :filter-method="customFilter"
@@ -15,7 +15,7 @@
 
       <template v-slot:top-right>
         <q-toggle
-          label="Arquivados"
+          :label="$t('archived')"
           left-label
           v-model="filterObject.showArchived"
         />
@@ -59,10 +59,11 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useQuestionStore } from 'stores/QuestionStore'
 import useFunctions from 'src/composables/UseFunctions'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 export default {
 
@@ -73,53 +74,59 @@ export default {
     const questionStore = useQuestionStore()
     const filterObject = ref({ showArchived: false })
 
-    const columns = [
-      {
-        name: 'time',
-        required: true,
-        label: 'Data',
-        field: row => row.time,
-        align: 'left',
+    const { t } = useI18n()
 
-        format: val => {
-          return formatDateTime(val)
+    const columnsI18n = computed(() => {
+      const columns = [
+        {
+          name: 'time',
+          required: true,
+          label: t('date'),
+          field: row => row.time,
+          align: 'left',
+
+          format: val => {
+            return formatDateTime(val)
+          },
+          sortable: true
         },
-        sortable: true
-      },
-      {
-        name: 'question',
-        required: true,
-        label: 'Pergunta',
-        align: 'left',
-        field: row => row.question,
-        format: val => {
-          return val
+        {
+          name: 'question',
+          required: true,
+          label: t('question'),
+          align: 'left',
+          field: row => row.question,
+          format: val => {
+            return val
+          },
+          sortable: true
         },
-        sortable: true
-      },
-      {
-        name: 'user',
-        required: true,
-        label: 'Autor',
-        field: row => row.user.username,
-        align: 'left',
-        format: val => {
-          return val
+        {
+          name: 'user',
+          required: true,
+          label: t('author'),
+          field: row => row.user.username,
+          align: 'left',
+          format: val => {
+            return val
+          },
+          sortable: true
         },
-        sortable: true
-      },
-      {
-        name: 'archived',
-        required: true,
-        label: 'Arquivados',
-        field: row => row.archived,
-        align: 'center',
-        format: val => {
-          return val
-        },
-        sortable: true
-      }
-    ]
+        {
+          name: 'archived',
+          required: true,
+          label: t('archived'),
+          field: row => row.archived,
+          align: 'center',
+          format: val => {
+            return val
+          },
+          sortable: true
+        }
+      ]
+
+      return columns
+    })
 
     const customFilter = (rows) => {
       if (!filterObject.value.showArchived) {
@@ -142,7 +149,7 @@ export default {
 
       questionStore,
       formatDateTime,
-      columns,
+      columnsI18n,
       test: (va) => {
         console.log(va)
       },

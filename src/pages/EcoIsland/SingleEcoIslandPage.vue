@@ -11,7 +11,7 @@
     <q-card v-if="loaded">
       <q-card-section class="row justify-between items-center">
         <div>
-          <span class="text-h4  text-grey-9">Ecoílha {{ ecoIsland.identifier }}</span>
+          <span class="text-h4  text-grey-9"> {{ $t('ecoisland') }} {{ ecoIsland.identifier }}</span>
           <span class="text-primary text-subtitle1"> ID: <span class="text-italic">{{ ecoIsland.id }}</span></span>
         </div>
         <q-btn
@@ -23,7 +23,7 @@
             class="q-mr-sm"
             name="qr_code"
           />
-          Gerar QR Code
+          {{ $t('msg_create_qrcode')}}
         </q-btn>
 
         <QRCodeDialog v-model:show-dialog="showDialogQR" :islandid="islandId"/>
@@ -32,7 +32,7 @@
         <q-card-section>
           <div class="text-h6">
             <div v-if="loaded" class="row">
-              Localização
+              {{ $t('location')}}
               <q-btn
                 v-if="ecoIsland.buildingId !== '-'"
                 color="primary"
@@ -58,18 +58,21 @@
           </div>
           <q-card-section class="row bg-grey-1 items-center">
             <div class="col-4 row">
-              <div class="text-bold q-mr-sm">Edifício:</div>
+              <div class="text-bold q-mr-sm">
+                {{ $t('building')}} :
+              </div>
               <div>
                 {{ ecoIsland.building }}
               </div>
             </div>
             <div class="col-2 row items-center">
-              <div class="text-bold q-mr-sm">Piso:</div>
+              <div class="text-bold q-mr-sm">              {{ $t('floor')}}
+                :</div>
               {{ ecoIsland.floor }}
 
             </div>
             <div class="col-6 row items-center">
-              <div class="text-bold q-mr-sm">Descrição:</div>
+              <div class="text-bold q-mr-sm">{{ $t('description') }}:</div>
               <q-input
                 :disable="!userStore.hasEditPermissions()"
                 borderless
@@ -82,12 +85,12 @@
         </q-card-section>
         <q-card-section class="col-12">
           <div class="row">
-            <div class="text-h6">Caixotes</div>
+            <div class="text-h6">{{ $t('bins') }}</div>
             <q-btn
               v-if="userStore.hasEditPermissions()"
               flat dense color="primary"
               class="text-italic"
-              label="editar"
+              :label="$t('edit')"
               @click="binsDialogToggle = !binsDialogToggle"
             />
             <BinsEditDialog :bins="ecoIsland.bins" @updateBins="a => {
@@ -115,8 +118,8 @@
           </q-card-section>
         </q-card-section>
         <q-card-actions class="justify-end q-mr-lg q-pb-md" v-if="hasChanges">
-          <q-btn dense color="positive" label="Save" @click="updateEcoisland"/>
-          <q-btn dense color="negative" label="Reset" @click="() => {
+          <q-btn dense color="positive" :label="$t('save')" @click="updateEcoisland"/>
+          <q-btn dense color="negative" :label="$t('reset')" @click="() => {
             ecoIsland = Object.assign({}, currentEcoIsland)
             hasChanges = false
           }"/>
@@ -128,7 +131,7 @@
         v-if="userStore.hasEditPermissions()"
         class="glossy q-ml-lg q-mt-lg"
         rounded color="red-7"
-        label="Apagar Ecoílha"
+        :label="$t('delete') + ' ' + $t('ecoisland')"
         @click="showDeleteDialog = !showDeleteDialog"
       />
 
@@ -136,14 +139,14 @@
         v-if="userStore.hasEditPermissions()"
         class="glossy q-mr-lg q-mt-lg"
         rounded color="primary"
-        label="Arquivar Relatórios"
+        :label="$t('archive') + ' ' + $t('alerts')"
         @click="archiveAllIslandReports()"
       />
     </div>
     <ConfirmationDialog
-      title="Tem a certeza que quer apagar a ecoílha?"
-      negative-label="Apagar"
-      positive-label="Cancelar"
+      :title="$t('msg_delete_ecoisland')"
+      :negative-label="$t('delete')"
+      :positive-label="$t('cancel')"
       v-model:show-dialog="showDeleteDialog"
       @negative-function="deleteIsland()"
     />

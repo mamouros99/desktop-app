@@ -133,7 +133,7 @@
         positive-label="Adicionar"
         v-model:show-dialog="showAddDialog"
         @positive-function="addUserBuilding"
-        @negative-function="buildToEdit = null"
+        @negative-function="resetBuildToEdit"
       />
       <ConfirmationDialog
         v-if="showDeleteDialog"
@@ -143,7 +143,7 @@
         positive-label="Remover"
         v-model:show-dialog="showDeleteDialog"
         @positive-function="removeUserBuilding"
-        @negative-function="buildToEdit = null"
+        @negative-function="resetBuildToEdit"
       />
 
     </q-card>
@@ -185,7 +185,10 @@ export default {
 
     const showDeleteDialog = ref(false)
     const showAddDialog = ref(false)
-    const buildToEdit = ref()
+    const buildToEdit = ref({
+      name: '',
+      id: ''
+    })
 
     const currentQuestion = ref()
 
@@ -196,6 +199,13 @@ export default {
     const firstUpper = (role) => {
       const str = role.toLowerCase()
       return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+
+    const resetBuildToEdit = () => {
+      buildToEdit.value = {
+        name: '',
+        id: ''
+      }
     }
 
     const updateUserRole = () => {
@@ -349,7 +359,9 @@ export default {
       toogleReceiveEmail,
       currentQuestion,
       fetchUser,
-      updateReceiveQuestions
+      updateReceiveQuestions,
+
+      resetBuildToEdit
     }
   }
 }

@@ -3,7 +3,7 @@
     <div>
 
       <div class="text-h2" style="opacity:.8">
-        A sua sessão terminou, por favor faça login outra vez
+        {{ $t('msg_end_session') }}
       </div>
 
       <q-btn

@@ -19,7 +19,7 @@
             name="add"
             class="q-pr-sm"
           />
-          <div>Nova Ecoílha</div>
+          <div>{{ $t('new_island') }}</div>
 
         </q-btn>
       </div>
@@ -57,7 +57,7 @@
       card-class="bg-grey-2"
       flat bordered
       :rows="ecoIslandStore.getEcoIslands()"
-      :columns="columns"
+      :columns="columnsI18n"
       row-key="id"
       :filter="currentFilter"
       :filter-method="customFilter"
@@ -65,11 +65,11 @@
 
       <template v-slot:no-data>
         <q-item>
-          De momento não tem ecoilhas disponiveis nos seus Edifícios. Pode adicionar mais edifícios no seu &nbsp;
+          {{ $t('msg_no_islands')}} &nbsp;
           <span
             @click="router.push('/user/' + userStore.getUsername())"
             class="text-primary text-bold"
-          > profile
+          > {{ $t('profile') }}
             </span>
 
         </q-item>
@@ -78,7 +78,7 @@
       <template v-slot:top>
         <div class="row full-width justify-between">
           <div class="text-h4 q-pl-lg col-3 text-primary">
-            Ecoílhas
+            {{ $t('ecoislands') }}
             <q-btn
               icon="download"
               color="secondary"
@@ -133,7 +133,7 @@
             <q-btn
               flat
               color="primary"
-              label="Filtro"
+              :label="$t('filter')"
               icon="filter_alt"
               @click="showFilterDialog = !showFilterDialog"
             />
@@ -175,7 +175,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import useVariables from 'src/composables/useVariables'
 import NewIslandDialog from 'components/Dialogs/NewIslandDialog.vue'
@@ -184,6 +184,7 @@ import useNotify from 'src/composables/UseNotify'
 import { useUserStore } from 'stores/UserStore'
 import { saveAs } from 'file-saver'
 import EcoislandFilterDialog from 'components/Dialogs/EcoislandFilterDialog.vue'
+import { useI18n } from 'vue-i18n'
 
 export default {
   components: {
@@ -197,6 +198,8 @@ export default {
       iconBinsExtra,
       iconBinsBase
     } = useVariables()
+
+    const { t } = useI18n()
 
     const showFilterDialog = ref(false)
 
@@ -282,46 +285,50 @@ export default {
       })
     }
 
-    const columns = [
-      {
-        name: 'identifier',
-        label: 'Identificador',
-        field: 'identifier',
-        sortable: true,
-        sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-        align: 'center'
+    const columnsI18n = computed(() => {
+      const columns = [
+        {
+          name: 'identifier',
+          label: t('identifier'),
+          field: 'identifier',
+          sortable: true,
+          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+          align: 'center'
 
-      },
-      {
-        name: 'building',
-        label: 'Edifício',
-        field: 'building',
-        sortable: true,
-        align: 'center'
-      },
-      {
-        name: 'floor',
-        label: 'Piso',
-        field: 'floor',
-        sortable: true,
-        align: 'center'
-      },
-      {
-        name: 'bins',
-        label: 'Caixotes',
-        field: 'bins',
-        sortable: true,
-        align: 'center'
-      }
-    ]
+        },
+        {
+          name: 'building',
+          label: t('building'),
+          field: 'building',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          name: 'floor',
+          label: t('floor'),
+          field: 'floor',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          name: 'bins',
+          label: t('bins'),
+          field: 'bins',
+          sortable: true,
+          align: 'center'
+        }
+      ]
+
+      return columns
+    })
 
     const uploadFiles = (a) => {
       ecoIslandStore.uploadEcoIslands(a)
         .then(() => {
-          notifySuccess('Upload foi bem-sucedido')
+          notifySuccess(t('msg_good_upload'))
         })
         .catch((errorMessage) => {
-          notifyError('Problema com o upload - ' + errorMessage)
+          notifyError(t('msg_bad_upload') + errorMessage)
         })
 
       file.value = null
@@ -347,7 +354,7 @@ export default {
 
     return {
       ecoIslandStore,
-      columns,
+      columnsI18n,
 
       showDialog,
 

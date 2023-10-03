@@ -6,7 +6,7 @@
       flat bordered
       title="Alertas"
       :rows="reportStore.getReports()"
-      :columns="columns"
+      :columns="columnsI18n"
       :filter="filter"
       :filter-method="customFilter"
       row-key="id"
@@ -14,7 +14,7 @@
       <template v-slot:top>
         <div class="row full-width justify-between">
           <div class="text-h4 text-primary q-pl-lg">
-            Alertas
+            {{ $t('alerts')}}
             <q-btn
               flat
               round
@@ -36,7 +36,7 @@
             <q-btn
               flat
               color="primary"
-              label="Filtro"
+              :label="$t('filter')"
               icon="filter_alt"
               @click="toggleDialog"
             />
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useReportStore } from 'stores/ReportStore'
 import { useRouter } from 'vue-router'
 import useFunctions from 'src/composables/UseFunctions'
@@ -119,6 +119,7 @@ import BinsLegendCard from 'components/BinsLegendCard.vue'
 import FilterDialog from 'components/Dialogs/ReportFilterDialog.vue'
 import useNotify from 'src/composables/UseNotify'
 import { saveAs } from 'file-saver'
+import { useI18n } from 'vue-i18n'
 
 export default {
   components: {
@@ -130,6 +131,8 @@ export default {
     const router = useRouter()
     const { notifyError } = useNotify()
 
+    const { t } = useI18n()
+
     const filter = ref({
       search: '',
       startDate: '',
@@ -139,73 +142,77 @@ export default {
     })
     const showDialog = ref(false)
 
-    const columns = [
-      {
-        name: 'ecoisland',
-        label: 'Edifício',
-        field: 'ecoIsland',
-        sortable: true,
-        align: 'center',
-        format: (val) => {
-          return val.building
-        }
-      },
-      {
-        name: 'ecoisland',
-        label: 'Island ID',
-        field: 'ecoIsland',
-        sortable: true,
-        align: 'center',
-        format: (val) => {
-          return val.id
-        }
-      },
-      {
-        name: 'time',
-        label: 'Date',
-        field: 'time',
-        sortable: true,
-        align: 'center',
-        format: (val) => {
-          return val === undefined ? '--' : formatDate(val)
-        },
-        headerStyle: 'text-align: center'
-      },
-      {
-        name: 'caixotes',
-        label: 'Caixotes Problemáticos',
-        field: row => {
-          let final = '00000'
-          const dirty = row.dirty === undefined ? '00000' : row.dirty
-          const separation = row.separation === undefined ? '00000' : row.separation
-          const full = row.full === undefined ? '00000' : row.full
-
-          for (let i = 0; i < 5; i++) {
-            if (dirty.charAt(i) === '1' || full.charAt(i) === '1' || separation.charAt(i) === '1') {
-              final = setCharAt(final, i, '1')
-            } else {
-              final = setCharAt(final, i, '0')
-            }
+    const columnsI18n = computed(() => {
+      const columns = [
+        {
+          name: 'ecoisland',
+          label: t('building'),
+          field: 'ecoIsland',
+          sortable: true,
+          align: 'center',
+          format: (val) => {
+            return val.building
           }
-          return final
         },
-        align: 'center',
-        format: (val) => {
-          return val === undefined ? '--' : val
+        {
+          name: 'ecoisland',
+          label: t('ecoisland') + ' ID',
+          field: 'ecoIsland',
+          sortable: true,
+          align: 'center',
+          format: (val) => {
+            return val.id
+          }
         },
-        sortable: true,
-        sort: (a, b) => {
-          return (a.match(/1/g) || []).length - (b.match(/1/g) || []).length
+        {
+          name: 'time',
+          label: t('date'),
+          field: 'time',
+          sortable: true,
+          align: 'center',
+          format: (val) => {
+            return val === undefined ? '--' : formatDate(val)
+          },
+          headerStyle: 'text-align: center'
+        },
+        {
+          name: 'caixotes',
+          label: t('problem_bins'),
+          field: row => {
+            let final = '00000'
+            const dirty = row.dirty === undefined ? '00000' : row.dirty
+            const separation = row.separation === undefined ? '00000' : row.separation
+            const full = row.full === undefined ? '00000' : row.full
+
+            for (let i = 0; i < 5; i++) {
+              if (dirty.charAt(i) === '1' || full.charAt(i) === '1' || separation.charAt(i) === '1') {
+                final = setCharAt(final, i, '1')
+              } else {
+                final = setCharAt(final, i, '0')
+              }
+            }
+            return final
+          },
+          align: 'center',
+          format: (val) => {
+            return val === undefined ? '--' : val
+          },
+          sortable: true,
+          sort: (a, b) => {
+            return (a.match(/1/g) || []).length - (b.match(/1/g) || []).length
+          }
+        },
+        {
+          name: 'archived',
+          label: t('archived'),
+          field: 'archived',
+          sortable: true,
+          align: 'center'
         }
-      },
-      {
-        name: 'archived',
-        label: 'Arquivados',
-        field: 'archived',
-        sortable: true,
-        align: 'center'
-      }
-    ]
+      ]
+
+      return columns
+    })
 
     const { iconBins } = useVariables()
     const customFilter = (rows) => {
@@ -315,7 +322,7 @@ export default {
     }
 
     return {
-      columns,
+      columnsI18n,
       reportStore,
       iconBins,
       filteredIconBin,
