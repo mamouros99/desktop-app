@@ -111,17 +111,18 @@
       </q-card-section>
     </q-card>
     <q-btn
+      icon="delete"
       v-if="userStore.hasEditPermissions()"
       class="q-ml-lg q-mt-lg"
       rounded color="red-7"
-      :label="$t('delete') + $t('alert')"
+      :label="$t('delete') + ' ' + $t('alert')"
       @click="showDeleteDialog = !showDeleteDialog"
     />
     <q-btn
       v-if="userStore.hasEditPermissions() && report"
       class="q-ml-lg q-mt-lg"
       rounded color="warning"
-      :label="report.archived? $t('unarchive') + $t('alert'): $t('archive') + $t('alert')"
+      :label="report.archived? $t('unarchive') + ' ' + $t('alert'): $t('archive') + ' ' + $t('alert')"
       :icon="report.archived? 'lock_open' : 'lock'"
       @click="toggleArchiveReport"
     />
@@ -144,6 +145,7 @@ import useFunctions from 'src/composables/UseFunctions'
 import useNotify from 'src/composables/UseNotify'
 import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
 import { useUserStore } from 'stores/UserStore'
+import { useI18n } from 'vue-i18n'
 
 export default {
   components: { ConfirmationDialog },
@@ -152,6 +154,7 @@ export default {
   setup () {
     const route = useRoute()
     const router = useRouter()
+    const { t } = useI18n()
 
     const {
       notifyError,
@@ -187,28 +190,28 @@ export default {
       {
         name: 'bin',
         required: true,
-        label: 'Caixote',
+        label: t('bin'),
         field: row => row.name,
         align: 'center'
       },
       {
         name: 'dirty',
         required: true,
-        label: 'Sujo',
+        label: t('dirty'),
         field: row => row.problems.dirty,
         align: 'center'
       },
       {
         name: 'full',
         required: true,
-        label: 'Cheio',
+        label: t('full'),
         field: row => row.problems.full,
         align: 'center'
       },
       {
         name: 'separation',
         required: true,
-        label: 'Má Separação',
+        label: t('bad_separation'),
         field: row => {
           return row.problems.separation
         },

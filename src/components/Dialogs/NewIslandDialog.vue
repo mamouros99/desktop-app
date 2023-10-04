@@ -7,7 +7,7 @@
     <q-card class="col-4 bg-grey-3" style=" width: 40%">
       <q-form>
         <q-card-section class="text-center">
-          <div class="text-h6 text-primary">Criar Nova Ecoílha</div>
+          <div class="text-h6 text-primary">{{  $t('msg_gen_new_island') }}</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
@@ -15,7 +15,7 @@
                     v-model="building"
                     :options="buildingOptions"
                     :option-label="'name'"
-                    label="Edificio"
+                    :label="$t('building')"
                     @update:model-value="updateBuilding"
           >
             <template v-slot:append>
@@ -32,7 +32,7 @@
             v-model="floor"
             :options="buildingFloors"
             :option-label="'name'"
-            label="Piso"
+            :label="$t('floor')"
             @update:modelValue="updateFloor"
           >
             <template v-slot:append>
@@ -47,7 +47,7 @@
               v-model="subFloor"
               :options="subBuildingFloors"
               :option-label="'name'"
-              label="SubPiso"
+              :label="$t('subfloor')"
               @update:modelValue="cleanCoords()"
             />
           </q-card-section>
@@ -57,7 +57,7 @@
             :disable="building.length === 0"
             standout="bg-primary text-white"
             v-model="desc"
-            label="Descrição"
+            :label="$t('description')"
             placeholder="Ex: Junto à sala V1.06">
             <template v-slot:append>
               <q-icon
@@ -72,7 +72,7 @@
             :disable="building.length === 0"
             standout="bg-primary text-white"
             v-model="identifier"
-            label="Identificador"
+            :label="$t('identifier')"
             placeholder="Ex: 1"
             type="number"
           >
@@ -90,7 +90,7 @@
               :disable="!hasFloor"
               :color="hasCoords ? 'primary' : 'grey-8' "
               flat
-              label="Posição"
+              :label="$t('location')"
               @click="toggleCoordsDialog = !toggleCoordsDialog"
             >
               <q-icon
@@ -100,10 +100,10 @@
           </q-card-section>
           <q-card-section class="col">
             <q-card-section>
-              <div class="q-pl-md text-h6">Caixotes Extra:</div>
+              <div class="q-pl-md text-h6">{{ $t('msg_extra_bins') }}:</div>
               <q-card-section h>
                 <q-toggle
-                  label="Vidro"
+                  :label="$t('glass')"
                   class="text-bold"
                   v-model="toggleGlass"
                   checked-icon="check"
@@ -111,7 +111,7 @@
                   unchecked-icon="clear"
                 />
                 <q-toggle
-                  label="Biorresíduos"
+                  :label="$t('biowaste')"
                   class="text-bold"
                   v-model="toggleBio"
                   checked-icon="check"
@@ -126,7 +126,7 @@
         </q-card-section>
         <q-card-actions class="row justify-around">
           <q-btn
-            label="cancelar"
+            :label="$t('cancel')"
             icon="close"
             color="negative"
             @click="() => {
@@ -138,7 +138,7 @@
           <q-btn
             icon="send"
             color="positive"
-            label="Submeter"
+            :label="$t('submit')"
             @click="() => {
 
               if(checkFields()){

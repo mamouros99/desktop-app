@@ -14,9 +14,9 @@
         <div class="text-subtitle1 text-grey-9"> {{ user.username }}</div>
       </q-card-section>
       <q-card-section>
-        <div><span class="text-bold">Email:</span> {{ user.email }}</div>
+        <div><span class="text-bold">{{ $t('email') }}:</span> {{ user.email }}</div>
         <div class="row items-center">
-          <div class="text-bold q-mr-sm">Role:</div>
+          <div class="text-bold q-mr-sm">{{ $t('role') }}:</div>
           <q-select
             :disable="!userStore.hasAdminPermissions()"
             class="text-green"
@@ -31,7 +31,7 @@
 
         </div>
         <div class="row items-center" v-if="userStore.hasEditPermissions()">
-          <div class="text-bold q-mr-sm">Receber Questões:</div>
+          <div class="text-bold q-mr-sm">{{ $t('receive_questions') }}:</div>
           <q-toggle
             :disable="user.username !== userStore.getUsername()"
             v-model="currentQuestion"
@@ -42,11 +42,11 @@
           />
         </div>
         <div class="row items-center">
-          <div class="text-bold q-mr-sm">Edifícios:</div>
+          <div class="text-bold q-mr-sm">{{ $t('buildings') }}:</div>
           <q-btn
             v-if=" !toggleBuildings"
             icon="edit"
-            label="Editar"
+            :label="$t('edit')"
             color="primary"
             size="sm"
             rounded
@@ -55,7 +55,7 @@
           <q-btn
             v-if=" toggleBuildings"
             icon="stop"
-            label="Cancelar"
+            :label="$t('cancel')"
             color="secondary"
             size="sm"
             rounded
@@ -104,7 +104,7 @@
                 @click="toogleReceiveEmail(build.id)"
               >
                 <q-tooltip>
-                  {{ build.receiveEmails ? 'Emails Ativados' : 'Emails Desativados' }}
+                  {{ build.receiveEmails ? $t('msg_active_emails') : $t('msg_desactive_emails') }}
                 </q-tooltip>
               </q-btn>
             </div>
@@ -114,13 +114,13 @@
           <q-btn
             class="q-mr-lg"
             dense
-            label="save"
+            :label="$t('save')"
             color="positive"
             @click="updateUserRole()"
           />
           <q-btn
             dense
-            label="reset"
+            :label="$t('reset')"
             color="negative"
             @click="role = user.role"
           />
@@ -128,9 +128,9 @@
       </q-card-section>
       <ConfirmationDialog
         v-if="showAddDialog"
-        :title="'Tem a certeza que quer adicionar o edificio ' + buildToEdit.name+'?'"
-        negative-label="Cancelar"
-        positive-label="Adicionar"
+        :title=" $t('msg_add_building') + ' ' + buildToEdit.name+'?'"
+        :negative-label="$t('cancel')"
+        :positive-label="$t('add')"
         v-model:show-dialog="showAddDialog"
         @positive-function="addUserBuilding"
         @negative-function="resetBuildToEdit"
@@ -138,9 +138,9 @@
       <ConfirmationDialog
         v-if="showDeleteDialog"
 
-        :title="'Tem a certeza que quer remover o edificio ' + buildToEdit.name+'?'"
-        negative-label="Cancelar"
-        positive-label="Remover"
+        :title=" $t('msg_remove_building') + ' ' + buildToEdit.name+'?'"
+        :negative-label="$t('cancel')"
+        :positive-label="$t('remove')"
         v-model:show-dialog="showDeleteDialog"
         @positive-function="removeUserBuilding"
         @negative-function="resetBuildToEdit"

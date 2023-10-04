@@ -8,7 +8,8 @@
   >
     <q-card style="width: 50%">
       <q-card-section>
-        <div class="text-h5 text-primary q-ml-md">Filtros</div>
+        <div class="text-h5 text-primary q-ml-md">{{           $t('filters')
+          }}</div>
       </q-card-section>
       <q-separator/>
       <q-card-section class="q-gutter-y-sm">
@@ -41,7 +42,7 @@
             class="col-10"
             filled
             type="number"
-            label="Identificador"
+            :label="$t('identifier')"
             placeholder="ex.: 1"
             v-model="currentFilter.identifier"
           >
@@ -65,7 +66,7 @@
           <q-input
             class="col-10"
             filled
-            label="Edifício"
+            :label="$t('building')"
             placeholder="ex.: Pavilhão Central"
             v-model="currentFilter.building"
           >
@@ -89,7 +90,7 @@
           <q-input
             class="col-10"
             filled
-            label="Piso"
+            :label="$t('floor')"
             placeholder="ex.: -1"
             v-model="currentFilter.floor"
           >

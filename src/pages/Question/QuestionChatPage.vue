@@ -21,9 +21,9 @@
         />
         <ConfirmationDialog
           title=""
-          negative-label="Apagar"
+          :negative-label="$t('delete')"
           negative-icon="delete"
-          positive-label="Cancelar"
+          :positive-label="$t('cancel')"
           v-model:show-dialog="deleteDialogToggle"
           @negative-function="deleteQuestion()"
         />

@@ -16,7 +16,7 @@
       </q-card-section>
       <div class="row q-ml-lg q-pb-md">
         <q-toggle
-          label="Vidro"
+          :label="$t('glass')"
           class="text-bold col-12"
           v-model="toggleGlass"
           checked-icon="check"
@@ -24,7 +24,7 @@
           unchecked-icon="clear"
         />
         <q-toggle
-          label="Biorresíduos"
+          :label="$t('biowaste')"
           class="text-bold col-12"
           v-model="toggleBio"
           checked-icon="check"

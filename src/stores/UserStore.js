@@ -50,8 +50,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const logoutUser = () => {
-    LocalStorage.clear()
+    resetLocalStorage()
     user.value = null
+  }
+
+  const resetLocalStorage = () => {
+    LocalStorage.remove('user')
+    LocalStorage.remove('beforePath')
   }
 
   const getAuth = async (code) => {

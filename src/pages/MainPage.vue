@@ -19,19 +19,19 @@
         <div v-else class="row full-width justify-around">
           <q-btn
             color="primary"
-            label="Ecoílhas"
+            :label="$t('ecoislands')"
             @click="router.push('/ecoislands')"
           />
           <q-btn
             color="primary"
-            label="Alertas"
+            :label="$t('alerts')"
             class="q-mx-xl"
             @click="router.push('/reports')"
           />
           <q-btn
             v-if="userStore.hasEditPermissions()"
             color="primary"
-            label="Questões"
+            :label="$t('questions')"
             @click="router.push('/questions')"
           >
             <q-badge v-if="count !== 0" color="orange" rounded floating> {{ count }}

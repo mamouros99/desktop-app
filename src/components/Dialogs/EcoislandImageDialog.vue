@@ -8,7 +8,7 @@
 
     <div class="col-12 q-my-lg bg-grey-2">
       <div class="text-center text-h4 text-primary text-bold full-width q-pt-md">
-        <div>Posição da Ecoílha, {{ buildingName }}, {{ floor }}</div>
+        <div>{{ buildingName }}, {{ floor }}</div>
       </div>
       <ImagePage
         :island-id="islandid"

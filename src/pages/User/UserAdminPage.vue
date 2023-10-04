@@ -5,7 +5,7 @@
       bordered
       class="bg-grey-2 "
       :rows="userStore.getUsers()"
-      :columns="columns"
+      :columns="columnsI18n"
       row-key="username"
       :filter="filter"
     >
@@ -20,8 +20,9 @@
 
       <template v-slot:top-left>
         <div class="text-primary text-h4 q-pl-lg">
-          Utilizadores
-        </div>
+          {{
+            $t('users')
+          }}        </div>
       </template>
 
       <template v-slot:body="props">
@@ -40,10 +41,11 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useUserStore } from 'stores/UserStore'
 import useNotify from 'src/composables/UseNotify'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 export default {
   // name: 'PageName',
@@ -52,34 +54,38 @@ export default {
     const userStore = useUserStore()
     const { notifyError } = useNotify()
 
-    const columns = [
-      {
-        name: 'username',
-        label: 'Username',
-        field: 'username',
-        sortable: true,
-        align: 'center'
-      },
-      {
-        name: 'name',
-        label: 'Name',
-        field: 'name',
-        align: 'center'
-      },
-      {
-        name: 'email',
-        label: 'Email',
-        field: 'email',
-        align: 'center'
-      },
-      {
-        name: 'Role',
-        label: 'Role',
-        field: 'role',
-        align: 'center',
-        sortable: true
-      }
-    ]
+    const { t } = useI18n()
+
+    const columnsI18n = computed(() => {
+      return [
+        {
+          name: 'username',
+          label: t('username'),
+          field: 'username',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          name: 'name',
+          label: t('name'),
+          field: 'name',
+          align: 'center'
+        },
+        {
+          name: 'email',
+          label: t('email'),
+          field: 'email',
+          align: 'center'
+        },
+        {
+          name: 'Role',
+          label: t('role'),
+          field: 'role',
+          align: 'center',
+          sortable: true
+        }
+      ]
+    })
 
     const filter = ref('')
 
@@ -109,7 +115,7 @@ export default {
       userStore,
       router,
 
-      columns,
+      columnsI18n,
       lineColor,
       firstUpper: role => {
         const str = role.toLowerCase()

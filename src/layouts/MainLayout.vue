@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title @click="router.push('/')">
-          EcoTecnico Watcher
+          TFaD Desktop
         </q-toolbar-title>
 
         <q-btn-dropdown
@@ -53,34 +53,6 @@
             >
             </q-btn>
             <q-separator/>
-          </q-list>
-        </q-btn-dropdown>
-
-        <q-btn-dropdown :label="$i18n.locale"
-                        flat
-                        dropdown-icon="none"
-        >
-          <q-list
-          >
-
-            <q-btn
-              flat
-              class="full-width"
-              label="pt-PT"
-              no-caps
-
-              @click="$i18n.locale = 'pt-PT'"
-            />
-
-            <q-separator/>
-
-            <q-btn
-              flat
-              no-caps
-              class="full-width"
-              label="en-US"
-              @click="$i18n.locale = 'en-US'"
-            />
           </q-list>
         </q-btn-dropdown>
 
@@ -151,6 +123,42 @@
     <q-page-container>
       <router-view/>
     </q-page-container>
+    <q-footer
+      class="bg-transparent text-primary"
+    >
+      <q-btn-dropdown :label="$i18n.locale"
+                      flat
+                      dropdown-icon="flag"
+
+      >
+        <q-list
+        >
+
+          <q-btn
+            flat
+            class="full-width"
+            label="pt-PT"
+            no-caps
+
+            @click=" () => {
+                $i18n.locale = 'pt-PT'
+              appLanguage.storeLanguage('pt-PT')}"
+          />
+
+          <q-separator/>
+
+          <q-btn
+            flat
+            no-caps
+            class="full-width"
+            label="en-US"
+            @click=" () => {
+              $i18n.locale = 'en-US'
+              appLanguage.storeLanguage('en-US')}"
+          />
+        </q-list>
+      </q-btn-dropdown>
+    </q-footer>
   </q-layout>
 </template>
 
@@ -158,6 +166,7 @@
 import { defineComponent, ref } from 'vue'
 import { useUserStore } from 'stores/UserStore'
 import { useRouter } from 'vue-router'
+import { useLanguageStore } from 'stores/LanguageStore'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -165,6 +174,7 @@ export default defineComponent({
   setup () {
     const leftDrawerOpen = ref(false)
     const userStore = useUserStore()
+    const appLanguage = useLanguageStore()
     const router = useRouter()
 
     return {
@@ -176,7 +186,8 @@ export default defineComponent({
       router,
       reload: () => {
         location.reload()
-      }
+      },
+      appLanguage
     }
   }
 })
