@@ -4,7 +4,7 @@
       class="full-width row"
       flat
       square
-      style="border-bottom: 1px solid gray"
+      style="border-bottom: 1px solid grey"
     >
       <div class="text-caption col-9">
         {{ date !== '' ? date : 'dd-mm-yyyy' }}

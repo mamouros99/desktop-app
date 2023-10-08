@@ -32,7 +32,13 @@
                 />
               </template>
             </q-input>
-
+            <q-card flat class="bg-transparent q-pl-md text-primary">
+              <q-toggle
+                :label="$t('archived')"
+                left-label
+                v-model="filter.archived"
+              />
+            </q-card>
             <q-btn
               flat
               color="primary"
@@ -138,12 +144,14 @@ export default {
       startDate: '',
       endDate: '',
       binsSelected: [],
-      problemsSelected: []
+      problemsSelected: [],
+      archived: false
     })
+
     const showDialog = ref(false)
 
     const columnsI18n = computed(() => {
-      const columns = [
+      return [
         {
           name: 'ecoisland',
           label: t('building'),
@@ -210,15 +218,17 @@ export default {
           align: 'center'
         }
       ]
-
-      return columns
     })
 
     const { iconBins } = useVariables()
     const customFilter = (rows) => {
+      const archivedFilter = !filter.value.archived ? rows.filter(e => {
+        return !e.archived
+      }) : rows
+
       const startDateFilter = filter.value.startDate !== '' ? rows.filter(e => {
         return +e.time > Date.parse(filter.value.startDate)
-      }) : rows
+      }) : archivedFilter
 
       const endOfDay = Date.parse(filter.value.endDate) + 86399999 // 23 hours, 59 minutes, 59seconds, 999ms
       const endDateFilter = filter.value.endDate !== '' ? startDateFilter.filter(e => {
