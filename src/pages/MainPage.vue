@@ -1,14 +1,14 @@
 <template>
   <q-page class="flex flex-center">
 
-    <q-card flat>
+    <q-card flat >
       <q-card-section>
         <img
           alt="Quasar logo"
           src="~assets/logo.png"
           style="max-width: 400px">
       </q-card-section>
-      <q-card-actions class="row justify-around">
+      <q-card-actions class="row justify-around" >
         <q-btn
           color="primary"
           v-if="!userStore.hasAuthenticatied()"
@@ -16,7 +16,7 @@
           icon="login"
           @click="router.push('/login')"
         />
-        <div v-else class="row full-width justify-around">
+        <div class="row full-width justify-around" v-else-if="userStore.hasEditPermissions()">
           <q-btn
             color="primary"
             :label="$t('ecoislands')"
@@ -38,6 +38,12 @@
             </q-badge>
           </q-btn>
         </div>
+        <q-btn v-else-if="userStore.hasAuthenticatied()"
+               :label="$t('msg_admin_request')"
+               color="primary"
+               icon="send"
+               @click="requestPermission()"
+        />
 
       </q-card-actions>
     </q-card>
@@ -70,15 +76,18 @@ export default defineComponent({
       }
     })
 
+    const requestPermission = () => {
+      userStore.addRoleRequest()
+    }
+
     return {
       userStore,
       router,
       questionStore,
 
       count,
-      test: function () {
-        console.log('I\'m on a development build')
-      }
+
+      requestPermission
     }
   }
 })

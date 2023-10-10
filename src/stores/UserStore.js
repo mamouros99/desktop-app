@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', () => {
   const user = ref(LocalStorage.getItem('user'))
 
   const users = ref([])
+  const roleRequests = ref([])
 
   const getUser = () => {
     return user.value
@@ -88,6 +89,13 @@ export const useUserStore = defineStore('user', () => {
     return users.value
   }
 
+  const getRoleRequest = () => {
+    return roleRequests.value
+  }
+  const getEditorUsers = () => {
+    return users.value.filter(e => e.role === 'ADMIN' || e.role === 'EDITOR')
+  }
+
   const fetchUserById = async (id) => {
     return await api.get('/user/get/' + id)
   }
@@ -100,8 +108,26 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const addBuildingToUser = async (userBuilding, username) => {
-    return await api
+    await api
       .post('/building/add/' + username, userBuilding)
+  }
+
+  const addRoleRequest = async (username) => {
+    await api
+      .post('/roleRequest/add/' + username)
+  }
+
+  const deleteRoleRequest = async (username) => {
+    return await api
+      .delete('/roleRequest/remove/' + username)
+  }
+
+  const fetchRoleRequest = async () => {
+    await api
+      .get('/roleRequest/get/all')
+      .then((response) => {
+        roleRequests.value = response.data
+      })
   }
 
   const deleteBuildingFromUser = async (buildingId, username) => {
@@ -143,6 +169,7 @@ export const useUserStore = defineStore('user', () => {
     fetchAllUsers,
     findMyUser,
     getUsers,
+    getEditorUsers,
     updateUserRole,
     fetchUserById,
     toggleReceiveQuestionById,
@@ -151,6 +178,11 @@ export const useUserStore = defineStore('user', () => {
     deleteBuildingFromUser,
     fetchBuildsByUsername,
     fetchMyBuildings,
-    toogleReceiveEmailStatus
+    toogleReceiveEmailStatus,
+
+    addRoleRequest,
+    deleteRoleRequest,
+    getRoleRequest,
+    fetchRoleRequest
   }
 })

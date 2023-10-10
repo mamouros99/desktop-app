@@ -12,25 +12,25 @@ const routes = [
         path: 'reports',
         name: 'reports',
         component: () => import('pages/Report/ReportsPage.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresEditor: true }
       },
       {
         path: 'ecoislands',
         name: 'ecoislands',
         component: () => import('pages/EcoIsland/EcoIslandPage.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresEditor: true }
       },
       {
         path: 'report/:reportId',
         name: 'report',
         component: () => import('pages/Report/SingleReportPage.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresEditor: true }
       },
       {
         path: 'ecoisland/:ecoislandId',
         name: 'ecoisland',
         component: () => import('pages/EcoIsland/SingleEcoIslandPage.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresEditor: true }
       },
       {
         path: 'login',
@@ -42,7 +42,6 @@ const routes = [
         name: 'questions',
         component: () => import('pages/Question/QuestionPage.vue'),
         meta: {
-          requiresAuth: true,
           requiresEditor: true
         }
       },
@@ -51,7 +50,6 @@ const routes = [
         name: 'question',
         component: () => import('pages/Question/QuestionChatPage.vue'),
         meta: {
-          requiresAuth: true,
           requiresEditor: true
         }
       },
@@ -65,7 +63,6 @@ const routes = [
         name: 'admin',
         component: () => import('pages/User/UserAdminPage.vue'),
         meta: {
-          requiresAuth: true,
           requiresAdmin: true
         }
       },
@@ -74,15 +71,15 @@ const routes = [
         name: 'user',
         component: () => import('pages/User/SingleUserPage.vue'),
         meta: {
-          requiresAuth: true
+          requiresEditor: true
         }
       },
       {
         path: 'image',
         name: 'image',
-        component: () => import('pages/ImagePage.vue'),
+        component: () => import('pages/EcoIsland/ImagePage.vue'),
         meta: {
-          requiresAuth: true
+          requiresEditor: true
         }
       }
     ]

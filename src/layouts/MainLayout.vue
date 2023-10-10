@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn
-          v-if="userStore.hasAuthenticatied()"
+          v-if="userStore.hasAuthenticatied() && userStore.hasEditPermissions()"
           flat
           dense
           round
@@ -41,6 +41,7 @@
             <q-separator/>
 
             <q-btn
+              v-if="userStore.hasAuthenticatied() && userStore.hasEditPermissions()"
               color="primary"
               icon="settings"
               class="full-width"

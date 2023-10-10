@@ -1,10 +1,53 @@
 <template>
   <q-page padding>
+
+    <q-table
+      v-if="userStore.getRoleRequest().length"
+      flat
+      bordered
+      class="bg-grey-2 q-mb-lg"
+      :rows="userStore.getRoleRequest()"
+      :columns="columnsI18nRequest"
+    >
+      <template v-slot:top-left>
+        <div class="text-primary text-h4 q-pl-lg">
+          {{
+            $t('requests')
+          }}        </div>
+      </template>
+      <template v-slot:body="props">
+          <q-tr class="bg-white">
+              <q-td class="text-center"> {{ props.row.username }}</q-td>
+              <q-td class="text-center"> {{ props.row.name }}</q-td>
+              <q-td class="text-center"> {{ props.row.email }}</q-td>
+              <q-td class="justify-between row ">
+                <q-btn
+                    class="q-ml-md"
+                    icon="close"
+                    color="negative"
+                    flat
+                    dense
+                    @click="deleteRequest(props.row.username)"
+                />
+                <q-btn
+                    class="q-mr-md"
+                    dense
+                    flat
+                    icon="done"
+                    color="positive"
+                    @click="updateUserRole(props.row.username)"
+                />
+              </q-td>
+          </q-tr>
+      </template>
+
+    </q-table>
+
     <q-table
       flat
       bordered
       class="bg-grey-2 "
-      :rows="userStore.getUsers()"
+      :rows="userStore.getEditorUsers()"
       :columns="columnsI18n"
       row-key="username"
       :filter="filter"
@@ -87,14 +130,47 @@ export default {
       ]
     })
 
+    const columnsI18nRequest = computed(() => {
+      return [
+        {
+          name: 'username',
+          label: t('username'),
+          field: 'username',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          name: 'name',
+          label: t('name'),
+          field: 'name',
+          align: 'center'
+        },
+        {
+          name: 'email',
+          label: t('email'),
+          field: 'email',
+          align: 'center'
+        },
+        {
+          name: 'actions',
+          label: '',
+          align: 'center'
+        }
+      ]
+    })
+
     const filter = ref('')
 
     onMounted(() => {
       fetch()
     })
 
-    const fetch = () => {
-      userStore.fetchAllUsers()
+    const fetch = async () => {
+      await userStore.fetchAllUsers()
+        .catch((errorMessage) => {
+          notifyError(errorMessage)
+        })
+      await userStore.fetchRoleRequest()
         .catch((errorMessage) => {
           notifyError(errorMessage)
         })
@@ -111,16 +187,39 @@ export default {
       }
     }
 
+    const updateUserRole = (username) => {
+      userStore.updateUserRole(username, 'EDITOR')
+        .then(() => {
+          deleteRequest(username)
+        })
+        .catch((error) => {
+          notifyError(error)
+        })
+    }
+
+    const deleteRequest = (username) => {
+      userStore.deleteRoleRequest(username)
+        .then(() => {
+          fetch()
+        })
+        .catch((error) => {
+          notifyError(error)
+        })
+    }
+
     return {
       userStore,
       router,
 
       columnsI18n,
+      columnsI18nRequest,
       lineColor,
       firstUpper: role => {
         const str = role.toLowerCase()
         return str.charAt(0).toUpperCase() + str.slice(1)
       },
+      updateUserRole,
+      deleteRequest,
       filter
     }
   }

@@ -45,6 +45,7 @@ export default {
   receive_questions: 'Receive Questions',
   remove: 'Remove',
   reset: 'Reset',
+  requests: 'Requests',
   role: 'Role',
   save: 'Save',
   show: 'Show',
@@ -70,6 +71,7 @@ export default {
   msg_add_building: 'Are you sure you want to add the building:',
   msg_remove_building: 'Are you sure you want to remove the building:',
   msg_gen_new_island: 'Generate New Ecoisland',
-  msg_extra_bins: 'Extra Bins'
+  msg_extra_bins: 'Extra Bins',
+  msg_admin_request: 'Ask Admin For Access'
 
 }
