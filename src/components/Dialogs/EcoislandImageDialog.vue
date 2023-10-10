@@ -25,7 +25,7 @@
 
 <script>
 import { ref } from 'vue'
-import ImagePage from 'pages/ImagePage.vue'
+import ImagePage from 'pages/EcoIsland/ImagePage.vue'
 
 export default {
   components: { ImagePage },
