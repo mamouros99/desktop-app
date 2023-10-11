@@ -8,6 +8,7 @@
       class="bg-grey-2 q-mb-lg"
       :rows="userStore.getRoleRequest()"
       :columns="columnsI18nRequest"
+
     >
       <template v-slot:top-left>
         <div class="text-primary text-h4 q-pl-lg">
@@ -51,6 +52,8 @@
       :columns="columnsI18n"
       row-key="username"
       :filter="filter"
+      :pagination="initialPagination"
+      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('usersRows', a.rowsPerPage)}"
     >
 
       <template v-slot:top-right>
@@ -89,6 +92,7 @@ import { useUserStore } from 'stores/UserStore'
 import useNotify from 'src/composables/UseNotify'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useTablesStore } from 'stores/TablesStore'
 
 export default {
   // name: 'PageName',
@@ -98,6 +102,9 @@ export default {
     const { notifyError } = useNotify()
 
     const { t } = useI18n()
+
+    const tablesStore = useTablesStore()
+    const initialPagination = ref({ rowsPerPage: tablesStore.usersRows || 10 })
 
     const columnsI18n = computed(() => {
       return [
@@ -210,6 +217,8 @@ export default {
     return {
       userStore,
       router,
+      initialPagination,
+      tablesStore,
 
       columnsI18n,
       columnsI18nRequest,

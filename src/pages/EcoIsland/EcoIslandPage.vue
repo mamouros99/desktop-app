@@ -61,6 +61,8 @@
       row-key="id"
       :filter="currentFilter"
       :filter-method="customFilter"
+      :pagination="initialPagination"
+      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('ecoislandRows', a.rowsPerPage)}"
     >
 
       <template v-slot:no-data>
@@ -185,6 +187,7 @@ import { useUserStore } from 'stores/UserStore'
 import { saveAs } from 'file-saver'
 import EcoislandFilterDialog from 'components/Dialogs/EcoislandFilterDialog.vue'
 import { useI18n } from 'vue-i18n'
+import { useTablesStore } from 'stores/TablesStore'
 
 export default {
   components: {
@@ -202,6 +205,9 @@ export default {
     const { t } = useI18n()
 
     const showFilterDialog = ref(false)
+
+    const tablesStore = useTablesStore()
+    const initialPagination = ref({ rowsPerPage: tablesStore.ecoislandRows || 10 })
 
     const currentFilter = ref({
       id: [],
@@ -268,7 +274,7 @@ export default {
 
       const filteredBuildingRows = currentFilter.value.building.length === 0 ? filterIdentifierRows : filterIdentifierRows.filter(e => {
         for (const id of currentFilter.value.building) {
-          if (e.building.includes(id)) {
+          if (e.building.toLowerCase().includes(id)) {
             return true
           }
         }
@@ -276,8 +282,8 @@ export default {
       })
 
       return currentFilter.value.floor.length === 0 ? filteredBuildingRows : filteredBuildingRows.filter(e => {
-        for (const id of currentFilter.value.id) {
-          if (e.id.includes(id)) {
+        for (const id of currentFilter.value.floor) {
+          if (e.floor.includes(id)) {
             return true
           }
         }
@@ -286,7 +292,7 @@ export default {
     }
 
     const columnsI18n = computed(() => {
-      const columns = [
+      return [
         {
           name: 'identifier',
           label: t('identifier'),
@@ -318,8 +324,6 @@ export default {
           align: 'center'
         }
       ]
-
-      return columns
     })
 
     const uploadFiles = (a) => {
@@ -354,6 +358,7 @@ export default {
 
     return {
       ecoIslandStore,
+      tablesStore,
       columnsI18n,
 
       showDialog,
@@ -375,7 +380,9 @@ export default {
       updateFilters,
 
       downloadEcoislands,
-      myUrl
+      myUrl,
+
+      initialPagination
     }
   }
 }

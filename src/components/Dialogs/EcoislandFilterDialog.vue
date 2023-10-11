@@ -7,9 +7,21 @@
     }"
   >
     <q-card style="width: 50%">
-      <q-card-section>
-        <div class="text-h5 text-primary q-ml-md">{{           $t('filters')
+      <q-card-section horizontal class="q-px-lg q-py-md">
+        <div class="text-h5 text-primary q-ml-md col-8">{{           $t('filters')
           }}</div>
+        <div class="col-4 row justify-end">
+          <q-btn
+            class="q-mr-lg"
+            round
+            size="md"
+            color="negative"
+            dense
+            flat
+            icon="close"
+            @click="emitUpdate('update:showDialog', false )"
+          />
+        </div>
       </q-card-section>
       <q-separator/>
       <q-card-section class="q-gutter-y-sm">

@@ -10,6 +10,8 @@
       :filter="filter"
       :filter-method="customFilter"
       row-key="id"
+      :pagination="initialPagination"
+      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('reportsRows', a.rowsPerPage)}"
     >
       <template v-slot:top>
         <div class="row full-width justify-between">
@@ -126,6 +128,7 @@ import FilterDialog from 'components/Dialogs/ReportFilterDialog.vue'
 import useNotify from 'src/composables/UseNotify'
 import { saveAs } from 'file-saver'
 import { useI18n } from 'vue-i18n'
+import { useTablesStore } from 'stores/TablesStore'
 
 export default {
   components: {
@@ -138,6 +141,9 @@ export default {
     const { notifyError } = useNotify()
 
     const { t } = useI18n()
+
+    const tablesStore = useTablesStore()
+    const initialPagination = ref({ rowsPerPage: tablesStore.reportsRows || 10 })
 
     const filter = ref({
       search: '',
@@ -169,7 +175,7 @@ export default {
           sortable: true,
           align: 'center',
           format: (val) => {
-            return val.id
+            return val.identifier
           }
         },
         {
@@ -333,7 +339,11 @@ export default {
 
     return {
       columnsI18n,
+
       reportStore,
+      initialPagination,
+      tablesStore,
+
       iconBins,
       filteredIconBin,
       openReport,

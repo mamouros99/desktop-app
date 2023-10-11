@@ -10,7 +10,8 @@
       title-class="text-primary text-h4  q-pl-lg"
       :filter="filterObject"
       :filter-method="customFilter"
-      :rows-per-page-options="[10,20,0]"
+      :pagination="initialPagination"
+      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('questionRows', a.rowsPerPage)}"
     >
 
       <template v-slot:top-right>
@@ -64,6 +65,7 @@ import { useQuestionStore } from 'stores/QuestionStore'
 import useFunctions from 'src/composables/UseFunctions'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useTablesStore } from 'stores/TablesStore'
 
 export default {
 
@@ -73,11 +75,14 @@ export default {
     const router = useRouter()
     const questionStore = useQuestionStore()
     const filterObject = ref({ showArchived: false })
+    const tablesStore = useTablesStore()
+
+    const initialPagination = ref({ rowsPerPage: tablesStore.questionRows || 10 })
 
     const { t } = useI18n()
 
     const columnsI18n = computed(() => {
-      const columns = [
+      return [
         {
           name: 'time',
           required: true,
@@ -124,8 +129,6 @@ export default {
           sortable: true
         }
       ]
-
-      return columns
     })
 
     const customFilter = (rows) => {
@@ -146,6 +149,8 @@ export default {
 
     return {
       router,
+      initialPagination,
+      tablesStore,
 
       questionStore,
       formatDateTime,

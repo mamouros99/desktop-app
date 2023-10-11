@@ -6,8 +6,20 @@
   >
     <q-card class="col-4 bg-grey-3" style=" width: 40%">
       <q-form>
-        <q-card-section class="text-center">
-          <div class="text-h6 text-primary">{{  $t('msg_gen_new_island') }}</div>
+        <q-card-section class="q-pt-md"  horizontal>
+          <div class="text-h5 text-primary col-8 text-right" >{{  $t('msg_gen_new_island') }}</div>
+          <div class="col-4 row justify-end">
+            <q-btn
+              class="q-mr-lg"
+              round
+              size="md"
+              color="negative"
+              dense
+              flat
+              icon="close"
+              @click="emitUpdate('update:showDialog', false )"
+            />
+          </div>
         </q-card-section>
         <q-separator/>
         <q-card-section>

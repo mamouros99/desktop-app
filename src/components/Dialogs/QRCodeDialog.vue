@@ -8,8 +8,20 @@
       style="max-width: 600px; width: 50%"
       class="bg-grey-2"
     >
-      <q-card-section>
-        <div class="text-h6">QR Code</div>
+      <q-card-section horizontal class="q-pl-md q-pt-md justify-between">
+        <div class="text-h6 ">QR Code</div>
+        <div>
+          <q-btn
+            class="q-mr-lg"
+            round
+            size="md"
+            color="negative"
+            dense
+            flat
+            icon="close"
+            @click="emitUpdate('update:showDialog', false )"
+          />
+        </div>
       </q-card-section>
       <q-card-section>
 

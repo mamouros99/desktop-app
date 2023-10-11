@@ -42,7 +42,7 @@ export default {
   profile: 'Profile',
   questions: 'Questions',
   question: 'Question',
-  receive_questions: 'Receive Questions',
+  receive_questions: 'Receive Questions per Email',
   remove: 'Remove',
   reset: 'Reset',
   requests: 'Requests',

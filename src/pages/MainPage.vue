@@ -77,7 +77,7 @@ export default defineComponent({
     })
 
     const requestPermission = () => {
-      userStore.addRoleRequest()
+      userStore.addRoleRequest(userStore.getUsername())
     }
 
     return {

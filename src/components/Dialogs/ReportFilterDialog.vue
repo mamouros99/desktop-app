@@ -6,19 +6,19 @@
   >
     <q-card style="max-width: 50%">
       <q-card-section class="row justify-between">
-        <div class="text-h5 text-primary q-ml-md">Filtros</div>
-        <q-btn
-          outline
-          rounded
-          color="negative"
-          @click="cleanDates();cleanSelected()"
-        >
-          Limpar Filtros
-          <q-icon
-            class="q-pl-md"
-            name="o_cancel"
+        <div class="text-h5 text-primary q-ml-md">{{ $t('filters')}}</div>
+        <div class="">
+          <q-btn
+            class="q-mr-lg"
+            round
+            size="md"
+            color="negative"
+            dense
+            flat
+            icon="close"
+            @click="emitUpdate('update:showDialog', false )"
           />
-        </q-btn>
+        </div>
 
       </q-card-section>
       <q-separator/>

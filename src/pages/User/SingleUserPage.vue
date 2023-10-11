@@ -33,7 +33,6 @@
         <div class="row items-center" v-if="userStore.hasEditPermissions()">
           <div class="text-bold q-mr-sm">{{ $t('receive_questions') }}:</div>
           <q-toggle
-            :disable="user.username !== userStore.getUsername()"
             v-model="currentQuestion"
             color="secondary"
             checked-icon="check"
@@ -83,30 +82,23 @@
         </div>
         <div v-else class="q-px-lg">
           <div class="row justify-start q-mb-sm" v-for="build in userBuildings" :key="build">
-            <div class="col-4">
-              <q-btn
-                :disable="userStore.getUsername() !== user.username"
-                flat
-                class="text-blue"
-                :label="build.name"
-                @click="toogleReceiveEmail(build.id)"
-              />
-            </div>
-            <div class="row items-center">
-              <q-btn
-                :disable="userStore.getUsername() !== user.username"
-                round
-                unelevated
-                dense
-                size="md"
-                icon="email"
-                :color="build.receiveEmails ? 'primary' : 'red-5'"
+            <div class="column col-4 justify-center ">
+              <div
+                class="text-primary text-h6"
                 @click="toogleReceiveEmail(build.id)"
               >
-                <q-tooltip>
-                  {{ build.receiveEmails ? $t('msg_active_emails') : $t('msg_desactive_emails') }}
-                </q-tooltip>
-              </q-btn>
+                {{build.name}}
+              </div>
+            </div>
+            <div class="row items-center">
+
+              <q-toggle
+                v-model="build.receiveEmails"
+                icon="email"
+                :label="build.receiveEmails ? $t('msg_active_emails') : $t('msg_desactive_emails')"
+                size="lg"
+                @click="toogleReceiveEmail(build.id)"
+              />
             </div>
           </div>
         </div>

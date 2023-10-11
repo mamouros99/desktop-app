@@ -20,7 +20,7 @@
           @click="deleteDialogToggle = ! deleteDialogToggle"
         />
         <ConfirmationDialog
-          title=""
+          :title="$t('msg_delete_question')"
           :negative-label="$t('delete')"
           negative-icon="delete"
           :positive-label="$t('cancel')"
