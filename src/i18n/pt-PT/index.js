@@ -73,6 +73,7 @@ export default {
   msg_remove_building: 'Tem a certeza que quer remover o edificio',
   msg_gen_new_island: 'Criar Nova Ecoílha',
   msg_extra_bins: 'Caixotes Extra',
-  msg_admin_request: 'Pedir Acesso ao Administrador'
+  msg_admin_request: 'Pedir Acesso ao Administrador',
+  msg_please_wait: 'Por favor aguarde'
 
 }

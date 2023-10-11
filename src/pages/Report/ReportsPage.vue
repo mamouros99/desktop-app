@@ -10,8 +10,7 @@
       :filter="filter"
       :filter-method="customFilter"
       row-key="id"
-      :pagination="initialPagination"
-      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('reportsRows', a.rowsPerPage)}"
+
     >
       <template v-slot:top>
         <div class="row full-width justify-between">

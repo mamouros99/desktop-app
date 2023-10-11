@@ -52,8 +52,7 @@
       :columns="columnsI18n"
       row-key="username"
       :filter="filter"
-      :pagination="initialPagination"
-      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('usersRows', a.rowsPerPage)}"
+
     >
 
       <template v-slot:top-right>

@@ -38,12 +38,17 @@
             </q-badge>
           </q-btn>
         </div>
-        <q-btn v-else-if="userStore.hasAuthenticatied()"
-               :label="$t('msg_admin_request')"
-               color="primary"
-               icon="send"
-               @click="requestPermission()"
-        />
+        <div v-else-if="userStore.hasAuthenticatied()">
+          <q-btn
+            v-if="!sent"
+            :label="$t('msg_admin_request')"
+            color="primary"
+            icon="send"
+            @click="requestPermission()"/>
+          <div class="text-primary text-subtitle1">
+            {{$t('msg_please_wait')}}
+          </div>
+        </div>
 
       </q-card-actions>
     </q-card>
@@ -65,6 +70,7 @@ export default defineComponent({
     const router = useRouter()
     const questionStore = useQuestionStore()
     const count = ref(0)
+    const sent = ref(false)
 
     onMounted(() => {
       LocalStorage.remove('beforePath')
@@ -86,6 +92,7 @@ export default defineComponent({
       questionStore,
 
       count,
+      sent,
 
       requestPermission
     }

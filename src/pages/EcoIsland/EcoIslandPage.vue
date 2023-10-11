@@ -61,8 +61,7 @@
       row-key="id"
       :filter="currentFilter"
       :filter-method="customFilter"
-      :pagination="initialPagination"
-      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('ecoislandRows', a.rowsPerPage)}"
+
     >
 
       <template v-slot:no-data>

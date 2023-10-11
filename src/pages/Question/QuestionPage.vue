@@ -10,8 +10,7 @@
       title-class="text-primary text-h4  q-pl-lg"
       :filter="filterObject"
       :filter-method="customFilter"
-      :pagination="initialPagination"
-      @update:pagination="(a) => {initialPagination.rowsPerPage = a.rowsPerPage; tablesStore.storeTableRows('questionRows', a.rowsPerPage)}"
+
     >
 
       <template v-slot:top-right>

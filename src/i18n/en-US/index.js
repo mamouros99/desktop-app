@@ -72,6 +72,7 @@ export default {
   msg_remove_building: 'Are you sure you want to remove the building:',
   msg_gen_new_island: 'Generate New Ecoisland',
   msg_extra_bins: 'Extra Bins',
-  msg_admin_request: 'Ask Admin For Access'
+  msg_admin_request: 'Ask Admin For Access',
+  msg_please_wait: 'Please wait'
 
 }
