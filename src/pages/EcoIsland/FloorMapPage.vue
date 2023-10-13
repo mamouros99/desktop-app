@@ -157,14 +157,13 @@ export default {
             Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
             return build
           })
-          console.log(coordinates.value)
         })
 
       await buildImage(buildingId)
     }
 
     onMounted(async () => {
-      await ecoIslandStore.fetchAlamedaBuildings()
+      await userStore.fetchMyBuildings()
         .then(res => {
           const campus = res.data
           const validKeys = ['id', 'name']
@@ -213,7 +212,6 @@ export default {
       ctx.font = 'bold 15px Arial'
       const txt = 'E#' + id
       const width = ctx.measureText(txt).width
-      console.log('width' + width + ':' + id + ':')
       ctx.fillStyle = '#EEEEEE'
       ctx.fillRect(x + 10, y - 15, width, 15)
 
@@ -223,7 +221,6 @@ export default {
     }
 
     const drawCircle = (bins, x, y) => {
-      console.log('drawing', bins)
       const ctx = canvas.value.getContext('2d')
 
       switch (bins) {
@@ -290,6 +287,7 @@ export default {
     }
 
     return {
+
       updateBuilding,
       updateFloor,
       ecoIslandStore,

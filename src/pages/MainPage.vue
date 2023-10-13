@@ -24,6 +24,12 @@
           />
           <q-btn
             color="primary"
+            class="q-ml-xl"
+            :label="$t('map')"
+            @click="router.push('/floormap')"
+          />
+          <q-btn
+            color="primary"
             :label="$t('alerts')"
             class="q-mx-xl"
             @click="router.push('/reports')"
