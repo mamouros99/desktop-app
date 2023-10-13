@@ -34,6 +34,7 @@ export default {
   identifier: 'Identifier',
   location: 'Location',
   logout: 'Logout',
+  map: 'Maps',
   name: 'Name',
   new_island: 'New Ecoisland',
   paper: 'Paper',

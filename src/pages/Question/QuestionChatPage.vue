@@ -8,7 +8,7 @@
             icon="arrow_back"
             @click="router.push('/questions')"
           />
-          {{ question.user.username }} - {{ formatDate(question.time) }}
+          {{ question.user.name }} - {{ formatDate(question.time) }}
         </div>
         <q-btn
           unelevated
@@ -37,6 +37,7 @@
 
         <q-chat-message
           v-for="q in question.answers"
+          :name="q.author"
           :key="q.id"
           :text="[q.text]"
           :sent="q.fromApp"
@@ -107,6 +108,7 @@ import { onMounted, ref } from 'vue'
 import { useQuestionStore } from 'stores/QuestionStore'
 import useFunctions from 'src/composables/UseFunctions'
 import ConfirmationDialog from 'components/Dialogs/ConfirmationDialog.vue'
+import { useUserStore } from 'stores/UserStore'
 
 export default {
   components: { ConfirmationDialog },
@@ -114,6 +116,7 @@ export default {
   setup () {
     const route = useRoute()
     const router = useRouter()
+    const userStore = useUserStore()
     const questionStore = useQuestionStore()
     const {
       formatDateTime,
@@ -133,7 +136,8 @@ export default {
       const auxAnswer = {
         text: newAnswer.value,
         fromApp: true,
-        time: Date.now()
+        time: Date.now(),
+        author: userStore.getFirstName() + ' ' + userStore.getLastName() + ' - ' + userStore.getUsername()
       }
 
       await questionStore.addNewAnswer(auxAnswer, id)
@@ -166,6 +170,8 @@ export default {
     }
 
     return {
+      userStore,
+
       addAnswer,
       archiveQuestion,
       unarchiveQuestion,

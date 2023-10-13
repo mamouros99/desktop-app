@@ -61,7 +61,8 @@
       row-key="id"
       :filter="currentFilter"
       :filter-method="customFilter"
-
+      v-model:pagination="initialPagination"
+      @update:pagination="tablesStore.storeTablePagination('ecoislandPagination', initialPagination)"
     >
 
       <template v-slot:no-data>
@@ -206,7 +207,7 @@ export default {
     const showFilterDialog = ref(false)
 
     const tablesStore = useTablesStore()
-    const initialPagination = ref({ rowsPerPage: tablesStore.ecoislandRows || 10 })
+    const initialPagination = ref(tablesStore.ecoislandPagination)
 
     const currentFilter = ref({
       id: [],

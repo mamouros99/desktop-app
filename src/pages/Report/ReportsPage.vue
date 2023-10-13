@@ -10,7 +10,8 @@
       :filter="filter"
       :filter-method="customFilter"
       row-key="id"
-
+      v-model:pagination="initialPagination"
+      @update:pagination="tablesStore.storeTablePagination('reportsPagination', initialPagination)"
     >
       <template v-slot:top>
         <div class="row full-width justify-between">
@@ -142,7 +143,7 @@ export default {
     const { t } = useI18n()
 
     const tablesStore = useTablesStore()
-    const initialPagination = ref({ rowsPerPage: tablesStore.reportsRows || 10 })
+    const initialPagination = ref(tablesStore.reportsPagination)
 
     const filter = ref({
       search: '',

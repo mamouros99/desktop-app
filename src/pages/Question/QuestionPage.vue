@@ -10,7 +10,8 @@
       title-class="text-primary text-h4  q-pl-lg"
       :filter="filterObject"
       :filter-method="customFilter"
-
+      v-model:pagination="initialPagination"
+      @update:pagination="tablesStore.storeTablePagination('questionPagination', initialPagination)"
     >
 
       <template v-slot:top-right>
@@ -76,7 +77,7 @@ export default {
     const filterObject = ref({ showArchived: false })
     const tablesStore = useTablesStore()
 
-    const initialPagination = ref({ rowsPerPage: tablesStore.questionRows || 10 })
+    const initialPagination = ref(tablesStore.questionPagination)
 
     const { t } = useI18n()
 

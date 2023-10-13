@@ -3,20 +3,20 @@ import { ref } from 'vue'
 import { LocalStorage } from 'quasar'
 
 export const useTablesStore = defineStore('TablesStore', () => {
-  const ecoislandRows = ref(LocalStorage.getItem('ecoislandRows'))
-  const questionRows = ref(LocalStorage.getItem('questionRows'))
-  const reportsRows = ref(LocalStorage.getItem('reportsRows'))
-  const usersRows = ref(LocalStorage.getItem('usersRows'))
+  const ecoislandPagination = ref(LocalStorage.getItem('ecoislandPagination'))
+  const questionPagination = ref(LocalStorage.getItem('questionPagination'))
+  const reportsPagination = ref(LocalStorage.getItem('reportsPagination'))
+  const usersPagination = ref(LocalStorage.getItem('usersPagination'))
 
-  const storeTableRows = (table, value) => {
+  const storeTablePagination = (table, value) => {
     LocalStorage.set(table, value)
   }
 
   return {
-    storeTableRows,
-    ecoislandRows,
-    reportsRows,
-    usersRows,
-    questionRows
+    storeTablePagination,
+    ecoislandPagination,
+    reportsPagination,
+    usersPagination,
+    questionPagination
   }
 })

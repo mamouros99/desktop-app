@@ -45,7 +45,7 @@
             color="primary"
             icon="send"
             @click="requestPermission()"/>
-          <div class="text-primary text-subtitle1">
+          <div v-else class="text-primary text-h6">
             {{$t('msg_please_wait')}}
           </div>
         </div>
@@ -83,6 +83,7 @@ export default defineComponent({
     })
 
     const requestPermission = () => {
+      sent.value = true
       userStore.addRoleRequest(userStore.getUsername())
     }
 

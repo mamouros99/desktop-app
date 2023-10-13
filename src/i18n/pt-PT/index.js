@@ -34,6 +34,7 @@ export default {
   identifier: 'Identificador',
   location: 'Localização',
   logout: 'Logout',
+  map: 'Mapas',
   new_island: 'Nova Ecoílha',
   name: 'Nome',
   observations: 'Observações',

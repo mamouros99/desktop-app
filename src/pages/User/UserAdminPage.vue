@@ -52,7 +52,8 @@
       :columns="columnsI18n"
       row-key="username"
       :filter="filter"
-
+      v-model:pagination="initialPagination"
+      @update:pagination="tablesStore.storeTablePagination('usersPagination', initialPagination)"
     >
 
       <template v-slot:top-right>
@@ -103,7 +104,7 @@ export default {
     const { t } = useI18n()
 
     const tablesStore = useTablesStore()
-    const initialPagination = ref({ rowsPerPage: tablesStore.usersRows || 10 })
+    const initialPagination = ref(tablesStore.usersPagination)
 
     const columnsI18n = computed(() => {
       return [
@@ -118,13 +119,16 @@ export default {
           name: 'name',
           label: t('name'),
           field: 'name',
-          align: 'center'
+          align: 'center',
+          sortable: true
         },
         {
           name: 'email',
           label: t('email'),
           field: 'email',
-          align: 'center'
+          align: 'center',
+          sortable: true
+
         },
         {
           name: 'Role',

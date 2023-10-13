@@ -1,3 +1,4 @@
+
 const routes = [
   {
     path: '/',
@@ -18,6 +19,13 @@ const routes = [
         path: 'ecoislands',
         name: 'ecoislands',
         component: () => import('pages/EcoIsland/EcoIslandPage.vue'),
+        meta: { requiresEditor: true }
+
+      },
+      {
+        name: 'floormap',
+        path: 'floormap', // here it is, route /user/profile
+        component: () => import('pages/EcoIsland/FloorMapPage.vue'), // we reference /src/pages/Profile.vue imported above
         meta: { requiresEditor: true }
       },
       {
