@@ -181,9 +181,23 @@ export default {
         ctx.drawImage(image, 0, 0, image.width, image.height)
         for (let i = 0; i < coordinates.value.length; i++) {
           drawCircle(coordinates.value[i].bins, coordinates.value[i].xPos, coordinates.value[i].yPos)
+          drawText(ctx, coordinates.value[i].xPos, coordinates.value[i].yPos, '#000000', coordinates.value[i].identifier)
         }
       }
       image.src = imageSource
+    }
+
+    const drawText = (ctx, x, y, color, id) => {
+      ctx.font = 'bold 15px Arial'
+      const txt = 'E#' + id
+      const width = ctx.measureText(txt).width
+      console.log('width' + width + ':' + id + ':')
+      ctx.fillStyle = '#EEEEEE'
+      ctx.fillRect(x + 10, y - 15, width, 15)
+
+      ctx.fillStyle = color
+      ctx.textBaseline = 'top'
+      ctx.fillText(txt, x + 10, y - 15)
     }
 
     const drawCircle = (bins, x, y) => {
@@ -192,28 +206,28 @@ export default {
 
       switch (bins) {
         case '11':
-          drawPartialCircle(ctx, x, y, 15, 0, 2 * Math.PI / 5, '#FFD133')
-          drawPartialCircle(ctx, x, y, 15, 2 * Math.PI / 5, 4 * Math.PI / 5, '#111111')
-          drawPartialCircle(ctx, x, y, 15, 4 * Math.PI / 5, 6 * Math.PI / 5, '#338AFF')
-          drawPartialCircle(ctx, x, y, 15, 6 * Math.PI / 5, 8 * Math.PI / 5, '#5bfd02')
-          drawPartialCircle(ctx, x, y, 15, 8 * Math.PI / 5, 0, '#785802')
+          drawPartialCircle(ctx, x, y, 10, 0, 2 * Math.PI / 5, '#FFD133')
+          drawPartialCircle(ctx, x, y, 10, 2 * Math.PI / 5, 4 * Math.PI / 5, '#111111')
+          drawPartialCircle(ctx, x, y, 10, 4 * Math.PI / 5, 6 * Math.PI / 5, '#338AFF')
+          drawPartialCircle(ctx, x, y, 10, 6 * Math.PI / 5, 8 * Math.PI / 5, '#5bfd02')
+          drawPartialCircle(ctx, x, y, 10, 8 * Math.PI / 5, 0, '#785802')
           break
         case '01':
-          drawPartialCircle(ctx, x, y, 15, 0, Math.PI / 2, '#FFD133')
-          drawPartialCircle(ctx, x, y, 15, Math.PI / 2, Math.PI, '#111111')
-          drawPartialCircle(ctx, x, y, 15, Math.PI, 3 * Math.PI / 2, '#338AFF')
-          drawPartialCircle(ctx, x, y, 15, 3 * Math.PI / 2, 0, '#5bfd02')
+          drawPartialCircle(ctx, x, y, 10, 0, Math.PI / 2, '#FFD133')
+          drawPartialCircle(ctx, x, y, 10, Math.PI / 2, Math.PI, '#111111')
+          drawPartialCircle(ctx, x, y, 10, Math.PI, 3 * Math.PI / 2, '#338AFF')
+          drawPartialCircle(ctx, x, y, 10, 3 * Math.PI / 2, 0, '#5bfd02')
           break
         case '10':
-          drawPartialCircle(ctx, x, y, 15, 0, Math.PI / 2, '#FFD133')
-          drawPartialCircle(ctx, x, y, 15, Math.PI / 2, Math.PI, '#111111')
-          drawPartialCircle(ctx, x, y, 15, Math.PI, 3 * Math.PI / 2, '#338AFF')
-          drawPartialCircle(ctx, x, y, 15, 3 * Math.PI / 2, 0, '#785802')
+          drawPartialCircle(ctx, x, y, 10, 0, Math.PI / 2, '#FFD133')
+          drawPartialCircle(ctx, x, y, 10, Math.PI / 2, Math.PI, '#111111')
+          drawPartialCircle(ctx, x, y, 10, Math.PI, 3 * Math.PI / 2, '#338AFF')
+          drawPartialCircle(ctx, x, y, 10, 3 * Math.PI / 2, 0, '#785802')
           break
         default:
-          drawPartialCircle(ctx, x, y, 15, 0, 2 * Math.PI / 3, '#FFD133')
-          drawPartialCircle(ctx, x, y, 15, 2 * Math.PI / 3, 4 * Math.PI / 3, '#111111')
-          drawPartialCircle(ctx, x, y, 15, 4 * Math.PI / 3, 0, '#338AFF')
+          drawPartialCircle(ctx, x, y, 10, 0, 2 * Math.PI / 3, '#FFD133')
+          drawPartialCircle(ctx, x, y, 10, 2 * Math.PI / 3, 4 * Math.PI / 3, '#111111')
+          drawPartialCircle(ctx, x, y, 10, 4 * Math.PI / 3, 0, '#338AFF')
       }
     }
 
