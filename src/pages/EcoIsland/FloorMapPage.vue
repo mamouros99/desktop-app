@@ -56,7 +56,7 @@
       </q-card-section>
       <q-separator/>
       <q-card-section class="col-12">
-        <canvas class="" ref="canvas" ></canvas>
+        <canvas class="" ref="canvas" @click="clickEvent"></canvas>
       </q-card-section>
     </q-card>
   </q-page>
@@ -66,11 +66,13 @@
 import { useEcoIslandStore } from 'stores/EcoIslandStore'
 import { onMounted, ref } from 'vue'
 import { useUserStore } from 'stores/UserStore'
+import { useRouter } from 'vue-router'
 
 export default {
   // name: 'PageName',
   setup () {
     const ecoIslandStore = useEcoIslandStore()
+    const router = useRouter()
 
     const coordinates = ref([])
 
@@ -89,8 +91,24 @@ export default {
     const canvas = ref()
     const image = new Image()
 
-    const updateBuilding = async () => {
+    const cleanSubFloor = () => {
+      const ctx = canvas.value.getContext('2d')
+      ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
+    }
+
+    const cleanFloor = () => {
+      cleanSubFloor()
+      subFloor.value = ''
+      subBuildingFloors.value = []
+    }
+
+    const cleanBuilding = () => {
+      cleanFloor()
       floor.value = ''
+    }
+
+    const updateBuilding = async () => {
+      cleanBuilding()
 
       await ecoIslandStore.fetchBuilding(typeof building.value.id.id === 'undefined' ? building.value.id : building.value.id.id)
         .then((res) => {
@@ -109,6 +127,8 @@ export default {
     }
 
     const updateFloor = async () => {
+      cleanFloor()
+
       await ecoIslandStore.fetchBuilding(floor.value.id)
         .then((res) => {
           const build = res.data.containedSpaces.sort((a, b) => {
@@ -128,9 +148,11 @@ export default {
     }
 
     const getCoords = async (buildingId) => {
+      cleanSubFloor()
+
       await ecoIslandStore.fetchEcoIslandsPerBuildingFloor(buildingId)
         .then(res => {
-          const validKeys = ['xPos', 'yPos', 'identifier', 'bins']
+          const validKeys = ['xPos', 'yPos', 'identifier', 'bins', 'id']
           coordinates.value = res.data.map((build) => {
             Object.keys(build).forEach((key) => validKeys.includes(key) || delete build[key])
             return build
@@ -240,6 +262,33 @@ export default {
       ctx.fill()
     }
 
+    function clickEvent (evt) {
+      const rect = canvas.value.getBoundingClientRect()
+      const x = evt.clientX - rect.left
+      const y = evt.clientY - rect.top
+
+      getCloserEcoisland(x, y)
+    }
+
+    const getCloserEcoisland = (x, y) => {
+      const closestIsland = { id: -1, dist: 40 }
+
+      for (let i = 0; i < coordinates.value.length; i++) {
+        const a = coordinates.value[i].xPos - x
+        const b = coordinates.value[i].yPos - y
+
+        const c = Math.sqrt(a * a + b * b)
+        if (c < closestIsland.dist) {
+          closestIsland.id = coordinates.value[i].id
+          closestIsland.dist = c
+        }
+      }
+
+      if (closestIsland.id !== -1) {
+        router.push('/ecoisland/' + closestIsland.id)
+      }
+    }
+
     return {
       updateBuilding,
       updateFloor,
@@ -260,7 +309,8 @@ export default {
         console.log(a)
       },
 
-      buildImage
+      buildImage,
+      clickEvent
     }
   }
 }

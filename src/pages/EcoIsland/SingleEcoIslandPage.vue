@@ -6,7 +6,7 @@
       label="Back"
       icon="arrow_back"
       class="q-ma-md"
-      @click="router.push('/ecoislands')"
+      @click="router.go(-1)"
     />
     <q-card v-if="loaded">
       <q-card-section class="row justify-between items-center">
